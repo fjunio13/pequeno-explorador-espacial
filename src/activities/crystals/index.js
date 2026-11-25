@@ -1,7 +1,8 @@
-import { bindActions, control, icon } from "../../ui/controls.js";
+import { bindActions, control } from "../../ui/controls.js";
+import { createRoundAdvance } from "../round-advance.js";
 import { bindCrystalDrag } from "./drag.js";
 import {
-  chooseNumber, confirmLoad, crystalCount, demonstrateTransfer, energize, moveCrystal, nextCharge,
+  chooseNumber, crystalCount, demonstrateTransfer, energize, moveCrystal, nextCharge, requestHelp,
   startCrystals, suggestedTransfer, targetFor,
 } from "./logic.js";
 
@@ -57,8 +58,8 @@ function activityMarkup(rounds) {
           <p class="crystal-feedback" role="status" data-crystal-feedback></p>
           <div class="crystal-numbers" role="group" aria-label="Escolha a quantidade" hidden>${numbers}</div>
           <div class="crystal-buttons">
-            ${control("help", "Ajudar", "gem")}
-            ${control("advance", "Conferir a carga", "check", "primary")}
+            ${control("help", "Ajuda", "help")}
+            ${control("power", "Ligar estação", "bolt", "primary")}
           </div>
         </div>
       </div>
@@ -67,20 +68,21 @@ function activityMarkup(rounds) {
 }
 
 function instructionFor(state) {
-  const count = state.loaded.length;
   switch (state.phase) {
     case "number":
       if (state.attempts >= 3) return "cristais-pista-numero";
-      if (state.attempts === 2) return "cristais-revisar-numero";
+      if (state.attempts > 0) return "cristais-revisar-numero";
       return "cristais-escolher";
     case "activate":
       return "cristais-ativar";
     case "powered":
       return "cristais-ligado";
     default:
-      if (state.attempts >= 2 && count === targetFor(state)) return "cristais-conferir";
       if (state.attempts >= 3) return "cristais-ajuda";
-      if (state.attempts === 2) return count < targetFor(state) ? "cristais-faltam" : "cristais-sobram";
+      if (state.attempts === 2) {
+        return state.loaded.length < targetFor(state) ? "cristais-faltam" : "cristais-sobram";
+      }
+      if (state.attempts === 1) return "cristais-recontar";
       return `cristais-pedido-${targetFor(state)}`;
   }
 }
@@ -93,7 +95,7 @@ function feedbackFor(state, suggestion) {
     return "Conte um por um e procure o número que brilha.";
   }
   if (state.attempts === 1) return "Vamos ajustar a carga?";
-  if (!suggestion) return "Agora, confira a carga.";
+  if (!suggestion) return "";
   if (state.attempts >= 3) return "Toque no cristal brilhando ou em Ajudar.";
   return suggestion.destination === "generator"
     ? "Coloque o cristal que está brilhando."
@@ -107,7 +109,6 @@ export function mountCrystals({ container, configuration, audio, onComplete, onR
   const screen = container.querySelector(".crystal-screen");
   const reserve = [...screen.querySelectorAll('[data-zone="reserve"] .crystal-socket')];
   const generator = [...screen.querySelectorAll('[data-zone="generator"] .crystal-socket')];
-  const pieces = reserve.map((_, index) => crystalButton(index));
   const brief = screen.querySelector("[data-instruction]");
   const generatorStatus = screen.querySelector("[data-generator-status]");
   const progress = screen.querySelector("[data-crystal-progress]");
@@ -115,9 +116,22 @@ export function mountCrystals({ container, configuration, audio, onComplete, onR
   const numberGrid = screen.querySelector(".crystal-numbers");
   const numberButtons = [...numberGrid.children];
   const help = screen.querySelector('[data-action="help"]');
-  const advance = screen.querySelector('[data-action="advance"]');
-  const actions = advance.parentElement;
-  screen.querySelector('[data-action="map"]').setAttribute("data-native-click", "");
+  const power = screen.querySelector('[data-action="power"]');
+  const actions = power.parentElement;
+  const listen = screen.querySelector('[data-action="listen"]');
+  const map = screen.querySelector('[data-action="map"]');
+  map.setAttribute("data-native-click", "");
+  let pieces = [];
+
+  const transition = createRoundAdvance(() => {
+    state = nextCharge(state);
+    if (!state) {
+      onComplete();
+      return;
+    }
+
+    startCharge();
+  });
 
   function render() {
     const { phase, loaded, round, attempts } = state;
@@ -159,29 +173,27 @@ export function mountCrystals({ container, configuration, audio, onComplete, onR
     }
 
     numberGrid.hidden = phase !== "number";
-    actions.hidden = phase === "number";
+    actions.hidden = phase === "number" || powered;
+    power.hidden = phase !== "activate";
+    help.hidden = phase !== "collect";
+    help.querySelector("span").textContent = attempts >= 3 ? "Ajudar" : "Ajuda";
     for (const [index, button] of numberButtons.entries()) {
       button.toggleAttribute("data-guide", phase === "number" && attempts >= 3 && index + 1 === loaded.length);
     }
-    help.hidden = attempts < 3 || !suggestion;
-    const [label, symbol] = phase === "activate" ? ["Ligar estação", "bolt"]
-      : powered ? [round + 1 === state.targets.length ? "Concluir" : "Continuar", "next"]
-        : ["Conferir a carga", "check"];
-    advance.innerHTML = `${icon(symbol)}<span>${label}</span>`;
-    advance.toggleAttribute("data-native-click", powered && round + 1 === state.targets.length);
 
-    if (focused === advance && phase === "number") numberButtons[0].focus({ preventScroll: true });
-    else if (numberButtons.includes(focused) && phase !== "number") advance.focus({ preventScroll: true });
+    if (focused === power && power.hidden) listen.focus({ preventScroll: true });
+    else if (numberButtons.includes(focused) && phase === "activate") power.focus({ preventScroll: true });
+    else if (focused === help && phase === "number") numberButtons[0].focus({ preventScroll: true });
     else if (pieces.includes(focused) && !powered) focused.focus({ preventScroll: true });
-    else if (focused === help && help.hidden) advance.focus({ preventScroll: true });
   }
 
   function transfer(next, destination) {
     if (state === next) return;
+    const changedCue = instructionFor(state) !== instructionFor(next);
     state = next;
     render();
-    audio.instruct(instructionFor(state), { playNow: false });
-    audio.play(destination === "generator" ? "cristais-encaixe" : "cristais-retirar");
+    audio.playIfIdle(destination === "generator" ? "cristais-encaixe" : "cristais-retirar");
+    if (changedCue) audio.instruct(instructionFor(state), { afterCurrent: true });
   }
 
   function move(id, destination) {
@@ -194,44 +206,52 @@ export function mountCrystals({ container, configuration, audio, onComplete, onR
     if (state === previous) return;
 
     render();
-    if (state.phase === "activate" || state.attempts >= 2) audio.instruct(instructionFor(state));
-    else audio.play("cristais-revisar-numero");
+    audio.instruct(instructionFor(state), { afterCurrent: true });
   }
 
-  function proceed() {
-    if (state.phase === "powered") {
-      state = nextCharge(state);
-      if (!state) {
-        onComplete();
-        return;
-      }
-    } else if (state.phase === "activate") {
-      state = energize(state);
-    } else if (state.phase === "collect") {
-      state = confirmLoad(state);
-    }
+  function powerStation() {
+    if (state.phase !== "activate") return;
+    state = energize(state);
 
     render();
-    if (state.phase === "collect" && state.attempts === 1) audio.play("cristais-recontar");
-    else audio.instruct(instructionFor(state));
+    transition.schedule(audio.instruct(instructionFor(state), { afterCurrent: true }));
+  }
+
+  function askForHelp() {
+    const suggestion = suggestedTransfer(state);
+    if (state.attempts >= 3 && suggestion) {
+      transfer(demonstrateTransfer(state), suggestion.destination);
+      return;
+    }
+
+    state = requestHelp(state);
+    render();
+    audio.instruct(instructionFor(state), { afterCurrent: true });
+  }
+
+  function startCharge() {
+    for (const piece of pieces) piece.remove();
+    pieces = reserve.map((_, index) => crystalButton(index));
+    render();
+    audio.instruct(instructionFor(state));
   }
 
   const unbindActions = bindActions(container, {
     map: onReturn,
-    listen: audio.repeat,
-    advance: proceed,
+    listen: () => {
+      const replay = audio.repeat();
+      if (state.phase === "powered") transition.schedule(replay);
+    },
+    power: powerStation,
     number: verifyNumber,
     crystal: (piece) => move(Number(piece.dataset.crystal),
       piece.closest("[data-zone]").dataset.zone === "reserve" ? "generator" : "reserve"),
-    help: () => {
-      const suggestion = suggestedTransfer(state);
-      transfer(demonstrateTransfer(state), suggestion?.destination);
-    },
+    help: askForHelp,
   });
   const unbindDrag = bindCrystalDrag(screen, move);
-  render();
-  audio.instruct(instructionFor(state));
+  startCharge();
   return () => {
+    transition.cancel();
     unbindDrag();
     unbindActions();
   };

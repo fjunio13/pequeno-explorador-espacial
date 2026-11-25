@@ -112,6 +112,11 @@ button:focus-visible {
   background: #342954;
 }
 
+.button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .button:active,
 .planet-button:active,
 .star-button:active:not(:disabled) {
@@ -404,7 +409,7 @@ button:focus-visible {
   animation: arrive 290ms ease-out both;
 }
 
-.count-stage[data-confirmed="true"] {
+.count-stage[data-matched="true"] {
   border-color: #a4efd3a1;
   background-color: #1d283d;
 }
@@ -528,7 +533,7 @@ button:focus-visible {
   animation: pulse 1.45s ease-in-out infinite;
 }
 
-.count-stage[data-confirmed="true"] .star-button[aria-pressed="true"] {
+.count-stage[data-matched="true"] .star-button[aria-pressed="true"] {
   border-color: var(--mint);
 }
 
@@ -543,7 +548,7 @@ button:focus-visible {
   font-weight: 850;
 }
 
-[data-confirmed="true"] .count-total {
+[data-matched="true"] .count-total {
   color: var(--mint);
 }
 

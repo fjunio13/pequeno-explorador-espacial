@@ -6,6 +6,8 @@
 - Use caminhos relativos para arquivos do jogo e preserve o funcionamento no subdiretório do GitHub Pages.
 - Mantenha as regras de cada atividade fora do núcleo e a navegação geral fora dos módulos dos planetas. Libere controles, animações e outros recursos temporários ao sair de uma atividade.
 - Use Pointer Events para toque e mouse. Preserve a orientação em paisagem, a autonomia de crianças que ainda não leem e o feedback sem punições.
+- Projete cada missão para que a criança passe mais tempo manipulando objetos do que confirmando telas. Use interações intuitivas, resposta imediata e consequências visuais. Preserve decisões educativas, ajuda, correção e um ritmo adequado a crianças de quatro anos. Faça as transições automáticas após o feedback audiovisual e cancele-as ao sair da atividade.
+- Consulte a [proposta de roteiro](docs/roteiro-narrativo.md) em trabalhos narrativos. Aguarde aprovação do roteiro antes de produzir as cenas.
 - Mantenha ilustrações, narrações pré-gravadas e efeitos no projeto. Documente a origem e os direitos de uso de cada recurso.
 - Use dados fictícios em código, documentação, testes e exemplos. Preserve a privacidade da criança e da família em nomes, imagens, voz e demais informações identificáveis.
 - Cubra as mudanças com testes proporcionais. Rode as verificações do [README](README.md) antes de abrir um pull request e relate as limitações da validação.

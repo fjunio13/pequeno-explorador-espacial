@@ -16,8 +16,8 @@ No Windows, use `py -3` no lugar de `python3`. Abra [a página inicial](http://1
 
 Toque em **Começar** e escolha um planeta no mapa.
 
-- **Estrelas** — marque ou desmarque estrelas por toque e use **Conferir**.
-- **Cristais** — arraste ou toque para mover os cristais entre a reserva e o gerador. Confira a carga, escolha o numeral que representa a quantidade e ligue a estação. São três cargas por missão. As sequências **1, 3, 5** e **2, 4, 5** se alternam a cada entrada.
+- **Estrelas** — toque para selecionar ou desmarcar estrelas. Ao atingir a quantidade pedida, o jogo diz o total e prepara a próxima rodada. Toque de novo para corrigir a seleção enquanto o resultado permanece na tela.
+- **Cristais** — arraste ou toque para mover os cristais entre a reserva e o gerador. A quantidade certa abre as opções de número. Escolha o numeral e ligue a estação. O jogo avança após a estação acender. As três cargas alternam entre **1, 3, 5** e **2, 4, 5** a cada entrada.
 
 O botão **Ouvir** repete a instrução da tela. Os dois planetas oferecem pistas progressivas e ajuda guiada. Após concluir, escolha **Jogar de novo** ou **Voltar ao mapa**.
 
@@ -44,5 +44,6 @@ Os testes de lógica cobrem contagem, associação de números, transferência, 
 - [Especificação funcional v0.1](docs/especificacao-funcional.md)
 - [Arquitetura técnica v0.1](docs/arquitetura.md)
 - [Guia visual das missões](docs/guia-visual.md)
+- [Proposta de roteiro narrativo](docs/roteiro-narrativo.md)
 - [Registro dos recursos audiovisuais](docs/recursos-audiovisuais.md)
 - [Instruções para agentes](AGENTS.md)
