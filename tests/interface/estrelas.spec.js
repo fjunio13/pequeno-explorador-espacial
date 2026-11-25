@@ -9,6 +9,7 @@ async function openMission(page) {
   await page.goto("./");
   await button(page, "Começar").tap();
   await button(page, "Planeta das Estrelas").tap();
+  await button(page, "Pular apresentação").tap();
   await expect(page.getByRole("heading", { name: "Planeta das Estrelas" })).toBeVisible();
 }
 
@@ -117,6 +118,7 @@ test("renova a pausa com Ouvir e cancela a passagem ao sair", async ({ page }) =
   await expect.poll(() => player(page).evaluate((node) => node.ended), { intervals: [50, 100, 150] }).toBe(true);
   await button(page, "Voltar ao mapa").tap();
   await button(page, "Planeta dos Cristais").tap();
+  await button(page, "Pular apresentação").tap();
   await expect(player(page)).toHaveAttribute("src", /cristais-pedido-1\.mp3$/);
   await expect.poll(() => player(page).evaluate((node) => node.ended)).toBe(true);
   await expect(page.getByRole("heading", { name: "Planeta dos Cristais" })).toBeVisible();

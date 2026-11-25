@@ -20,3 +20,13 @@ A composição prioriza celular em paisagem e mantém os controles dentro das á
 O planeta combina rochas índigo e veios de cristal menta. A estação tem estrutura marfim, detalhes em cobre e um núcleo circular. Cristais grandes de uma única forma facilitam reconhecer a peça durante a coleta e recontá-la após o encaixe.
 
 A reserva fica à esquerda e o gerador à direita. O contorno dourado identifica os encaixes solicitados e o brilho menta acompanha o cristal ao entrar no gerador. Após a criança acionar o equipamento, o núcleo ilumina a estação e uma onda atravessa o painel. Os números ocupam uma faixa própria, com um alvo de toque amplo por opção.
+
+## Planeta das Descobertas
+
+O vale tem penhascos índigo e lavanda, um horizonte âmbar e primeiro plano escuro. As luzinhas têm corpo dourado arredondado, asas lavanda e olhos simples que continuam distinguíveis nos menores tamanhos. A pedra, a flor e o arco usam silhuetas diferentes e ocupam alvos de toque de pelo menos 48 px.
+
+O brilho pequeno indica onde uma criatura está escondida. Ao revelar o esconderijo, a luzinha voa até o grupo. O acerto faz o grupo subir e brilhar ao ritmo de duas luzes curtas e uma longa. Com movimento reduzido, a criatura aparece junto às demais e a luz do grupo e do padrão permanece visível.
+
+## Pistas e conclusão
+
+O mapa usa uma seta dourada para a direção, uma antena menta para o padrão da estação e três luzes coral para a origem do sinal. Cada marca tem forma própria. O desfecho mostra a nave e as luzinhas nas duas pontas do padrão de luz.

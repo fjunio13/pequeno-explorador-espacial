@@ -1,6 +1,6 @@
 # A aventura do sinal de luz
 
-**Proposta para aprovação.** O roteiro descreve cenas e falas para uma etapa futura. O jogo desta entrega mantém a abertura, as missões e as conclusões jogáveis.
+**Roteiro aprovado.** A quinta entrega integra as chegadas, as três pistas e o desfecho. As cenas usam as falas pré-gravadas descritas no [catálogo de áudio](../src/services/audio-catalog.js).
 
 ## História geral
 
@@ -19,24 +19,24 @@ O sinal é um convite à exploração. O céu está tranquilo, o combustível da
 
 ## Planeta das Estrelas
 
-- **Chegada.** A nave aponta para um céu com estrelas e mostra que precisa reconhecer um grupo para orientar sua antena. Fala proposta — “Vamos contar estrelas? Elas ajudam a nave a encontrar o caminho.”
+- **Chegada.** A nave detecta um piscar distante. “O sinal vem de longe. Vamos contar estrelas para achar a direção?”
 - **Missão.** A criança toca nas estrelas solicitadas. As peças se acendem uma por uma e a voz diz o total da rodada.
-- **Consequência.** Ao chegar à quantidade, um traço suave liga as estrelas escolhidas. Depois da última rodada, a nave detecta a direção de onde vem o piscar.
-- **Conclusão parcial.** Uma pequena linha luminosa aparece no mapa. Fala proposta — “Agora sabemos de onde vem o sinal!”
+- **Consequência.** As estrelas pedidas se iluminam. Após a última rodada, uma rota luminosa indica a direção do piscar.
+- **Conclusão parcial.** Uma seta dourada aparece no mapa. “Encontramos a direção do sinal! Veja a seta no mapa.”
 
 ## Planeta dos Cristais
 
-- **Chegada.** A nave pousa perto de uma estação com as luzes apagadas. Um robô indica o gerador. Fala proposta — “A estação está apagada. Você pode ajudar a ligar?”
+- **Chegada.** A nave pousa perto de uma estação com as luzes apagadas. Um robô espera perto do gerador. “A estação deste planeta está apagada. Vamos ligar o gerador?”
 - **Missão.** A criança coloca os cristais no gerador, escolhe o numeral correspondente e aciona a estação.
 - **Consequência.** O núcleo se ilumina, uma onda alcança as janelas e o robô acena. A antena da estação pisca no mesmo ritmo que o sinal ouvido na nave.
-- **Conclusão parcial.** A estação compartilha com a nave uma carga de energia e uma amostra do sinal. Fala proposta — “A estação acendeu! Olhe, a antena também está piscando.”
+- **Conclusão parcial.** A antena menta no mapa representa a estação reativada e as duas luzes curtas seguidas de uma longa. “A estação deu energia à nave. A antena pisca no ritmo do sinal.”
 
 ## Planeta das Descobertas
 
-- **Chegada.** A nave encontra um vale onde pequenas criaturas piscam entre as rochas. Fala proposta — “Olhe as luzes no vale. Vamos chegar perto?”
-- **Missão.** A criança conta um grupo pequeno de criaturas. Ao tocar num ponto brilhante do cenário, chama mais uma criatura para perto. A nave convida a criança a contar o grupo de novo.
-- **Consequência.** A recém-chegada se junta às outras e o grupo pisca no ritmo observado na aventura. A imagem mostra a nova criatura chegando e ficando junto das demais.
-- **Conclusão parcial.** A nave registra quem emite o sinal. Fala proposta — “Chegou mais uma! As pequenas luzes estavam chamando a gente.”
+- **Chegada.** A nave encontra um vale onde pequenas criaturas piscam entre as rochas. “Tem luzinhas piscando no vale. Vamos chegar mais perto?”
+- **Missão.** A criança explora a pedra, a flor e o arco. Ao tocar no brilho do esconderijo, chama mais uma criatura para perto. Depois conta as luzinhas que ficaram juntas.
+- **Consequência.** A criatura voa até as demais. Quando a criança escolhe a nova quantidade, o grupo responde com luz e som no ritmo da aventura.
+- **Conclusão parcial.** Três luzinhas coral aparecem no mapa. “Descobrimos quem mandou o sinal. Foram as luzinhas do vale!”
 
 ## Como as missões se conectam
 
@@ -44,9 +44,9 @@ O mapa recebe três marcas. A primeira mostra a direção indicada pelas estrela
 
 As marcas pertencem à sessão da aventura. Repetir uma missão pode rever a descoberta sem duplicar marcas. A criança pode voltar ao mapa, repetir um planeta ou escolher outro a qualquer momento.
 
-## Direção para uma etapa futura
+## Ritmo das cenas
 
-- Mostrar o contexto com um gesto ou imagem antes de uma fala curta. Na primeira entrada, permitir pular a apresentação. Em novas visitas, oferecer a opção de rever.
+- A imagem apresenta o contexto junto da fala curta. Na primeira entrada, a criança pode pular a apresentação. Em novas visitas, o livro no mapa permite revê-la.
 - Deixar a missão sob controle da criança. Começar a atividade assim que a introdução terminar ou for pulada. Mostrar o efeito da ação antes de liberar a passagem seguinte.
 - Usar a voz pré-gravada para explicar o essencial, com imagens compreensíveis sem leitura. Na preferência por movimento reduzido, comunicar a mesma mudança com luz, postura ou enquadramento estático.
-- Integrar chegada e conclusão usando as entradas e saídas já existentes das atividades. Cancelar narração e animações ao voltar ao mapa. A quantidade de cenas desta versão cabe nos módulos atuais.
+- A terceira conclusão parcial dá passagem ao desfecho depois da fala. A nave emite o padrão e o grupo responde. A passagem é cancelada se a criança escolher outra ação, e **Responder ao sinal** fica disponível no mapa.

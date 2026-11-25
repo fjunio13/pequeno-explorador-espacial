@@ -38,11 +38,11 @@ A referência estética será a imagem de aventura espacial infantil selecionada
 
 **Fluxo principal** — Tela inicial → Mapa espacial → Planeta → Atividade → Conclusão → Mapa espacial.
 
-A criança poderá selecionar os planetas disponíveis, sem necessidade de cumprir uma ordem rígida.
+A criança pode selecionar os planetas em qualquer ordem. A primeira visita inclui uma chegada narrada e pulável. O mapa oferece a opção de rever uma chegada já visitada.
 
-Após concluir uma atividade, haverá uma pequena celebração visual e sonora, seguida da possibilidade de retornar ao mapa.
+Após concluir uma atividade, a criança vê e ouve a descoberta daquela missão e pode retornar ao mapa ou jogar de novo. O mapa registra uma pista visual por planeta durante a sessão.
 
-A nave espacial funcionará como elemento de ligação narrativa entre os planetas.
+A nave liga as missões de [A aventura do sinal de luz](roteiro-narrativo.md). Quando as três pistas são reunidas, a nave pisca para as luzinhas do vale e elas respondem. Todas as missões continuam disponíveis.
 
 ### 2.3. Controles
 
@@ -83,11 +83,11 @@ A quantidade certa abre a escolha do numeral. Alterar a carga cancela a escolha 
 
 **Objetivo** — introduzir intuitivamente a ideia de acrescentar uma unidade.
 
-O cenário apresenta uma pequena quantidade de objetos. Um novo objeto aparece e a criança observa ou identifica a nova quantidade.
+O vale apresenta um grupo de criaturas-luz e três lugares para explorar. Ao tocar no brilho entre a pedra, a flor e o arco, a criança chama uma criatura escondida. Ela voa até as que já estavam juntas.
 
-Por exemplo, quatro estrelas estão no céu. Surge uma quinta estrela e a narração convida a criança a contar novamente.
+A criança pode tocar nas criaturas para contar e escolher o numeral que representa o novo grupo. O grupo responde com luz e som, e a próxima exploração começa após o feedback. As três rodadas mostram a passagem de 1 para 2, de 3 para 4 e de 4 para 5, com esconderijos diferentes a cada visita.
 
-Não será obrigatório apresentar expressões matemáticas formais, como “4 + 1 = 5”.
+As pistas indicam o lugar que brilha, apoiam a recontagem e destacam o numeral quando necessário. A criança continua responsável por explorar o lugar e escolher a quantidade.
 
 ### Progressão
 

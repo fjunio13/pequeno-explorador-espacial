@@ -1,0 +1,274 @@
+.discovery-screen {
+  grid-template-rows: auto 1fr;
+  gap: clamp(0.5rem, 2.4svh, 1.5rem);
+  background: radial-gradient(ellipse at 54% 70%, #352b64, #1d173b 66%, var(--night));
+}
+
+.discovery-board {
+  display: grid;
+  inline-size: min(100%, 67rem);
+  align-self: center;
+  justify-self: center;
+  gap: clamp(0.38rem, 1.7svh, 0.9rem);
+  padding: clamp(0.55rem, 2svh, 1.3rem);
+  border: 1px solid #9e83bd88;
+  border-radius: clamp(0.85rem, 3vw, 1.7rem);
+  background: #291e45c7;
+  box-shadow: 0 18px 60px #10092788;
+}
+
+.discovery-brief {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.discovery-brief p {
+  color: var(--gold);
+  font-size: clamp(0.93rem, 2.6vw, 1.55rem);
+  font-weight: 850;
+}
+
+.discovery-valley {
+  position: relative;
+  display: grid;
+  min-block-size: clamp(7.2rem, 43svh, 21rem);
+  grid-template-columns: 1.65fr 1fr;
+  align-items: end;
+  gap: clamp(0.3rem, 1.65vw, 1.75rem);
+  padding: clamp(0.25rem, 1.1vw, 1.25rem);
+  padding-block-end: clamp(0.9rem, 4svh, 2.7rem);
+  border: 1px solid #7d619f89;
+  border-radius: 0.8rem;
+  background: #282147 url("../../assets/images/vale-das-descobertas.webp") center top / cover;
+  isolation: isolate;
+}
+
+.discovery-valley::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(ellipse at 24% 76%, #f4ac454b 0%, #a7668047 39%, transparent 72%);
+  transition: opacity 240ms ease;
+  content: "";
+}
+
+.discovery-screen[data-phase="lit"] .discovery-valley::after {
+  opacity: 1;
+}
+
+.discovery-valley .light-pattern {
+  position: absolute;
+  inset: 33% auto auto 27%;
+  visibility: hidden;
+  transform: translateX(-50%);
+}
+
+.discovery-screen[data-phase="lit"] .light-pattern {
+  visibility: visible;
+}
+
+.discovery-screen[data-phase="search"] .light-pattern i,
+.discovery-screen[data-phase="count"] .light-pattern i {
+  animation: none;
+}
+
+.discovery-group,
+.discovery-hollows {
+  display: flex;
+  min-inline-size: 0;
+  align-items: end;
+  justify-content: center;
+  gap: clamp(0.1rem, 0.6vw, 0.75rem);
+}
+
+.discovery-group {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  justify-items: center;
+}
+
+.glow-creature {
+  position: relative;
+  display: grid;
+  inline-size: min(100%, clamp(3rem, 8vw, 7.1rem));
+  min-inline-size: 3rem;
+  min-block-size: 3rem;
+  aspect-ratio: 1;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 0.8rem;
+  background-color: transparent;
+}
+
+.glow-creature[hidden],
+.discovery-number[hidden] {
+  display: none;
+}
+
+.glow-creature img {
+  inline-size: 100%;
+  filter: drop-shadow(0 0 0.55rem #ffc877a0);
+}
+
+.glow-creature[data-new] {
+  z-index: 2;
+}
+
+.glow-creature[data-new] img,
+.glow-creature[data-counted] img {
+  filter: drop-shadow(0 0 0.7rem #ffe25ea9) brightness(1.13);
+}
+
+.glow-creature span {
+  position: absolute;
+  inset: auto 50% -0.55rem auto;
+  translate: 50% 0;
+  visibility: hidden;
+  min-inline-size: 1.2em;
+  padding-inline: 0.23em;
+  border-radius: 999px;
+  color: var(--ink);
+  background: var(--gold);
+  font-size: clamp(0.86rem, 2vw, 1.3rem);
+  font-weight: 850;
+}
+
+.glow-creature[data-counted] span,
+.glow-creature[data-count-hint] span {
+  visibility: visible;
+}
+
+.discovery-screen[data-phase="lit"] .glow-creature img {
+  animation: light-reply 820ms ease-in-out 2;
+}
+
+.discovery-spot {
+  position: relative;
+  flex: 0 1 5.4rem;
+  min-inline-size: 3rem;
+  min-block-size: 3rem;
+  padding: 0.12rem;
+  border: 1px solid transparent;
+  border-radius: 0.65rem;
+  background: transparent;
+}
+
+.discovery-spot > svg {
+  display: block;
+  inline-size: 100%;
+  filter: drop-shadow(0 0.3rem 0.22rem #191030ad);
+  transform-origin: center bottom;
+}
+
+.discovery-spot:active:not(:disabled) > svg,
+.glow-creature:active img {
+  scale: 0.89;
+}
+
+.discovery-spot[data-explored] > svg {
+  animation: rustle 370ms ease-out;
+}
+
+.discovery-spot:disabled {
+  cursor: default;
+}
+
+.discovery-glint {
+  position: absolute;
+  inset: 1% 11% auto auto;
+  display: none;
+  inline-size: clamp(0.9rem, 2.5vw, 1.7rem);
+  color: #fff3a2;
+  filter: drop-shadow(0 0 0.45rem #ffc262);
+  animation: signal-note 1.2s ease-in-out infinite;
+}
+
+.discovery-spot[data-glint] .discovery-glint {
+  display: block;
+}
+
+.discovery-spot[data-guide],
+.discovery-number[data-guide] {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+  animation: pulse 1.45s ease-in-out infinite;
+}
+
+.discovery-dock {
+  display: grid;
+  min-block-size: 3rem;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-areas: "feedback numbers help";
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.discovery-dock p {
+  grid-area: feedback;
+  color: var(--lavender);
+  font-size: clamp(0.76rem, 1.9vw, 1.05rem);
+}
+
+.discovery-dock .button {
+  grid-area: help;
+  justify-self: end;
+}
+
+.discovery-numbers {
+  display: flex;
+  grid-area: numbers;
+  gap: clamp(0.25rem, 1vw, 0.6rem);
+}
+
+.discovery-number {
+  min-inline-size: clamp(3rem, 7vw, 4.55rem);
+  min-block-size: 3rem;
+  padding: 0.14rem 0.45rem;
+  border: 1px solid #b49ce898;
+  border-radius: 0.65rem;
+  color: var(--cream);
+  background: #452f67;
+  font-size: clamp(1.25rem, 4.1vw, 2.55rem);
+  font-weight: 850;
+}
+
+.discovery-number[data-answered] {
+  border-color: #fcecac;
+  color: var(--ink);
+  background: var(--gold);
+}
+
+.discovery-number:disabled:not([data-answered]) {
+  opacity: 0.55;
+}
+
+@keyframes rustle {
+  0%, 100% { rotate: 0deg; }
+  36% { rotate: -9deg; }
+  65% { rotate: 7deg; }
+}
+
+@media (orientation: portrait) {
+  .discovery-valley {
+    min-block-size: 12rem;
+    grid-template-columns: 1fr;
+    align-content: end;
+    gap: 1.15rem;
+  }
+}
+
+@media (max-width: 410px) {
+  .discovery-dock {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "feedback feedback" "numbers help";
+  }
+
+  .discovery-dock p:empty {
+    display: none;
+  }
+}

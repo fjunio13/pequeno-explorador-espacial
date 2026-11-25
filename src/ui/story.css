@@ -1,0 +1,298 @@
+.map-screen h1 {
+  font-size: clamp(1.5rem, 4.8vw, 3.7rem);
+  text-align: center;
+}
+
+.map-layout {
+  display: grid;
+  justify-items: center;
+  align-self: center;
+  inline-size: min(100%, 68rem);
+  gap: clamp(0.55rem, 3svh, 1.5rem);
+  margin-inline: auto;
+}
+
+.planet-grid {
+  display: grid;
+  inline-size: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.2rem, 2vw, 1.25rem);
+}
+
+.map-screen .planet-art {
+  block-size: clamp(5.25rem, 39svh, 20rem);
+}
+
+.map-screen .planet-label {
+  padding-inline: clamp(0.4rem, 1.3vw, 0.95rem);
+  font-size: clamp(0.73rem, 1.9vw, 1.15rem);
+}
+
+.map-screen .planet-button {
+  padding-inline: 0.2rem;
+}
+
+.planet-clue,
+.arrival-replay {
+  position: absolute;
+  inset-block-start: 2%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+}
+
+.arrival-replay {
+  inset-inline-start: 0;
+  inline-size: 3rem;
+  padding: 0;
+  background-color: #231b42ef;
+}
+
+.planet-clue {
+  inset-inline-end: 0;
+  inline-size: clamp(1.8rem, 4.7vw, 3.6rem);
+  aspect-ratio: 1;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  color: var(--clue-color);
+  background-color: #281e42;
+  box-shadow: 0 0 0.8rem #151127;
+}
+
+.planet-clue svg,
+.mission-clue svg {
+  inline-size: 57%;
+}
+
+[data-clue="direction"] { --clue-color: var(--gold); }
+[data-clue="antenna"] { --clue-color: var(--mint); }
+[data-clue="lights"] { --clue-color: #ffc3a0; }
+
+.mission-clue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+}
+
+.destination-copy .mission-clue {
+  color: var(--clue-color);
+}
+
+.mission-clue svg {
+  flex: none;
+  inline-size: 1.35em;
+}
+
+.story-screen .destination-copy h1 {
+  font-size: clamp(2rem, 5.35vw, 5.15rem);
+}
+
+.story-picture {
+  position: relative;
+  display: grid;
+  min-block-size: clamp(8.5rem, 54svh, 28rem);
+  place-items: center;
+  isolation: isolate;
+  animation: arrive 420ms ease-out both;
+}
+
+.story-stars .planet-art {
+  block-size: clamp(7rem, 50svh, 23rem);
+  opacity: 0.84;
+}
+
+.story-route,
+.story-star {
+  position: absolute;
+  color: var(--gold);
+  filter: drop-shadow(0 0 0.6rem #ffbb71);
+}
+
+.story-route {
+  inline-size: 86%;
+  fill: currentColor;
+  animation: celebrate 710ms ease-out both;
+}
+
+.story-star {
+  inset: 7% 11% auto auto;
+  inline-size: clamp(1.9rem, 5vw, 3.9rem);
+}
+
+.story-station {
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #183d586b, transparent 72%);
+}
+
+.story-station img {
+  inline-size: 90%;
+  max-block-size: 43svh;
+  object-fit: contain;
+}
+
+.story-station[data-discovered="false"] img {
+  filter: saturate(0.36) brightness(0.63);
+}
+
+.story-station[data-discovered="true"] img {
+  filter: drop-shadow(0 0 1.15rem #97eed45e);
+}
+
+.station-robot {
+  position: absolute;
+  inset: auto 3% 6% auto;
+  inline-size: clamp(2.2rem, 8vw, 6.5rem);
+}
+
+.story-station[data-discovered="true"] .robot-arm {
+  transform-origin: 40px 46px;
+  animation: robot-wave 850ms ease-in-out 2;
+}
+
+.story-valley {
+  overflow: hidden;
+  border: 1px solid #ab83c3a1;
+  border-radius: clamp(1rem, 3vw, 2rem);
+  background: #2a234f url("../../assets/images/vale-das-descobertas.webp") center top / cover;
+  box-shadow: 0 18px 60px #0c081f75;
+}
+
+.story-lights {
+  display: flex;
+  justify-content: center;
+  gap: clamp(0.1rem, 0.8vw, 0.7rem);
+  padding-block-start: 11%;
+}
+
+.story-lights img {
+  inline-size: clamp(2.25rem, 8vw, 7.25rem);
+  block-size: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 0.65rem #ffb65b9d);
+}
+
+.story-valley[data-discovered="false"] .story-lights img {
+  opacity: 0.82;
+  animation: float 2.6s ease-in-out infinite;
+}
+
+.story-lights img:nth-child(2) {
+  margin-block-start: 0.75rem;
+}
+
+.light-pattern {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.26em;
+  color: #ffe985;
+  font-size: clamp(0.75rem, 2vw, 1.35rem);
+}
+
+.light-pattern i {
+  display: block;
+  inline-size: 0.43em;
+  block-size: 0.43em;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 0.6em currentColor;
+  animation: signal-note 550ms ease-in-out both;
+}
+
+.light-pattern i:nth-child(2) { animation-delay: 220ms; }
+.light-pattern i:nth-child(3) { inline-size: 1.02em; animation-delay: 440ms; }
+
+.story-picture .light-pattern {
+  position: absolute;
+  inset: 15% auto auto 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+}
+
+.story-station .light-pattern { color: var(--mint); }
+
+.story-valley[data-discovered="true"] .story-lights,
+.finale-picture .story-lights {
+  animation: light-reply 870ms ease-in-out both;
+}
+
+.finale-picture {
+  grid-template-columns: 0.9fr auto 1.15fr;
+  gap: clamp(0.2rem, 1vw, 1rem);
+  padding: clamp(0.4rem, 1.35vw, 1.2rem);
+}
+
+.story-ship {
+  inline-size: 100%;
+  filter: drop-shadow(0 0.45rem 0.6rem #170f3fa9);
+  animation: float 3s ease-in-out infinite;
+}
+
+.ship-lamp {
+  animation: signal-note 550ms ease-out 2;
+  filter: drop-shadow(0 0 0.3rem #ffda7c);
+}
+
+.finale-picture .light-pattern {
+  position: static;
+  transform: none;
+}
+
+.finale-picture .story-lights {
+  inline-size: 100%;
+  padding: 0;
+  animation-delay: 960ms;
+}
+
+.finale-picture .story-lights img {
+  inline-size: 33%;
+}
+
+@keyframes signal-note {
+  0%, 100% { opacity: 0.68; }
+  48% { opacity: 1; scale: 1.24; }
+}
+
+@keyframes light-reply {
+  0%, 100% { filter: brightness(1); }
+  30% { filter: brightness(1.42); transform: translateY(-0.43rem); }
+  65% { filter: brightness(1.18); }
+}
+
+@keyframes robot-wave {
+  0%, 100% { rotate: 0deg; }
+  50% { rotate: -32deg; }
+}
+
+@media (orientation: portrait) and (max-width: 430px) {
+  .map-screen .planet-art {
+    block-size: clamp(4rem, 30vw, 7.5rem);
+  }
+
+  .arrival-replay {
+    inset-block-start: -2rem;
+  }
+
+  .map-layout {
+    padding-block-start: 2rem;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 365px) {
+  .story-screen .destination-copy h1 {
+    font-size: clamp(1.95rem, 5.3vw, 3.7rem);
+  }
+
+  .story-screen .mission-links {
+    gap: 0.4rem;
+  }
+
+  .story-screen .mission-links .button {
+    font-size: 0.86rem;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 340px) {
+  .map-screen .planet-art {
+    block-size: clamp(4.5rem, 35svh, 7.4rem);
+  }
+}
