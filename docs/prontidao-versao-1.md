@@ -1,5 +1,7 @@
 # Prontidão para a versão 1.0
 
+Este relatório registra a sétima entrega. Consulte o [guia de publicação vigente](publicacao.md) para homologar ou publicar uma entrega atual.
+
 A sétima entrega consolida a `main` após o PR #8. A homologação depende da validação em Android físico e da aprovação da publicação.
 
 ## Funcionalidades concluídas

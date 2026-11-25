@@ -175,17 +175,6 @@ button:focus-visible {
   inset-inline-end: var(--space-x);
 }
 
-.game-version {
-  position: absolute;
-  inset-block-start: var(--space-y);
-  inset-inline-start: var(--space-x);
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
-  color: #ded5f4;
-  background: #18132ad9;
-  font-size: 0.75rem;
-}
-
 .intro-copy {
   max-inline-size: min(41%, 33rem);
   padding-block: 1.5rem;
