@@ -14,7 +14,7 @@ No Windows, use `py -3` no lugar de `python3`. Abra [a página inicial](http://1
 
 ## Jogar
 
-Toque em **Começar** e escolha um planeta no mapa.
+Toque em **Começar** e escolha um planeta no mapa. O mesmo toque pede tela cheia nos navegadores compatíveis.
 
 - **Estrelas** — toque para selecionar ou desmarcar estrelas. Ao atingir a quantidade pedida, o jogo diz o total e prepara a próxima rodada. Toque de novo para corrigir a seleção enquanto o resultado permanece na tela.
 - **Cristais** — arraste ou toque para mover os cristais entre a reserva e o gerador. A quantidade certa abre as opções de número. Escolha o numeral e ligue a estação. O jogo avança após a estação acender. As três cargas alternam entre **1, 3, 5** e **2, 4, 5** a cada entrada.

@@ -74,7 +74,19 @@ export function startGame(container, audio) {
   }
 
   function home(options) {
-    show(homeScreen(), { start: map }, "inicio", { ...options, playNow: false });
+    show(homeScreen(), { start }, "inicio", { ...options, playNow: false });
+  }
+
+  async function start() {
+    // Inicie a narração antes que o pedido de tela cheia consuma o gesto.
+    map();
+    if (!document.fullscreenEnabled || document.fullscreenElement) return;
+
+    try {
+      await document.documentElement.requestFullscreen({ navigationUI: "hide" });
+    } catch {
+      // O navegador pode restringir o modo de tela cheia.
+    }
   }
 
   function map() {
