@@ -83,6 +83,27 @@
   inline-size: 1.35em;
 }
 
+.complete-screen .mission-links {
+  display: grid;
+  max-inline-size: 23rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.complete-screen .mission-links .button--quiet {
+  padding-inline: 0.5rem;
+}
+
+.next-mission {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.next-mission img {
+  inline-size: 1.85em;
+  block-size: 1.85em;
+  object-fit: contain;
+}
+
 .story-screen .destination-copy h1 {
   font-size: clamp(2rem, 5.35vw, 5.15rem);
 }
@@ -275,6 +296,11 @@
   .map-layout {
     padding-block-start: 2rem;
   }
+}
+
+@media (orientation: portrait) {
+  .complete-screen .mission-links { margin-inline: auto; }
+  .next-mission { justify-self: center; }
 }
 
 @media (orientation: landscape) and (max-height: 365px) {

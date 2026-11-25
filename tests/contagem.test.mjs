@@ -2,10 +2,34 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   demonstrateStar, hasTarget, nextRound, requestHelp, startCounting, suggestedStar, supportFor,
-  targetFor, toggleStar,
+  starConfiguration, targetFor, toggleStar,
 } from "../src/activities/stars/logic.js";
 
 const configuration = { targets: [1, 2, 3, 4, 5], starCount: 5 };
+
+test("configura seis rodadas com abertura de uma estrela e repetição espaçada", () => {
+  for (const random of [() => 0, () => 0.5, () => 0.999]) {
+    for (let visit = 0; visit < 8; visit++) {
+      const { targets, starCount } = starConfiguration(visit, random);
+      assert.equal(starCount, 5);
+      assert.equal(targets.length, 6);
+      assert.equal(targets[0], 1);
+      assert.deepEqual([...new Set(targets.slice(1))].sort(), [2, 3, 4, 5]);
+      assert.ok(targets.every((target, index) => target !== targets[index - 1]));
+    }
+  }
+});
+
+test("varia a ordem e percorre os quatro números repetidos em visitas sucessivas", () => {
+  const orders = [0, 0.2, 0.5, 0.8, 0.999].map((value) => starConfiguration(0, () => value).targets.join());
+  assert.ok(new Set(orders).size > 1);
+
+  const repetitions = Array.from({ length: 5 }, (_, visit) => {
+    const { targets } = starConfiguration(visit, () => 0);
+    return targets.find((target, index) => targets.indexOf(target) !== index);
+  });
+  assert.deepEqual(repetitions, [2, 3, 4, 5, 2]);
+});
 
 test("mantém a ordem de toque e permite desmarcar sem duplicar estrelas", () => {
   const start = startCounting(configuration);

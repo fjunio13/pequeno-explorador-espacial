@@ -103,6 +103,7 @@
   border: 0;
   border-radius: 0.8rem;
   background-color: transparent;
+  isolation: isolate;
 }
 
 .glow-creature[hidden],
@@ -114,6 +115,19 @@
   inline-size: 100%;
   filter: drop-shadow(0 0 0.55rem #ffc877a0);
 }
+
+.discovery-screen:not([data-phase="lit"]) .glow-creature:not([hidden])::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(ellipse, var(--creature-glow, #ffd46bc2), transparent 71%);
+  opacity: 0.78;
+  animation: creature-glow 2.8s ease-in-out infinite;
+  pointer-events: none;
+  content: "";
+}
+
+.glow-creature[data-count-hint] { --creature-glow: #ffe792; }
 
 .glow-creature[data-new] {
   z-index: 2;
@@ -251,6 +265,11 @@
   0%, 100% { rotate: 0deg; }
   36% { rotate: -9deg; }
   65% { rotate: 7deg; }
+}
+
+@keyframes creature-glow {
+  0%, 100% { opacity: 0.46; }
+  50% { opacity: 1; }
 }
 
 @media (orientation: portrait) {

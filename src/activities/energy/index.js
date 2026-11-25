@@ -90,11 +90,12 @@ function workshopMarkup(rounds) {
 
 function refreshLoad(panel, state) {
   const amount = energyTotal(state);
-  const { target } = state.challenge;
+  const { mode, target } = state.challenge;
+  const showMissing = mode === "complete" || state.attempts >= 2;
   panel.querySelector("[data-total]").textContent = amount;
   for (const [index, cell] of [...panel.querySelectorAll(".energy-cell")].entries()) {
     cell.toggleAttribute("data-lit", index < amount);
-    cell.toggleAttribute("data-needed", state.attempts >= 2 && index >= amount && index < target);
+    cell.toggleAttribute("data-needed", showMissing && index >= amount && index < target);
     cell.toggleAttribute("data-extra", state.attempts >= 2 && index >= target && index < amount);
   }
   for (const [index, frame] of [...panel.querySelectorAll(".energy-frame")].entries()) {

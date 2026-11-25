@@ -76,17 +76,19 @@ Evitar abstrações excessivamente genéricas. As três atividades poderão comp
 | `AGENTS.md` | Instruções permanentes para agentes |
 | `.github/workflows/` | Automações de testes e publicação |
 
-`src/main.js` inicia o jogo. `src/core/game.js` registra os planetas, as falas de chegada e as pistas. O núcleo conta visitas e mantém um conjunto de conclusões por identificador. A primeira entrada abre a chegada narrada. Nas seguintes, a criança pode entrar direto ou rever a chegada pelo mapa. A ação **Jogar de novo** inicia a missão que acabou de ser concluída. `src/ui/` contém as telas, os controles e os estilos.
+`src/main.js` inicia o jogo. `src/core/game.js` registra os planetas, as falas de chegada e as pistas. O núcleo conta visitas e mantém um conjunto de conclusões por identificador. A primeira entrada abre a chegada narrada. Nas seguintes, a criança pode entrar direto ou rever a chegada pelo mapa. **Próxima missão** usa o mesmo caminho de entrada do mapa e sugere o primeiro planeta pendente na ordem Estrelas, Cristais e Descobertas. **Jogar de novo** inicia a missão que acabou de ser concluída. `src/ui/` contém as telas, os controles e os estilos.
 
 O núcleo reutiliza `round-advance.js` nas chegadas e após a fala da terceira pista. Quando reúne as três, apresenta o desfecho ao fim da fala, com a opção de abri-lo pelo mapa. Ele sinaliza a primeira exibição durante a sessão, para que repetir uma missão preserve as pistas e a escolha da próxima ação.
 
-`src/activities/stars/` implementa a contagem de estrelas. Em `src/activities/crystals/`, `logic.js` controla quantidade, pistas e a liberação da estação. `drag.js` cuida dos gestos, e `index.js` liga as regras à tela e ao áudio. A quantidade certa apresenta os numerais. A criança associa o número e aciona a energia em passos distintos.
+`src/activities/stars/` implementa a contagem de estrelas. `starConfiguration` usa o número da visita para alternar o numeral repetido e embaralha as cinco rodadas após a abertura. Em `src/activities/crystals/`, `logic.js` controla quantidade, pistas e a liberação da estação. `drag.js` cuida dos gestos, e `index.js` liga as regras à tela e ao áudio. A quantidade certa apresenta os numerais. A criança associa o número e aciona a energia em passos distintos.
 
 Em `src/activities/discoveries/`, `logic.js` mantém o esconderijo, a quantidade inicial, a chegada de uma unidade e a escolha do numeral. `index.js` conecta a exploração do cenário, os controles de contagem, o voo da criatura e a reação do grupo. Cada rodada só avança após a criança identificar a nova quantidade.
 
 Em `src/activities/energy/`, `configuration.js` organiza as três faixas e as variações de cada visita. `logic.js` controla a composição da carga, os complementos, as comparações e a representação em fileiras. `feedback.js` escolhe a mensagem visual e a fala. `index.js` renderiza os painéis e recebe as interações, e `screens.js` apresenta a chegada e a nave energizada.
 
 O núcleo abre a oficina pela nave no mapa e mantém a faixa e as visitas da oficina durante a sessão. Repetir reutiliza a configuração da última visita. O módulo comunica a conclusão da oficina por `onComplete`. O desfecho da aventura consulta o conjunto de pistas dos três planetas.
+
+Os estilos da missão das Descobertas e da modalidade **Completar o painel** animam apenas a opacidade dos brilhos. O estado da atividade determina quais elementos recebem destaque. Trocar de tela remove esses elementos. A regra de movimento reduzido desativa as animações e conserva a sinalização estática.
 
 `src/services/audio.js` controla um único elemento de áudio. Instruções prioritárias podem aguardar a fala em curso. Ações rápidas podem dispensar pequenos efeitos enquanto há voz ativa. A conclusão da fala usa o evento `ended`. Em caso de erro ou de reprodução sem progresso, a apresentação visual conduz a atividade. O catálogo em `src/services/audio-catalog.js` associa os identificadores aos arquivos locais e o botão **Ouvir** repete a instrução atual.
 

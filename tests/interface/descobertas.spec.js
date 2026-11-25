@@ -6,6 +6,13 @@ const player = (page) => page.locator("#game-audio");
 const creatures = (page) => mission(page).locator(".glow-creature:not([hidden])");
 const hiding = (page) => mission(page).locator("[data-glint]");
 
+function creatureGlow(creature) {
+  return creature.evaluate((element) => {
+    const style = getComputedStyle(element, "::before");
+    return { animation: style.animationName, background: style.backgroundImage };
+  });
+}
+
 async function openMission(page, playbackRate = 1) {
   await page.goto("./");
   await player(page).evaluate((audio, rate) => { audio.defaultPlaybackRate = rate; }, playbackRate);
@@ -17,6 +24,8 @@ async function openMission(page, playbackRate = 1) {
 test("explora o vale, acrescenta uma criatura e corrige a quantidade com ajuda", async ({ page }) => {
   await openMission(page, 3);
   await expect(creatures(page)).toHaveCount(1);
+  const restingGlow = await creatureGlow(creatures(page).first());
+  expect(restingGlow.animation).toBe("creature-glow");
   await button(page, "Flor do vale").tap();
   await expect(page.getByText("Experimente outro lugar.")).toBeVisible();
   await button(page, "Ajuda").tap();
@@ -37,6 +46,7 @@ test("explora o vale, acrescenta uma criatura e corrige a quantidade com ajuda",
   await expect(page.getByText("Vamos contar de novo?")).toBeVisible();
   await button(page, "Ajuda").tap();
   await expect(creatures(page).and(mission(page).locator("[data-count-hint]"))).toHaveCount(2);
+  expect((await creatureGlow(creatures(page).first())).background).not.toBe(restingGlow.background);
   await button(page, "3").tap();
   await expect(button(page, "2")).toHaveAttribute("data-guide", "");
   await expect(creatures(page)).toHaveCount(2);
@@ -47,6 +57,8 @@ test("explora o vale, acrescenta uma criatura e corrige a quantidade com ajuda",
   await button(page, "2").tap();
   await expect(mission(page)).toHaveAttribute("data-phase", "lit");
   await expect(mission(page).locator(".light-pattern")).toBeVisible();
+  expect((await creatureGlow(creatures(page).first())).animation).toBe("none");
+  await expect(creatures(page).first().locator("img")).toHaveCSS("animation-name", "light-reply");
   await expect(button(page, "Conferir")).toHaveCount(0);
   await expect(button(page, "Continuar")).toHaveCount(0);
   await expect(player(page)).toHaveAttribute("src", /descobertas-sinal\.mp3$/);
@@ -77,11 +89,15 @@ test("mantém a fala de chegada, aceita repetição e cancela a reação ao volt
   await expect(hiding(page)).toHaveAttribute("data-place", "flower");
   await hiding(page).tap();
   await page.evaluate(() => {
-    window.movement = document.querySelector("[data-new]").getAnimations()[0];
+    window.movement = document.querySelector("[data-new]").getAnimations()
+      .find((animation) => animation.animationName === undefined);
   });
   expect(await page.evaluate(() => window.movement?.playState)).toBe("running");
+  expect((await creatureGlow(creatures(page).first())).animation).toBe("creature-glow");
   await button(page, "Voltar ao mapa").tap();
   expect(await page.evaluate(() => window.movement?.playState)).toBe("idle");
+  expect(await page.evaluate(() => document.getAnimations().some((animation) =>
+    animation.animationName === "creature-glow"))).toBe(false);
   await page.waitForTimeout(1550);
   await expect(page.locator('[data-screen="map"]')).toBeVisible();
   await expect(button(page, "Planeta das Descobertas")).toHaveAttribute("data-completed", "false");
@@ -99,6 +115,9 @@ test("acomoda o mapa e as fases de descoberta em três telas em paisagem", async
     await fit();
     await button(page, "Pular apresentação").tap();
     await fit();
+    const glow = await creatureGlow(creatures(page).first());
+    expect(glow.animation).toBe("none");
+    expect(glow.background).toContain("radial-gradient");
     await hiding(page).tap();
     await fit();
     await button(page, "2").tap();

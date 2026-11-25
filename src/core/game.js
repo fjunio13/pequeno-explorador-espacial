@@ -7,6 +7,7 @@ import { energyConfiguration, lastEnergyBand } from "../activities/energy/config
 import { energyArrivalScreen, energyCompleteScreen } from "../activities/energy/screens.js";
 import { createRoundAdvance } from "../activities/round-advance.js";
 import { mountStars } from "../activities/stars/index.js";
+import { starConfiguration } from "../activities/stars/logic.js";
 import { bindActions } from "../ui/controls.js";
 import { arrivalScreen, completeScreen, finaleScreen, homeScreen, mapScreen } from "../ui/screens.js";
 
@@ -16,7 +17,7 @@ const planets = [
     name: "Planeta das Estrelas",
     image: new URL("../../assets/images/planeta-das-estrelas.webp", import.meta.url).href,
     mount: mountStars,
-    configuration: () => ({ targets: [1, 2, 3, 4, 5], starCount: 5 }),
+    configuration: starConfiguration,
     arrival: { text: "As estrelas ajudam a encontrar a direção do sinal.", audio: "estrelas-chegada" },
     discovery: { symbol: "direction", text: "Direção do sinal", audio: "conclusao" },
   },
@@ -97,15 +98,16 @@ export function startGame(container, audio) {
   function map() {
     show(mapScreen(planets, visits, completed), {
       home: () => home(),
-      mission: (button) => {
-        const planet = planets.find((item) => item.id === button.dataset.planet);
-        if (visits.has(planet.id)) mission(planet);
-        else arrive(planet);
-      },
+      mission: (button) => enterPlanet(planets.find((item) => item.id === button.dataset.planet)),
       arrival: (button) => arrive(planets.find((item) => item.id === button.dataset.planet)),
       workshop: enterWorkshop,
       finale,
     }, "mapa");
+  }
+
+  function enterPlanet(planet) {
+    if (visits.has(planet.id)) mission(planet);
+    else arrive(planet);
   }
 
   function arrive(planet) {
@@ -127,8 +129,11 @@ export function startGame(container, audio) {
 
   function finish(planet) {
     completed.add(planet.id);
-    const onEnd = completed.size === planets.length && !finaleShown ? finale : undefined;
-    show(completeScreen(planet), { map, mission: () => mission(planet) }, planet.discovery.audio, { onEnd });
+    const nextPlanet = planets.find(({ id }) => !completed.has(id));
+    const actions = { map, mission: () => mission(planet) };
+    if (nextPlanet) actions["next-mission"] = () => enterPlanet(nextPlanet);
+    const onEnd = !nextPlanet && !finaleShown ? finale : undefined;
+    show(completeScreen(planet, nextPlanet), actions, planet.discovery.audio, { onEnd });
   }
 
   function finale() {

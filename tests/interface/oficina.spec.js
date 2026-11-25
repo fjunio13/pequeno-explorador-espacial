@@ -8,6 +8,14 @@ const room = (page) => screen(page, "energy");
 const player = (page) => page.locator("#game-audio");
 const add = (page, value) => room(page).locator('[data-action="add"][data-value="' + value + '"]');
 const remove = (page, value) => room(page).locator('[data-action="remove"][data-value="' + value + '"]');
+const gaps = (page) => room(page).locator(".energy-cell[data-needed]");
+
+function cellGlow(cell) {
+  return cell.evaluate((element) => {
+    const style = getComputedStyle(element, "::after");
+    return { animation: style.animationName, shadow: style.boxShadow };
+  });
+}
 
 async function openMap(page, rate = 4) {
   await page.goto("./");
@@ -93,10 +101,22 @@ test("reproduz a apresentação, aceita correções e orienta as três modalidad
 
   await expect(room(page)).toHaveAttribute("data-mode", "complete");
   await expect(room(page).locator(".energy-cell[data-fixed]")).toHaveCount(7);
+  await expect(gaps(page)).toHaveCount(3);
+  const gap = await cellGlow(gaps(page).first());
+  expect(gap.animation).toBe("energy-gap-glow");
+  expect((await cellGlow(room(page).locator(".energy-cell[data-lit]").first())).animation).toBe("none");
+  await button(page, "Ajuda").tap();
+  expect((await cellGlow(gaps(page).first())).shadow).not.toBe(gap.shadow);
+  await expect(add(page, 3)).not.toHaveAttribute("data-guide");
+  await add(page, 1).tap();
+  await expect(gaps(page)).toHaveCount(2);
+  await remove(page, 1).tap();
+  await expect(gaps(page)).toHaveCount(3);
   await add(page, 5).tap();
   await expect(room(page).locator("[data-total]")).toHaveText("7");
   await add(page, 3).tap();
   await expect(room(page).locator("[data-total]")).toHaveText("10");
+  await expect(gaps(page)).toHaveCount(0);
   await expect(room(page)).toHaveAttribute("data-mode", "compare");
 
   await expect(room(page).locator("[data-comparison-number]:visible")).toHaveCount(0);
@@ -175,6 +195,26 @@ test("a oficina mantém controles grandes em três dimensões Android horizontai
     await button(page, "Pular apresentação").tap();
     await expectFit(page);
     await add(page, 5).tap();
+    await add(page, 1).tap();
+    await add(page, 1).tap();
+    await expect(room(page)).toHaveAttribute("data-mode", "complete");
     await expectFit(page);
+    await expect(gaps(page)).toHaveCount(3);
+    const glow = await cellGlow(gaps(page).first());
+    expect(glow.animation).toBe("none");
+    expect(glow.shadow).toContain("inset");
   }
+});
+
+test("o destaque do complemento é removido ao sair da oficina", async ({ page }) => {
+  await openMap(page);
+  await firstWorkshop(page);
+  for (const value of [5, 1, 1]) await add(page, value).tap();
+  await expect(room(page)).toHaveAttribute("data-mode", "complete");
+  const activeGlow = () => page.evaluate(() => document.getAnimations().some((animation) =>
+    animation.animationName === "energy-gap-glow"));
+  expect(await activeGlow()).toBe(true);
+  await button(page, "Voltar ao mapa").tap();
+  await expect(screen(page, "map")).toBeVisible();
+  expect(await activeGlow()).toBe(false);
 });
