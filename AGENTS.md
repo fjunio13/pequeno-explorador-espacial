@@ -12,3 +12,4 @@
 - Use dados fictícios em código, documentação, testes e exemplos. Preserve a privacidade da criança e da família em nomes, imagens, voz e demais informações identificáveis.
 - Cubra as mudanças com testes proporcionais. Rode as verificações do [README](README.md) antes de abrir um pull request e relate as limitações da validação.
 - Trabalhe em branch separada. Submeta mudanças por pull request e aguarde autorização explícita para merge ou publicação.
+- Siga o [guia de publicação](docs/publicacao.md) para homologar a branch e devolver o Pages à `main` após o merge. Mantenha a branch de homologação até confirmar a publicação da `main`.

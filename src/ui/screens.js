@@ -6,14 +6,9 @@ const lightling = new URL("../../assets/images/luzinha.webp", import.meta.url).h
 const creature = `<img src="${lightling}" alt="" width="280" height="252">`;
 
 export function homeScreen() {
-  const revision = document.documentElement.dataset.revisao;
-  const version = /^[a-f0-9]{40}$/.test(revision)
-    ? `<small class="game-version" title="${revision}">Revisão ${revision.slice(0, 7)}</small>`
-    : "";
   return `
     <section class="screen intro-screen" data-screen="home">
       <img class="intro-art" src="${launchArt}" alt="" width="1600" height="900">
-      ${version}
       <div class="intro-audio">${control("listen", "Ouvir", "sound")}</div>
       <div class="intro-copy">
         <h1 tabindex="-1">Pequeno Explorador <strong>Espacial</strong></h1>

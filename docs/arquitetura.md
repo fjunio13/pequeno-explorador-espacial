@@ -74,7 +74,7 @@ Evitar abstrações excessivamente genéricas. As três atividades poderão comp
 | `tests/` | Testes automatizados |
 | `docs/` | Especificações e decisões |
 | `AGENTS.md` | Instruções permanentes para agentes |
-| `.github/workflows/` | Automações de testes e publicação |
+| `.github/workflows/` | Verificações automatizadas |
 
 `src/main.js` inicia o jogo. `src/core/game.js` registra os planetas, as falas de chegada e as pistas. O núcleo conta visitas e mantém um conjunto de conclusões por identificador. A primeira entrada abre a chegada narrada. Nas seguintes, a criança pode entrar direto ou rever a chegada pelo mapa. **Próxima missão** usa o mesmo caminho de entrada do mapa e sugere o primeiro planeta pendente na ordem Estrelas, Cristais e Descobertas. **Jogar de novo** inicia a missão que acabou de ser concluída. `src/ui/` contém as telas, os controles e os estilos.
 
@@ -114,10 +114,10 @@ O toque em **Começar** abre o mapa e inicia a narração antes de solicitar tel
 
 ## 6.7. Publicação
 
-O jogo será distribuído como site estático pelo GitHub Pages. Atualizações serão realizadas por meio do repositório. A publicação deverá ocorrer somente após a execução satisfatória das verificações automatizadas.
+O jogo é distribuído como site estático pelo GitHub Pages. As verificações automatizadas rodam nos pull requests para a `main` e nos pushes nessa branch. A homologação começa após a aprovação das verificações do PR. Durante a homologação, o Pages publica automaticamente os commits da branch selecionada, por isso execute os testes locais antes de atualizá-la.
 
 O jogo deverá ser funcional sem cadastro ou autenticação. A primeira versão exigirá acesso à internet para ser carregada. Recursos de funcionamento offline poderão ser adicionados posteriormente.
 
 A URL do GitHub Pages deverá ser tratada como publicamente acessível. Não deverão ser incluídos dados pessoais da criança ou recursos privados no conteúdo publicado.
 
-A entrada fica na raiz. As referências relativas permitem servir o jogo em um subdiretório como `/pequeno-explorador-espacial/`. O artefato do Pages agrupa módulos e recursos em `revisoes/<SHA>/` e inclui `.nojekyll`. O workflow manual confere o SHA aprovado da `main`, reutiliza as verificações e publica o artefato. A ativação da origem GitHub Actions exige autorização administrativa. [Publicação e atualização no navegador](publicacao.md)
+O Pages serve os arquivos da raiz da branch selecionada. O `index.html` referencia módulos, estilos e mídia por caminhos relativos, compatíveis com `/pequeno-explorador-espacial/`, e o arquivo `.nojekyll` indica que o site é estático. A seleção da branch é uma operação nas configurações do repositório. Após o merge, altere a origem de volta para `main` e confirme a publicação. [Publicação e atualização no navegador](publicacao.md)

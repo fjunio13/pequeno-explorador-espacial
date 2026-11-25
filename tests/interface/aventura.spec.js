@@ -152,8 +152,10 @@ for (const [orderIndex, order] of orders.entries()) {
           await page.setViewportSize({ width, height });
           await expectLandscapeFit(page);
           for (const name of ["Próxima missão", "Jogar de novo", "Voltar ao mapa"]) {
-            const rect = await button(page, name).boundingBox();
-            expect(Math.min(rect.width, rect.height)).toBeGreaterThanOrEqual(48);
+            const control = button(page, name);
+            const size = await control.evaluate((element) => Math.min(element.offsetWidth, element.offsetHeight));
+            expect(size).toBeGreaterThanOrEqual(48);
+            const rect = await control.boundingBox();
             expect(rect.x).toBeGreaterThanOrEqual(0);
             expect(rect.y).toBeGreaterThanOrEqual(0);
             expect(rect.x + rect.width).toBeLessThanOrEqual(width);
