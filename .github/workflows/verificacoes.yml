@@ -1,0 +1,34 @@
+name: Verificações
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: Verificar a sintaxe do JavaScript
+        run: npm run check
+      - name: Testar a página de entrada
+        run: npm test
+      - name: Instalar dependências de desenvolvimento
+        run: npm ci
+      - name: Instalar Chromium
+        run: npx playwright install --with-deps --only-shell chromium
+      - name: Testar a interface móvel
+        run: npm run test:ui

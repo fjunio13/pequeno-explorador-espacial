@@ -1,0 +1,46 @@
+:root {
+  color-scheme: dark;
+  font-family: system-ui, sans-serif;
+  color: #f4f6ff;
+  background: #0e1738;
+}
+
+body {
+  box-sizing: border-box;
+  display: grid;
+  min-block-size: 100vh;
+  min-block-size: 100svh;
+  margin: 0;
+  padding:
+    env(safe-area-inset-top)
+    env(safe-area-inset-right)
+    env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+  place-items: center;
+  background: radial-gradient(ellipse at 50% 115%, #284580, transparent 70%);
+}
+
+main {
+  box-sizing: border-box;
+  max-inline-size: 42rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 7vw, 4rem);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.orientation-hint {
+  display: none;
+}
+
+@media (orientation: portrait) and (pointer: coarse) {
+  .orientation-hint {
+    display: block;
+    margin: 1rem 0 0;
+  }
+}
