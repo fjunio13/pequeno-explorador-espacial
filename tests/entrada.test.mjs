@@ -16,15 +16,16 @@ test("a página de entrada declara o idioma e a adaptação ao tamanho da tela",
 test("o CSS e o JavaScript carregam por caminhos relativos ao projeto", async () => {
   const html = await readFile(entryFile, "utf8");
   const tags = [...html.matchAll(/<(link|script)\b([^>]+)>/gi)];
-  const styles = tags.find(([, tag, attrs]) => tag === "link" && /\brel="stylesheet"/i.test(attrs));
+  const styles = tags.filter(([, tag, attrs]) => tag === "link" && /\brel="stylesheet"/i.test(attrs));
   const script = tags.find(([, tag, attrs]) => tag === "script" && /\btype="module"/i.test(attrs));
-  const stylesheetPath = styles?.[2].match(/\bhref="([^"]+)"/i)?.[1];
+  const stylesheetPaths = styles.map(([, , attrs]) => attrs.match(/\bhref="([^"]+)"/i)?.[1]);
   const scriptPath = script?.[2].match(/\bsrc="([^"]+)"/i)?.[1];
 
-  assert.ok(stylesheetPath, "A página precisa referenciar a folha de estilos.");
+  assert.ok(stylesheetPaths.length, "A página precisa referenciar as folhas de estilo.");
   assert.ok(scriptPath, "A página precisa referenciar o módulo JavaScript.");
 
-  for (const path of [stylesheetPath, scriptPath]) {
+  for (const path of [...stylesheetPaths, scriptPath]) {
+    assert.ok(path, "Cada recurso precisa indicar seu caminho.");
     assert.doesNotMatch(path, /^(?:[a-z][a-z0-9+.-]*:|[/\\])/i);
     const deployedUrl = new URL(path, pagesEntry);
 

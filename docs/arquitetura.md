@@ -47,13 +47,13 @@ Todas as atividades deverão respeitar uma interface comum. Ao iniciar uma ativi
 
 A atividade deverá inicializar seus elementos, processar as interações e sinalizar a conclusão. Ao ser encerrada, deverá liberar seus controles, animações e demais recursos temporários.
 
-Os módulos `mountStars` e `mountCrystals` recebem `{ container, configuration, audio, onComplete, onReturn }` e retornam uma função de encerramento. O núcleo chama essa função e interrompe o áudio ao trocar de tela. A atividade usa as funções recebidas para comunicar a conclusão e a saída.
+Os módulos `mountStars`, `mountCrystals` e `mountDiscoveries` recebem `{ container, configuration, audio, onComplete, onReturn }` e retornam uma função de encerramento. O núcleo chama essa função e interrompe o áudio ao trocar de tela. A atividade usa as funções recebidas para comunicar a conclusão e a saída.
 
 Os botões nativos recebem toque, mouse e teclado pela ativação do evento `click`. A área de toque e os estados de seleção, foco e pista são definidos pela interface.
 
 Nos Cristais, os Pointer Events acompanham a peça até qualquer ponto da área de destino. Soltar fora dela ou cancelar o gesto devolve a peça à origem. Um toque sem deslocamento transfere a peça na soltura. Os controles que mantêm a criança na atividade aceitam a soltura logo após um arraste. O retorno ao mapa e a ativação pelo teclado usam o clique nativo.
 
-As duas atividades usam `round-advance.js` para avançar após o feedback existente e 650 ms de pausa visual. Se o áudio estiver indisponível, o resultado permanece visível por 1,4 s. Repetir a fala de acerto ou de energização renova a espera. Mudar a seleção nas Estrelas cancela a passagem pendente. Ao trocar de tela, a função de encerramento cancela a transição e remove os eventos. Nos Cristais, ela também libera a captura do ponteiro.
+As três atividades usam `round-advance.js` para avançar após o feedback e 650 ms de pausa visual. Se o áudio estiver indisponível, o resultado permanece visível por 1,4 s. Repetir a fala de resultado renova a espera. Mudar a seleção nas Estrelas cancela a passagem pendente. Ao trocar de tela, a função de encerramento cancela a transição e remove os eventos. Nos Cristais, ela também libera a captura do ponteiro. Nas Descobertas, cancela o voo da criatura.
 
 Adicionar um novo planeta não deverá exigir modificar a lógica interna dos planetas existentes.
 
@@ -76,9 +76,13 @@ Evitar abstrações excessivamente genéricas. As três atividades poderão comp
 | `AGENTS.md` | Instruções permanentes para agentes |
 | `.github/workflows/` | Automações de testes e publicação |
 
-`src/main.js` inicia o jogo. `src/core/game.js` registra os planetas, encaminha a seleção para o módulo correspondente e guarda as conclusões por identificador. A ação **Jogar de novo** inicia a missão do planeta que acabou de ser concluído. `src/ui/` contém as telas, os controles e os estilos.
+`src/main.js` inicia o jogo. `src/core/game.js` registra os planetas, as falas de chegada e as pistas. O núcleo conta visitas e mantém um conjunto de conclusões por identificador. A primeira entrada abre a chegada narrada. Nas seguintes, a criança pode entrar direto ou rever a chegada pelo mapa. A ação **Jogar de novo** inicia a missão que acabou de ser concluída. `src/ui/` contém as telas, os controles e os estilos.
+
+O núcleo reutiliza `round-advance.js` nas chegadas e após a fala da terceira pista. Quando reúne as três, apresenta o desfecho ao fim da fala, com a opção de abri-lo pelo mapa. Ele sinaliza a primeira exibição durante a sessão, para que repetir uma missão preserve as pistas e a escolha da próxima ação.
 
 `src/activities/stars/` implementa a contagem de estrelas. Em `src/activities/crystals/`, `logic.js` controla quantidade, pistas e a liberação da estação. `drag.js` cuida dos gestos, e `index.js` liga as regras à tela e ao áudio. A quantidade certa apresenta os numerais. A criança associa o número e aciona a energia em passos distintos.
+
+Em `src/activities/discoveries/`, `logic.js` mantém o esconderijo, a quantidade inicial, a chegada de uma unidade e a escolha do numeral. `index.js` conecta a exploração do cenário, os controles de contagem, o voo da criatura e a reação do grupo. Cada rodada só avança após a criança identificar a nova quantidade.
 
 `src/services/audio.js` controla um único elemento de áudio. Instruções prioritárias podem aguardar a fala em curso. Ações rápidas podem dispensar pequenos efeitos enquanto há voz ativa. A conclusão da fala usa o evento `ended`. Em caso de erro ou de reprodução sem progresso, a apresentação visual conduz a atividade. O catálogo em `src/services/audio-catalog.js` associa os identificadores aos arquivos locais e o botão **Ouvir** repete a instrução atual.
 

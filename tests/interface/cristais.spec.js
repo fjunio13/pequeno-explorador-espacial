@@ -11,6 +11,7 @@ async function openCrystals(page) {
   await page.goto("./");
   await button(page, "Começar").tap();
   await button(page, "Planeta dos Cristais").tap();
+  await button(page, "Pular apresentação").tap();
   await expect(mission(page)).toHaveAttribute("data-phase", "collect");
 }
 
@@ -131,7 +132,7 @@ test("energiza as três cargas e repete sem confirmação intermediária", async
   }
 
   await expect(page.locator('[data-screen="complete"]')).toHaveAttribute("data-planet", "crystals");
-  await expect(page.getByText("Você ligou a estação!")).toBeVisible();
+  await expect(page.getByText("Estação acesa e padrão de luz")).toBeVisible();
   await expect(audio(page)).toHaveAttribute("src", /cristais-conclusao\.mp3$/);
   await expect.poll(() => audio(page).evaluate((node) => node.currentTime)).toBeGreaterThan(0);
   await page.locator('[data-screen="complete"] img').evaluate((image) => image.decode());
@@ -148,6 +149,7 @@ test("energiza as três cargas e repete sem confirmação intermediária", async
   await expect(button(page, "Planeta dos Cristais")).toHaveAttribute("data-completed", "true");
   await expect(button(page, "Planeta das Estrelas")).toHaveAttribute("data-completed", "false");
   await button(page, "Planeta das Estrelas").tap();
+  await button(page, "Pular apresentação").tap();
   await expect(page.getByRole("heading", { name: "Planeta das Estrelas" })).toBeVisible();
   for (let amount = 1; amount <= 5; amount++) {
     await expect(page.locator("[data-target]")).toHaveText(String(amount));
@@ -166,6 +168,7 @@ test("sair durante a energização cancela a passagem pendente", async ({ page }
   await button(page, "Voltar ao mapa").tap();
   await expect(button(page, "Planeta dos Cristais")).toHaveAttribute("data-completed", "false");
   await button(page, "Planeta das Estrelas").tap();
+  await button(page, "Pular apresentação").tap();
   await expect(audio(page)).toHaveAttribute("src", /\/pedido-1\.mp3$/);
   await expect.poll(() => audio(page).evaluate((node) => node.ended)).toBe(true);
   await expect(page.getByRole("heading", { name: "Planeta das Estrelas" })).toBeVisible();

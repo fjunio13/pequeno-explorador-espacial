@@ -84,8 +84,7 @@ button:focus-visible {
   transition: transform 160ms ease, background-color 160ms ease;
 }
 
-.button svg,
-.planet-label svg {
+.button svg {
   inline-size: 1.32em;
   block-size: 1.32em;
   flex: none;
@@ -187,7 +186,7 @@ button:focus-visible {
 }
 
 .intro-copy strong,
-.complete-screen h1 strong {
+.story-screen h1 strong {
   display: block;
   color: var(--gold);
   font-weight: inherit;
@@ -309,38 +308,8 @@ button:focus-visible {
   text-align: center;
 }
 
-.planet-label svg {
-  color: var(--gold);
-}
-
 .planet-button:hover .planet-label {
   background: #402755;
-}
-
-.map-layout {
-  grid-template-columns: minmax(8rem, 0.55fr) minmax(0, 1.45fr);
-  gap: clamp(0.6rem, 2.8vw, 2.5rem);
-}
-
-.planet-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.45rem, 2vw, 1.25rem);
-}
-
-.map-screen .planet-art {
-  block-size: clamp(5.2rem, 49svh, 19rem);
-}
-
-.map-screen .planet-label {
-  padding-inline: clamp(0.55rem, 1.3vw, 0.95rem);
-  font-size: clamp(0.79rem, 1.9vw, 1.05rem);
-}
-
-.planet-button[data-completed="true"] .planet-label svg,
-.complete-screen[data-planet="crystals"] .celebration span,
-.complete-screen[data-planet="crystals"] h1 strong {
-  color: var(--mint);
 }
 
 .mission-links {
@@ -348,40 +317,6 @@ button:focus-visible {
   flex-wrap: wrap;
   gap: 0.65rem;
   margin-block-start: clamp(0.8rem, 4svh, 2rem);
-}
-
-.celebration {
-  animation: arrive 480ms ease-out both;
-}
-
-.celebration span {
-  position: absolute;
-  inline-size: clamp(1.3rem, 4.8vw, 3.6rem);
-  color: var(--gold);
-  filter: drop-shadow(0 0 12px #ffcf6970);
-  animation: celebrate 680ms ease-out both;
-}
-
-.celebration span:nth-of-type(1) {
-  inset: 8% auto auto 9%;
-  transform: rotate(-14deg);
-}
-
-.celebration span:nth-of-type(2) {
-  inset: 0 13% auto auto;
-  transform: rotate(14deg);
-  animation-delay: 90ms;
-}
-
-.celebration span:nth-of-type(3) {
-  inset: auto 4% 9% auto;
-  transform: rotate(22deg);
-  animation-delay: 170ms;
-}
-
-.celebration svg {
-  inline-size: 100%;
-  fill: currentColor;
 }
 
 .mission-screen {
