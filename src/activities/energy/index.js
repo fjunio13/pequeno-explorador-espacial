@@ -96,10 +96,15 @@ function refreshLoad(panel, state) {
   for (const [index, cell] of [...panel.querySelectorAll(".energy-cell")].entries()) {
     cell.toggleAttribute("data-lit", index < amount);
     cell.toggleAttribute("data-needed", showMissing && index >= amount && index < target);
-    cell.toggleAttribute("data-extra", state.attempts >= 2 && index >= target && index < amount);
+    cell.toggleAttribute("data-extra", state.attempts > 0 && index >= target && index < amount);
   }
   for (const [index, frame] of [...panel.querySelectorAll(".energy-frame")].entries()) {
     frame.toggleAttribute("data-full", amount >= 10 * (index + 1));
+  }
+  if (mode === "complete") {
+    for (const row of panel.querySelectorAll(".energy-row")) {
+      row.toggleAttribute("data-row-guide", state.attempts === 3 && row.querySelector("[data-needed]") !== null);
+    }
   }
 }
 
@@ -107,9 +112,13 @@ function refreshComparison(sides, { challenge, choice, attempts }, solved) {
   const [low, high] = [...challenge.loads].sort((a, b) => a - b);
   for (const [side, panel] of sides.entries()) {
     panel.setAttribute("aria-pressed", String(choice === side));
-    panel.querySelector("[data-comparison-number]").hidden = !solved && attempts < 2;
+    panel.querySelector("[data-comparison-number]").hidden = !solved;
+    for (const [index, row] of [...panel.querySelectorAll(".energy-row")].entries()) {
+      const full = challenge.loads[side] >= 5 * (index + 1);
+      row.toggleAttribute("data-row-guide", !solved && (attempts === 2 || (attempts === 1 && full)));
+    }
     for (const [index, cell] of [...panel.querySelectorAll(".energy-cell")].entries()) {
-      cell.toggleAttribute("data-difference", (solved || attempts >= 2) && index >= low && index < high);
+      cell.toggleAttribute("data-difference", (solved || attempts === 3) && index >= low && index < high);
     }
   }
 }
@@ -154,6 +163,9 @@ export function mountEnergy({ container, configuration, audio, onComplete, onRet
     }
 
     const live = panels.querySelector("[data-live]");
+    for (const panel of panels.children) {
+      panel.toggleAttribute("data-help-focus", challenge.mode === "build" && !solved && attempts === 1);
+    }
     if (live) refreshLoad(live, state);
     else refreshComparison([...panels.children], state, solved);
 

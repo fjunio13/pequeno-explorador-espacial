@@ -8,8 +8,9 @@ const crystal = (page, id) => mission(page).locator(`[data-crystal="${id}"]`);
 const audio = (page) => page.locator("#game-audio");
 const button = (page, name) => page.getByRole("button", { name, exact: true });
 
-async function openCrystals(page) {
+async function openCrystals(page, playbackRate = 1) {
   await page.goto("./");
+  await audio(page).evaluate((node, rate) => { node.defaultPlaybackRate = rate; }, playbackRate);
   await button(page, "Começar").tap();
   await button(page, "Planeta dos Cristais").tap();
   await button(page, "Pular apresentação").tap();
@@ -67,7 +68,11 @@ test("arrasta, corrige o excesso e reabre a escolha ao acertar a carga", async (
   await crystal(page, 1).tap();
   await expect(mission(page)).toHaveAttribute("data-loaded", "2");
   await expect(mission(page)).toHaveAttribute("data-phase", "collect");
-  await expect(page.getByText("Vamos ajustar a carga?")).toBeVisible();
+  await expect(page.getByText("Devolva um cristal à reserva.")).toBeVisible();
+  await expect(audio(page)).toHaveAttribute("src", /cristais-excesso\.mp3$/);
+  await button(page, "Ajuda").tap();
+  await expect(generator(page).locator("[data-load-hint]").locator('[data-crystal="1"]')).toBeVisible();
+  await expect(crystal(page, 1)).not.toHaveAttribute("data-guide");
   await button(page, "Ajuda").tap();
   await expect(crystal(page, 1)).toHaveAttribute("data-guide", "");
   await expect(audio(page)).toHaveAttribute("src", /cristais-sobram\.mp3$/);
@@ -86,28 +91,64 @@ test("arrasta, corrige o excesso e reabre a escolha ao acertar a carga", async (
 });
 
 test("guia a coleta e a escolha do número, com ações explícitas da criança", async ({ page }) => {
-  await openCrystals(page);
+  await openCrystals(page, 3);
   await button(page, "Ajuda").tap();
+  await expect(generator(page)).toHaveAttribute("data-help-focus", "");
+  await expect(mission(page).locator(".crystal-piece[data-guide]")).toHaveCount(0);
+  await button(page, "Ajuda").tap();
+  await expect(generator(page).locator("[data-load-hint]")).toHaveCount(1);
+  await expect(audio(page)).toHaveAttribute("src", /cristais-espacos\.mp3$/);
+  await button(page, "Ajuda").tap();
+  await expect(crystal(page, 0)).toHaveAttribute("data-guide", "");
   await expect(audio(page)).toHaveAttribute("src", /cristais-faltam\.mp3$/);
   await button(page, "Ajuda").tap();
   await expect(mission(page)).toHaveAttribute("data-loaded", "0");
-  await button(page, "Ajudar").tap();
+  await crystal(page, 0).tap();
   await expect(mission(page)).toHaveAttribute("data-loaded", "1");
   await expect(mission(page)).toHaveAttribute("data-phase", "number");
 
-  const wrong = button(page, "2");
-  await wrong.tap();
-  await wrong.tap();
-  await expect(generator(page).locator("[data-count-hint]")).toHaveCount(1);
+  await button(page, "Ajuda").tap();
+  await expect(generator(page)).toHaveAttribute("data-help-focus", "");
+  await expect(generator(page).locator("[data-count-hint]")).toHaveCount(0);
   await expect(button(page, "1")).not.toHaveAttribute("data-guide");
-  await wrong.tap();
+  await button(page, "2").tap();
+  await expect(generator(page).locator("[data-count-hint]")).toHaveCount(1);
+  await expect(generator(page).locator(".crystal-count:visible")).toHaveText("1");
+  await expect(button(page, "1")).not.toHaveAttribute("data-guide");
+  await button(page, "Ajuda").tap();
   await expect(button(page, "1")).toHaveAttribute("data-guide", "");
   await button(page, "Ouvir").tap();
   await expect(audio(page)).toHaveAttribute("src", /cristais-pista-numero\.mp3$/);
+  await expect(mission(page)).toHaveAttribute("data-phase", "number");
   await button(page, "1").tap();
+  await expect(mission(page)).toHaveAttribute("data-phase", "activate");
+  await button(page, "Ajuda").tap();
+  await expect(button(page, "Ligar estação")).toHaveAttribute("data-guide", "");
   await expect(mission(page)).toHaveAttribute("data-phase", "activate");
   await button(page, "Ligar estação").tap();
   await expect(mission(page)).toHaveAttribute("data-phase", "powered");
+});
+
+test("sair da escolha do numeral cancela a pista que aguardava", async ({ page }) => {
+  await openCrystals(page);
+  await crystal(page, 0).tap();
+  await button(page, "Ajuda").tap();
+  await button(page, "Ouvir").tap();
+  await expect(audio(page)).toHaveAttribute("src", /cristais-recontar\.mp3$/);
+  await expect.poll(() => audio(page).evaluate((node) => node.currentTime)).toBeGreaterThan(0);
+  await button(page, "Ajuda").tap();
+  await button(page, "Ajuda").tap();
+  await expect(button(page, "1")).toHaveAttribute("data-guide", "");
+  await expect(audio(page)).toHaveAttribute("src", /cristais-recontar\.mp3$/);
+
+  await button(page, "Voltar ao mapa").tap();
+  await expect(audio(page)).toHaveAttribute("src", /mapa\.mp3$/);
+  await expect(mission(page)).toHaveCount(0);
+  await button(page, "Planeta dos Cristais").tap();
+  await expect(audio(page)).toHaveAttribute("src", /cristais-pedido-2\.mp3$/);
+  await expect.poll(() => audio(page).evaluate((node) => node.ended)).toBe(true);
+  await expect(audio(page)).toHaveAttribute("src", /cristais-pedido-2\.mp3$/);
+  await expect(mission(page).locator("[data-help-focus], [data-guide]")).toHaveCount(0);
 });
 
 test("energiza as três cargas e repete sem confirmação intermediária", async ({ page, baseURL }) => {
@@ -208,6 +249,7 @@ test("cancela o arraste fora do alvo e limpa o ponteiro ao sair no meio do gesto
 });
 
 test("encaixa as fases e os controles em celulares horizontais estreitos", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   for (const [width, height] of [[568, 320], [667, 375], [780, 360]]) {
     await page.evaluate(() => document.fullscreenElement && document.exitFullscreen());
     await page.setViewportSize({ width, height });
@@ -225,10 +267,17 @@ test("encaixa as fases e os controles em celulares horizontais estreitos", async
       expect(Math.min(...layout.controls)).toBeGreaterThanOrEqual(48);
     }
 
+    await button(page, "Ajuda").tap();
     await fit();
     await crystal(page, 0).tap();
+    for (let level = 1; level <= 3; level++) {
+      await button(page, "Ajuda").tap();
+      await fit();
+    }
+    await expect(button(page, "1")).toHaveCSS("animation-name", "none");
     await fit();
     await button(page, "1").tap();
+    await button(page, "Ajuda").tap();
     await fit();
     await button(page, "Ligar estação").tap();
     await fit();

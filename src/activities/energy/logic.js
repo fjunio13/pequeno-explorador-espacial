@@ -78,9 +78,8 @@ export function requestHelp(state) {
 }
 
 export function suggestion(state) {
-  if (isSolved(state) || state.attempts < 3) return null;
   const { challenge, pieces } = state;
-  if (challenge.mode === "compare") return { action: "choose", value: correctSide(challenge) };
+  if (challenge.mode !== "build" || isSolved(state) || state.attempts < assistanceLimit) return null;
   const missing = challenge.target - energyTotal(state);
   if (missing > 0) {
     return { action: "add", value: Math.max(...challenge.modules.filter((value) => value <= missing)) };

@@ -43,14 +43,9 @@ export function moveCrystal(state, id, destination) {
   return { ...state, loaded, attempts: Math.min(attempts + excess, helpLimit), phase: "collect" };
 }
 
-function tryAgain(state) {
-  if (state.attempts === helpLimit) return state;
-  return { ...state, attempts: state.attempts + 1 };
-}
-
 export function requestHelp(state) {
-  if (state.phase !== "collect") return state;
-  return { ...state, attempts: Math.min(Math.max(state.attempts + 1, 2), helpLimit) };
+  if (state.phase === "powered" || state.attempts === helpLimit) return state;
+  return { ...state, attempts: state.attempts + 1 };
 }
 
 export function chooseNumber(state, number) {
@@ -58,26 +53,18 @@ export function chooseNumber(state, number) {
     return state;
   }
 
-  if (number !== state.loaded.length) return tryAgain(state);
+  if (number !== state.loaded.length) return requestHelp(state);
   return { ...state, attempts: 0, phase: "activate" };
 }
 
 export function suggestedTransfer(state) {
-  if (state.phase !== "collect" || state.attempts < 2) return null;
+  if (state.phase !== "collect" || state.attempts < helpLimit) return null;
 
-  const target = targetFor(state);
-  if (state.loaded.length > target) return { id: state.loaded.at(-1), destination: "reserve" };
-  if (state.loaded.length === target) return null;
+  if (state.loaded.length > targetFor(state)) return { id: state.loaded.at(-1), destination: "reserve" };
 
   const id = Array.from({ length: crystalCount }, (_, index) => index)
     .find((index) => !state.loaded.includes(index));
   return { id, destination: "generator" };
-}
-
-export function demonstrateTransfer(state) {
-  const suggestion = suggestedTransfer(state);
-  if (state.attempts < helpLimit || !suggestion) return state;
-  return moveCrystal(state, suggestion.id, suggestion.destination);
 }
 
 export function energize(state) {

@@ -71,6 +71,10 @@ test("a mesma carga admite composições distintas e a retirada corrige uma resp
 
 test("o excesso permite correção e o limite do painel preserva os módulos", () => {
   const initial = first(2);
+  const orient = requestHelp(initial);
+  assert.equal(feedbackFor(orient).cue, "oficina-grupos");
+  assert.deepEqual(orient.pieces, []);
+  assert.equal(feedbackFor(requestHelp(orient)).cue, "oficina-espacos");
   assert.equal(addModule(initial, 3), initial);
   const excess = load(initial, [10, 10]);
   assert.equal(energyTotal(excess), 20);
@@ -80,9 +84,11 @@ test("o excesso permite correção e o limite do painel preserva os módulos", (
   assert.equal(blocked.issue, "space");
   assert.deepEqual(blocked.pieces, [10, 10]);
   const guided = requestHelp(blocked);
+  assert.equal(feedbackFor(guided).cue, "oficina-retirar");
   assert.deepEqual(suggestion(guided), { action: "remove", value: 10 });
   const corrected = removeModule(guided, 10);
   assert.deepEqual(suggestion(corrected), { action: "add", value: 5 });
+  assert.equal(feedbackFor(corrected).cue, "oficina-pista");
   assert.equal(isSolved(load(corrected, [5, 1, 1, 1])), true);
 });
 
@@ -94,8 +100,12 @@ test("completa um ou dois painéis com um grupo ou com unidades adicionais", () 
       const missing = challenge.target - challenge.start;
       assert.equal(removeModule(initial, 1), initial);
       assert.equal(addModule(initial, 5).issue, "space");
-      assert.equal(isSolved(addModule(initial, missing)), true);
-      const filled = load(initial, Array(missing).fill(1));
+      const guided = requestHelp(requestHelp(requestHelp(initial)));
+      assert.equal(energyTotal(guided), challenge.start);
+      assert.equal(feedbackFor(guided).cue, "oficina-encaixar-espacos");
+      assert.equal(suggestion(guided), null);
+      assert.equal(isSolved(addModule(guided, missing)), true);
+      const filled = load(guided, Array(missing).fill(1));
       assert.equal(isSolved(filled), true);
       assert.equal(isSolved(removeModule(filled, 1)), false);
       assert.equal(addModule(filled, 1), filled);
@@ -111,10 +121,13 @@ test("compara mais e menos, orienta escolhas e conserva a decisão da criança",
     let state = chooseCharge(startChallenge(challenge), 1 - correct);
     assert.equal(isSolved(state), false);
     assert.equal(suggestion(state), null);
+    assert.equal(feedbackFor(state).cue, "oficina-comparar-ajuda");
+    assert.equal(feedbackFor(requestHelp(state)).cue, "oficina-comparar-fileiras");
     for (let press = 0; press < 4; press++) state = requestHelp(state);
     assert.equal(state.attempts, 3);
     assert.equal(state.choice, 1 - correct);
-    assert.deepEqual(suggestion(state), { action: "choose", value: correct });
+    assert.equal(suggestion(state), null);
+    assert.equal(feedbackFor(state).cue, relation === "more" ? "oficina-pista-mais" : "oficina-pista-menos");
     const solved = chooseCharge(state, correct);
     assert.equal(isSolved(solved), true);
     assert.equal(isSolved(chooseCharge(solved, 1 - correct)), false);

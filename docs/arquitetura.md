@@ -55,6 +55,8 @@ Nos Cristais, os Pointer Events acompanham a peça até qualquer ponto da área 
 
 As atividades usam `round-advance.js` para avançar após o feedback e 650 ms de pausa visual. Se o áudio estiver indisponível, o resultado permanece visível por 1,4 s. Repetir a fala de resultado renova a espera. Mudar a seleção nas Estrelas ou corrigir a carga na Oficina cancela a passagem pendente. Ao trocar de tela, a função de encerramento cancela a transição e remove os eventos. Nos Cristais, ela também libera a captura do ponteiro. Nas Descobertas, cancela o voo da criatura.
 
+Cada atividade mantém o nível de ajuda no estado local da fase ou rodada. A interface seleciona a pista a partir desse estado e da quantidade atual. Pedir ajuda modifica a orientação e a instrução que pode ser repetida pelo serviço de áudio. As escolhas, transferências e ativações continuam nos controles da atividade. Os destaques são atributos de estado renderizados por CSS e saem da tela com o restante da atividade.
+
 Adicionar um novo planeta não deverá exigir modificar a lógica interna dos planetas existentes.
 
 Evitar abstrações excessivamente genéricas. As três atividades poderão compartilhar infraestrutura sem necessariamente compartilhar suas mecânicas educativas.

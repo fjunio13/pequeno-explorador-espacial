@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  chooseNumber, crystalConfiguration, demonstrateTransfer, energize, moveCrystal, nextCharge,
+  chooseNumber, crystalConfiguration, energize, moveCrystal, nextCharge,
   requestHelp, startCrystals, suggestedTransfer, targetFor,
 } from "../src/activities/crystals/logic.js";
 
@@ -38,28 +38,48 @@ test("abre os numerais ao atingir a carga certa e cancela a escolha ao reorganiz
   assert.equal(moveCrystal(changed, 0, "generator").phase, "number");
 });
 
-test("distingue falta e excesso, com ajuda de um cristal por toque", () => {
-  const start = startCrystals({ targets: [3] });
-  assert.equal(suggestedTransfer(start), null);
-
-  const hint = requestHelp(start);
-  assert.deepEqual(suggestedTransfer(hint), { id: 0, destination: "generator" });
-  assert.equal(demonstrateTransfer(hint), hint);
-
-  let guided = requestHelp(hint);
+test("a ajuda distingue falta e excesso sem transferir cristais", () => {
+  let guided = startCrystals({ targets: [3] });
+  for (const level of [1, 2, 3, 3]) {
+    guided = requestHelp(guided);
+    assert.equal(guided.attempts, level);
+    assert.deepEqual(guided.loaded, []);
+    assert.deepEqual(suggestedTransfer(guided), level === 3 ? { id: 0, destination: "generator" } : null);
+  }
   for (let count = 1; count <= 3; count++) {
-    guided = demonstrateTransfer(guided);
+    const { id, destination } = suggestedTransfer(guided);
+    guided = moveCrystal(guided, id, destination);
     assert.equal(guided.loaded.length, count);
     assert.equal(guided.phase, count === 3 ? "number" : "collect");
   }
   assert.equal(suggestedTransfer(guided), null);
 
-  const excess = fill(start, 5);
+  const excess = requestHelp(fill(startCrystals({ targets: [3] }), 5));
   assert.equal(excess.phase, "collect");
   assert.deepEqual(suggestedTransfer(excess), { id: 4, destination: "reserve" });
-  const corrected = demonstrateTransfer(requestHelp(excess));
+  assert.equal(requestHelp(excess), excess);
+  const corrected = moveCrystal(excess, 4, "reserve");
   assert.equal(corrected.loaded.length, 4);
-  assert.equal(demonstrateTransfer(corrected).phase, "number");
+  assert.equal(moveCrystal(corrected, 3, "reserve").phase, "number");
+});
+
+test("pedir ajuda no numeral e na ativação mantém a ação explícita da criança", () => {
+  let state = fill(startCrystals({ targets: [2] }), 2);
+  for (const level of [1, 2, 3]) {
+    state = requestHelp(state);
+    assert.equal(state.phase, "number");
+    assert.equal(state.attempts, level);
+    assert.equal(energize(state), state);
+  }
+  const ready = chooseNumber(state, 2);
+  assert.equal(ready.attempts, 0);
+  const assisted = requestHelp(ready);
+  assert.equal(assisted.phase, "activate");
+  assert.equal(assisted.attempts, 1);
+  assert.deepEqual(assisted.loaded, [0, 1]);
+  const powered = energize(assisted);
+  assert.equal(powered.phase, "powered");
+  assert.equal(requestHelp(powered), powered);
 });
 
 test("só libera a energização com a quantidade e o número corretos", () => {

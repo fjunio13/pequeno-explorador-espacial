@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  demonstrateStar, hasTarget, nextRound, requestHelp, startCounting, suggestedStar, supportFor,
+  hasTarget, nextRound, requestHelp, startCounting, suggestedStar, supportFor,
   starConfiguration, targetFor, toggleStar,
 } from "../src/activities/stars/logic.js";
 
@@ -49,32 +49,33 @@ test("pode corrigir a seleção mesmo depois de atingir a quantidade", () => {
 
   const extra = toggleStar(matched, 0);
   assert.deepEqual(extra.selected, [3, 0]);
-  assert.equal(supportFor(extra), "retry");
+  assert.equal(supportFor(extra), "orient");
   assert.equal(nextRound(extra), extra);
 
   const hint = requestHelp(extra);
   assert.equal(supportFor(hint), "hint");
-  assert.equal(suggestedStar(hint), 0);
-  assert.equal(hasTarget(toggleStar(hint, 0)), true);
+  assert.equal(suggestedStar(hint), null);
+  const guided = requestHelp(hint);
+  assert.equal(suggestedStar(guided), 0);
+  assert.equal(hasTarget(toggleStar(guided, 0)), true);
   assert.equal(hasTarget(toggleStar(matched, 3)), false);
 });
 
-test("orienta a seleção de uma estrela por ação até a quantidade solicitada", () => {
+test("orienta desde a primeira escolha e a ajuda guiada mantém a seleção com a criança", () => {
   let state = startCounting({ targets: [3], starCount: 5 });
-  state = requestHelp(state);
-  assert.equal(supportFor(state), "hint");
-  assert.equal(demonstrateStar(state), state);
-
-  state = requestHelp(state);
-  assert.equal(supportFor(state), "guided");
-  assert.equal(suggestedStar(state), 0);
+  for (const level of ["orient", "hint", "guided", "guided"]) {
+    state = requestHelp(state);
+    assert.equal(supportFor(state), level);
+    assert.deepEqual(state.selected, []);
+    assert.equal(suggestedStar(state), level === "guided" ? 0 : null);
+  }
   for (let count = 1; count <= 3; count++) {
-    state = demonstrateStar(state);
+    state = toggleStar(state, suggestedStar(state));
     assert.equal(state.selected.length, count);
     assert.equal(hasTarget(state), count === 3);
   }
   assert.equal(suggestedStar(state), null);
-  assert.equal(demonstrateStar(state), state);
+  assert.equal(requestHelp(state), state);
 });
 
 test("aceita as quantidades de 1 a 5 e encerra depois da última rodada", () => {

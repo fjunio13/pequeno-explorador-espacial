@@ -78,9 +78,13 @@ test("reproduz a apresentação, aceita correções e orienta as três modalidad
 
   await expect(room(page).locator("[data-target]")).toHaveText("7");
   await expect(add(page, 5).locator(".energy-piece i")).toHaveCount(5);
+  await button(page, "Ajuda").tap();
+  await expect(room(page).locator(".energy-panel[data-help-focus]")).toHaveCount(2);
+  await expect(room(page).locator("button[data-guide]")).toHaveCount(0);
   await add(page, 5).tap();
   await add(page, 5).tap();
   await expect(room(page).locator("[data-total]")).toHaveText("10");
+  await expect(room(page).locator("[data-extra]")).toHaveCount(3);
   await expect(room(page).locator("[data-note]")).toContainText("retirar");
   await button(page, "Ajuda").tap();
   await button(page, "Ajuda").tap();
@@ -107,7 +111,10 @@ test("reproduz a apresentação, aceita correções e orienta as três modalidad
   expect((await cellGlow(room(page).locator(".energy-cell[data-lit]").first())).animation).toBe("none");
   await button(page, "Ajuda").tap();
   expect((await cellGlow(gaps(page).first())).shadow).not.toBe(gap.shadow);
-  await expect(add(page, 3)).not.toHaveAttribute("data-guide");
+  await button(page, "Ajuda").tap();
+  await button(page, "Ajuda").tap();
+  await expect(room(page).locator(".energy-row[data-row-guide]")).toHaveCount(1);
+  await expect(room(page).locator("button[data-guide]")).toHaveCount(0);
   await add(page, 1).tap();
   await expect(gaps(page)).toHaveCount(2);
   await remove(page, 1).tap();
@@ -117,15 +124,25 @@ test("reproduz a apresentação, aceita correções e orienta as três modalidad
   await add(page, 3).tap();
   await expect(room(page).locator("[data-total]")).toHaveText("10");
   await expect(gaps(page)).toHaveCount(0);
+  await expect(room(page).locator(".energy-row[data-row-guide]")).toHaveCount(0);
   await expect(room(page)).toHaveAttribute("data-mode", "compare");
 
   await expect(room(page).locator("[data-comparison-number]:visible")).toHaveCount(0);
+  await button(page, "Ajuda").tap();
+  await expect(room(page).locator(".energy-row[data-row-guide]")).toHaveCount(2);
+  await expect(room(page).locator(".energy-cell[data-difference]")).toHaveCount(0);
+  await expect(room(page).locator("button[data-guide]")).toHaveCount(0);
   await button(page, "Carga da esquerda").tap();
+  await expect(room(page).locator(".energy-row[data-row-guide]")).toHaveCount(4);
+  await expect(room(page).locator(".energy-cell[data-difference]")).toHaveCount(0);
   await button(page, "Ajuda").tap();
-  await expect(room(page).locator(".energy-cell[data-difference]")).toHaveCount(6);
-  await button(page, "Ajuda").tap();
-  await expect(button(page, "Carga da direita")).toHaveAttribute("data-guide", "");
+  await expect(button(page, "Carga da esquerda").locator(".energy-cell[data-difference]")).toHaveCount(3);
+  await expect(button(page, "Carga da direita").locator(".energy-cell[data-difference]")).toHaveCount(3);
+  await expect(room(page).locator("[data-comparison-number]:visible")).toHaveCount(0);
+  await expect(room(page).locator("button[data-guide]")).toHaveCount(0);
   await expect(room(page)).toHaveAttribute("data-solved", "false");
+  await button(page, "Ouvir").tap();
+  await expect(player(page)).toHaveAttribute("src", /oficina-pista-mais\.mp3$/);
   await button(page, "Carga da direita").tap();
   await expect(screen(page, "energy-complete")).toBeVisible();
   await expect(player(page)).toHaveAttribute("src", /oficina-pronta\.mp3$/);
@@ -184,6 +201,7 @@ test("sair durante o retorno de áudio cancela o avanço para o próximo desafio
 });
 
 test("a oficina mantém controles grandes em três dimensões Android horizontais", async ({ page }) => {
+  test.slow();
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const [width, height] of [[568, 320], [667, 375], [780, 360]]) {
     await page.evaluate(() => document.fullscreenElement && document.exitFullscreen());
@@ -193,16 +211,24 @@ test("a oficina mantém controles grandes em três dimensões Android horizontai
     await button(page, "Oficina de Energia").tap();
     await expectFit(page);
     await button(page, "Pular apresentação").tap();
+    await button(page, "Ajuda").tap();
     await expectFit(page);
     await add(page, 5).tap();
     await add(page, 1).tap();
     await add(page, 1).tap();
     await expect(room(page)).toHaveAttribute("data-mode", "complete");
+    await button(page, "Ajuda").tap();
     await expectFit(page);
     await expect(gaps(page)).toHaveCount(3);
     const glow = await cellGlow(gaps(page).first());
     expect(glow.animation).toBe("none");
     expect(glow.shadow).toContain("inset");
+    await add(page, 3).tap();
+    await expect(room(page)).toHaveAttribute("data-mode", "compare");
+    for (let level = 1; level <= 3; level++) {
+      await button(page, "Ajuda").tap();
+      await expectFit(page);
+    }
   }
 });
 
