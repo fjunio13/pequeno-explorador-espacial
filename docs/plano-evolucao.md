@@ -7,9 +7,10 @@
 | Implementado e homologado na revisão do PR #9 | Três planetas, Oficina de Energia, três pistas reunidas em qualquer ordem e desfecho atual |
 | Integrado na oitava entrega, PR #10 | Seis rodadas variáveis nas Estrelas com abertura fixa, atalho **Próxima missão**, brilho das luzinhas e destaque dos espaços faltantes na Oficina |
 | Integrado na nona entrega, PR #11 | Publicação direta pela raiz da branch no GitHub Pages, com retorno à `main` após o merge |
-| Implementado na décima entrega, para homologação | Ajuda desde a primeira tentativa, pistas progressivas nos três planetas e nas três modalidades da Oficina de Energia |
-| Aprovado como direção de planejamento | Diversificar os Cristais e as Descobertas, planejar um desfecho interativo e homologar o ciclo em Android físico |
-| Depende de aprovação específica | Implementação das etapas 11 a 14, aprovação do roteiro do novo desfecho e decisões de versão e publicação |
+| Homologado na décima entrega, PR #12 | Ajuda desde a primeira tentativa, pistas progressivas nos três planetas e nas três modalidades da Oficina de Energia |
+| Implementado na décima primeira entrega, para homologação | Cinco situações por visita nos Cristais, com carga vazia, complemento, excesso, comparação e variação final |
+| Aprovado como direção de planejamento | Diversificar as Descobertas, planejar um desfecho interativo e homologar o ciclo em Android físico |
+| Depende de aprovação específica | Implementação das etapas 12 a 14, aprovação do roteiro do novo desfecho e decisões de versão e publicação |
 
 As etapas abaixo são a referência para futuras entregas. A especificação funcional, a arquitetura e o roteiro vigentes continuam orientando o jogo. O [guia de publicação](publicacao.md) registra o fluxo aprovado para colocar uma revisão no ar.
 
@@ -23,9 +24,9 @@ A persistência de desempenho entre sessões depende de aprovação adicional.
 
 ## Etapa 11 — Ampliação do Planeta dos Cristais
 
-Avaliar visitas com cerca de cinco ou seis desafios concretos. Variar entre geradores vazios e parcialmente carregados. Considerar acrescentar ou retirar cristais, identificar excessos e quantidades faltantes e comparar cargas de dois geradores. Alternar quantidades e situações entre visitas.
+Quatro roteiros se alternam entre visitas, com cinco desafios em cada um. Completar e retirar reaproveitam o gesto e a ajuda da montagem. A comparação alterna **mais** e **menos**, com a maior carga dos dois lados ao longo do ciclo. Os dois geradores usam a mesma disposição de encaixes para permitir a comparação por pares. [Capturas dos desafios](capturas-decima-primeira-entrega/)
 
-A quantidade final de desafios depende dos testes de duração e compreensão infantil. Manter as escolhas ligadas às peças e aos geradores, sem aritmética formal.
+A duração de três a cinco minutos é uma hipótese para observação em Android físico. Vale observar se a criança distingue completar e retirar pela fala e pelos encaixes, se compara os grupos sem escolher sempre o mesmo lado e se mantém o interesse até a quinta situação.
 
 ## Etapa 12 — Ampliação do Planeta das Descobertas
 

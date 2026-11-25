@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { initialCrystalRoute, openCrystalChallenge, solveCrystalChallenge } from "./cristais-rodadas.js";
 import { readStarAmount, tapStars } from "./estrelas-rodadas.js";
 
 test.describe.configure({ mode: "parallel" });
@@ -57,11 +58,9 @@ async function playMission(page, planet) {
       await tapStars(page, await readStarAmount(page, round));
     }
   } else if (planet === "crystals") {
-    for (const amount of [1, 3, 5]) {
-      await expect(page.locator("[data-instruction]")).toContainText(`Coloque ${amount}`);
-      for (let index = 0; index < amount; index++) await page.locator(`[data-crystal="${index}"]`).tap();
-      await button(page, String(amount)).tap();
-      await button(page, "Ligar estação").tap();
+    for (const [index, challenge] of initialCrystalRoute.entries()) {
+      await openCrystalChallenge(page, index + 1);
+      await solveCrystalChallenge(page, challenge);
     }
   } else {
     for (const amount of [2, 4, 5]) {
