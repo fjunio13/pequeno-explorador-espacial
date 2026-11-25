@@ -1,12 +1,34 @@
+import { mountCrystals } from "../activities/crystals/index.js";
+import { crystalConfiguration } from "../activities/crystals/logic.js";
 import { mountStars } from "../activities/stars/index.js";
 import { bindActions } from "../ui/controls.js";
 import { completeScreen, homeScreen, mapScreen } from "../ui/screens.js";
 
-const stars = { targets: [1, 2, 3, 4, 5], starCount: 5 };
+const planets = [
+  {
+    id: "stars",
+    name: "Planeta das Estrelas",
+    image: new URL("../../assets/images/planeta-das-estrelas.webp", import.meta.url).href,
+    symbol: "star",
+    mount: mountStars,
+    configuration: () => ({ targets: [1, 2, 3, 4, 5], starCount: 5 }),
+    completion: { text: "Você contou as estrelas.", audio: "conclusao" },
+  },
+  {
+    id: "crystals",
+    name: "Planeta dos Cristais",
+    image: new URL("../../assets/images/planeta-dos-cristais.webp", import.meta.url).href,
+    symbol: "gem",
+    mount: mountCrystals,
+    configuration: crystalConfiguration,
+    completion: { text: "Você ligou a estação!", audio: "cristais-conclusao" },
+  },
+];
 
 export function startGame(container, audio) {
   let closeScreen = () => {};
-  let missionCompleted = false;
+  const completed = new Set();
+  const visits = new Map();
 
   function open(mount, { focus = true } = {}) {
     closeScreen();
@@ -31,22 +53,30 @@ export function startGame(container, audio) {
   }
 
   function map() {
-    show(mapScreen(missionCompleted), { home: () => home(), mission }, "mapa");
+    show(mapScreen(planets, completed), {
+      home: () => home(),
+      mission: (button) => {
+        const planet = planets.find((item) => item.id === button.dataset.planet);
+        if (planet) mission(planet);
+      },
+    }, "mapa");
   }
 
-  function mission() {
-    open(() => mountStars({
+  function mission(planet) {
+    const visit = visits.get(planet.id) ?? 0;
+    visits.set(planet.id, visit + 1);
+    open(() => planet.mount({
       container,
-      configuration: stars,
+      configuration: planet.configuration(visit),
       audio,
-      onComplete: finish,
+      onComplete: () => finish(planet),
       onReturn: map,
     }));
   }
 
-  function finish() {
-    missionCompleted = true;
-    show(completeScreen(), { map, mission }, "conclusao");
+  function finish(planet) {
+    completed.add(planet.id);
+    show(completeScreen(planet), { map, mission: () => mission(planet) }, planet.completion.audio);
   }
 
   home({ focus: false });

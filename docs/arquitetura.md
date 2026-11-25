@@ -47,9 +47,11 @@ Todas as atividades deverão respeitar uma interface comum. Ao iniciar uma ativi
 
 A atividade deverá inicializar seus elementos, processar as interações e sinalizar a conclusão. Ao ser encerrada, deverá liberar seus controles, animações e demais recursos temporários.
 
-Na primeira missão, `mountStars({ container, configuration, audio, onComplete, onReturn })` retorna a função que desativa os eventos da atividade. O núcleo chama essa função e interrompe o áudio ao trocar de tela. A atividade usa as funções recebidas para comunicar a conclusão e a saída.
+Os módulos `mountStars` e `mountCrystals` recebem `{ container, configuration, audio, onComplete, onReturn }` e retornam uma função de encerramento. O núcleo chama essa função e interrompe o áudio ao trocar de tela. A atividade usa as funções recebidas para comunicar a conclusão e a saída.
 
 Os botões nativos recebem toque, mouse e teclado pela ativação do evento `click`. A área de toque e os estados de seleção, foco e pista são definidos pela interface.
+
+Nos Cristais, os Pointer Events acompanham a peça até qualquer ponto da área de destino. Soltar fora dela ou cancelar o gesto devolve a peça à origem. Um toque sem deslocamento transfere a peça na soltura. Os controles que mantêm a criança na atividade aceitam a soltura logo após um arraste. A troca de tela e a ativação pelo teclado usam o clique nativo. A função de encerramento libera a captura do ponteiro e remove os eventos.
 
 Adicionar um novo planeta não deverá exigir modificar a lógica interna dos planetas existentes.
 
@@ -72,7 +74,9 @@ Evitar abstrações excessivamente genéricas. As três atividades poderão comp
 | `AGENTS.md` | Instruções permanentes para agentes |
 | `.github/workflows/` | Automações de testes e publicação |
 
-`src/main.js` inicia o jogo. `src/core/game.js` controla abertura, mapa, atividade e conclusão. `src/ui/` contém as telas, os controles e os estilos. `src/activities/stars/` implementa a atividade e mantém a lógica de contagem separada do DOM.
+`src/main.js` inicia o jogo. `src/core/game.js` registra os planetas, encaminha a seleção para o módulo correspondente e guarda as conclusões por identificador. A ação **Jogar de novo** inicia a missão do planeta que acabou de ser concluído. `src/ui/` contém as telas, os controles e os estilos.
+
+`src/activities/stars/` implementa a contagem de estrelas. Em `src/activities/crystals/`, `logic.js` controla quantidade, pistas e a liberação da estação. `drag.js` cuida dos gestos, e `index.js` liga as regras à tela e ao áudio. A criança confirma a carga, associa o numeral e aciona a energia em passos distintos.
 
 `src/services/audio.js` controla um único elemento de áudio. Cada nova mensagem interrompe a anterior. O catálogo em `src/services/audio-catalog.js` associa os identificadores aos arquivos locais e o botão **Ouvir** repete a instrução atual.
 
