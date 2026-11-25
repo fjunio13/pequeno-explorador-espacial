@@ -209,6 +209,7 @@ test("cancela o arraste fora do alvo e limpa o ponteiro ao sair no meio do gesto
 
 test("encaixa as fases e os controles em celulares horizontais estreitos", async ({ page }) => {
   for (const [width, height] of [[568, 320], [667, 375], [780, 360]]) {
+    await page.evaluate(() => document.fullscreenElement && document.exitFullscreen());
     await page.setViewportSize({ width, height });
     await openCrystals(page);
     const snapshot = () => page.evaluate(() => ({

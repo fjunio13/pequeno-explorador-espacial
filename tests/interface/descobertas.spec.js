@@ -90,6 +90,7 @@ test("mantém a fala de chegada, aceita repetição e cancela a reação ao volt
 test("acomoda o mapa e as fases de descoberta em três telas em paisagem", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const [width, height] of [[568, 320], [667, 375], [780, 360]]) {
+    await page.evaluate(() => document.fullscreenElement && document.exitFullscreen());
     await page.setViewportSize({ width, height });
     await page.goto("./");
     await button(page, "Começar").tap();
