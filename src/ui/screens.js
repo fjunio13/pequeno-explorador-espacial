@@ -1,7 +1,6 @@
 import { control, icon } from "./controls.js";
 
 const launchArt = new URL("../../assets/images/astronauta-e-nave.webp", import.meta.url).href;
-const planetArt = new URL("../../assets/images/planeta-das-estrelas.webp", import.meta.url).href;
 
 export function homeScreen() {
   return `
@@ -15,48 +14,51 @@ export function homeScreen() {
     </section>`;
 }
 
-export function mapScreen(completed) {
+export function mapScreen(planets, completed) {
+  const destinations = planets.map(({ id, image, name }) => `
+    <div class="orbit">
+      <button class="planet-button" type="button" data-action="mission" data-planet="${id}"
+        data-completed="${completed.has(id)}"${completed.has(id) ? ' aria-description="Missão concluída"' : ""}>
+        <img class="planet-art" src="${image}" alt="">
+        <span class="planet-label">${icon(completed.has(id) ? "check" : "play")} ${name}</span>
+      </button>
+    </div>`).join("");
+
   return `
-    <section class="screen sky-screen" data-screen="map">
+    <section class="screen sky-screen map-screen" data-screen="map">
       <div class="screen-toolbar">
         ${control("home", "Início", "back")}
         ${control("listen", "Ouvir", "sound")}
       </div>
-      <div class="destination-layout">
+      <div class="destination-layout map-layout">
         <div class="destination-copy">
           <h1 tabindex="-1">Mapa espacial</h1>
-          <p>Toque no planeta para começar.</p>
+          <p>Toque em um planeta.</p>
         </div>
-        <div class="orbit">
-          <button class="planet-button" type="button" data-action="mission">
-            <img class="planet-art" src="${planetArt}" alt="">
-            <span class="planet-label">
-              ${icon(completed ? "check" : "play")} Planeta das Estrelas
-            </span>
-          </button>
-        </div>
+        <div class="planet-grid" role="group" aria-label="Planetas">${destinations}</div>
       </div>
     </section>`;
 }
 
-export function completeScreen() {
+export function completeScreen(planet) {
+  const sparkle = icon(planet.symbol);
   return `
-    <section class="screen sky-screen complete-screen" data-screen="complete">
+    <section class="screen sky-screen complete-screen" data-screen="complete" data-planet="${planet.id}">
       <div class="screen-toolbar screen-toolbar--end">${control("listen", "Ouvir", "sound")}</div>
       <div class="destination-layout">
         <div class="destination-copy">
           <h1 tabindex="-1">Missão <strong>concluída!</strong></h1>
-          <p>Você contou as estrelas.</p>
+          <p>${planet.completion.text}</p>
           <div class="mission-links">
             ${control("mission", "Jogar de novo", "repeat", "primary")}
             ${control("map", "Voltar ao mapa", "back")}
           </div>
         </div>
         <div class="orbit celebration" aria-hidden="true">
-          <img class="planet-art" src="${planetArt}" alt="">
-          <span>${icon("star")}</span>
-          <span>${icon("star")}</span>
-          <span>${icon("star")}</span>
+          <img class="planet-art" src="${planet.image}" alt="">
+          <span>${sparkle}</span>
+          <span>${sparkle}</span>
+          <span>${sparkle}</span>
         </div>
       </div>
     </section>`;

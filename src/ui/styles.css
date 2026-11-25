@@ -312,6 +312,32 @@ button:focus-visible {
   background: #402755;
 }
 
+.map-layout {
+  grid-template-columns: minmax(8rem, 0.55fr) minmax(0, 1.45fr);
+  gap: clamp(0.6rem, 2.8vw, 2.5rem);
+}
+
+.planet-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.45rem, 2vw, 1.25rem);
+}
+
+.map-screen .planet-art {
+  block-size: clamp(5.2rem, 49svh, 19rem);
+}
+
+.map-screen .planet-label {
+  padding-inline: clamp(0.55rem, 1.3vw, 0.95rem);
+  font-size: clamp(0.79rem, 1.9vw, 1.05rem);
+}
+
+.planet-button[data-completed="true"] .planet-label svg,
+.complete-screen[data-planet="crystals"] .celebration span,
+.complete-screen[data-planet="crystals"] h1 strong {
+  color: var(--mint);
+}
+
 .mission-links {
   display: flex;
   flex-wrap: wrap;
