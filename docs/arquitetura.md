@@ -92,7 +92,7 @@ O núcleo abre a oficina pela nave no mapa e mantém a faixa e as visitas da ofi
 
 Os estilos da missão das Descobertas e da modalidade **Completar o painel** animam apenas a opacidade dos brilhos. O estado da atividade determina quais elementos recebem destaque. Trocar de tela remove esses elementos. A regra de movimento reduzido desativa as animações e conserva a sinalização estática.
 
-`src/services/audio.js` controla um único elemento de áudio. Instruções prioritárias podem aguardar a fala em curso. Ações rápidas podem dispensar pequenos efeitos enquanto há voz ativa. A conclusão da fala usa o evento `ended`. Em caso de erro ou de reprodução sem progresso, a apresentação visual conduz a atividade. O catálogo em `src/services/audio-catalog.js` associa os identificadores aos arquivos locais e o botão **Ouvir** repete a instrução atual.
+`src/services/audio.js` controla um único elemento de áudio. Instruções prioritárias podem aguardar a fala em curso. Ações rápidas podem dispensar pequenos efeitos enquanto há voz ativa. A conclusão da fala usa o evento `ended`. Em caso de erro ou de reprodução sem progresso, **Ouvir** mostra o ícone riscado, a mensagem de status fica disponível para leitores de tela e a apresentação visual conduz a atividade. O catálogo em `src/services/audio-catalog.js` associa os identificadores aos arquivos locais e o botão **Ouvir** repete a instrução atual.
 
 O [guia visual](guia-visual.md) registra a direção de arte. O [registro audiovisual](recursos-audiovisuais.md) reúne a origem das ilustrações, falas e efeitos.
 

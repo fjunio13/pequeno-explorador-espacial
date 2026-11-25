@@ -121,7 +121,7 @@ O botão **Ajuda** fica disponível desde o início de cada fase interativa. Ped
 2. **Pista específica** — distinguir falta e excesso, apoiar a contagem ou indicar grupos a observar.
 3. **Orientação guiada** — destacar uma ação possível ou a região que permite tomar a decisão.
 
-A criança realiza o toque, arraste ou escolha para continuar. A fala pode ser repetida em **Ouvir**, e os destaques visuais continuam disponíveis com o áudio indisponível. O nível de ajuda pertence à fase ou rodada em curso.
+A criança realiza o toque, arraste ou escolha para continuar. A fala pode ser repetida em **Ouvir**. Quando o áudio falha, o ícone de som fica riscado e os destaques visuais continuam disponíveis. O nível de ajuda pertence à fase ou rodada em curso.
 
 As mensagens positivas deverão valorizar a descoberta, a exploração e a perseverança, evitando elogios excessivos e repetitivos.
 

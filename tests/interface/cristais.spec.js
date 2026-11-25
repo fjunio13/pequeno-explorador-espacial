@@ -151,6 +151,28 @@ test("sair da escolha do numeral cancela a pista que aguardava", async ({ page }
   await expect(mission(page).locator("[data-help-focus], [data-guide]")).toHaveCount(0);
 });
 
+test("sinaliza a falta de áudio sem encobrir a ajuda e os numerais", async ({ page }) => {
+  await page.setViewportSize({ width: 568, height: 320 });
+  await page.route("**/assets/audio/*.mp3", (route) => route.abort());
+  await openCrystals(page);
+  await crystal(page, 0).tap();
+  for (let level = 1; level <= 3; level++) await button(page, "Ajuda").tap();
+
+  const listen = button(page, "Ouvir");
+  await expect(listen).toHaveAccessibleDescription(/Áudio indisponível/);
+  await expect(listen.locator(".sound-unavailable")).toBeVisible();
+  await expect(page.locator("#audio-status")).toHaveCSS("clip-path", "inset(50%)");
+  await expect(button(page, "1")).toHaveAttribute("data-guide", "");
+  await button(page, "1").tap();
+  await button(page, "Ligar estação").tap();
+  await expect(mission(page).locator("[data-instruction]")).toContainText("Coloque 3 cristais");
+
+  await page.unroute("**/assets/audio/*.mp3");
+  await listen.tap();
+  await expect.poll(() => audio(page).evaluate((node) => node.currentTime)).toBeGreaterThan(0);
+  await expect(listen.locator(".sound-unavailable")).toBeHidden();
+});
+
 test("energiza as três cargas e repete sem confirmação intermediária", async ({ page, baseURL }) => {
   test.slow();
   const failures = [];

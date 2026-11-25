@@ -173,7 +173,8 @@ test("o tutorial continua jogável sem áudio em paisagem", async ({ page }) => 
     await page.evaluate(() => document.fullscreenElement && document.exitFullscreen());
     await page.setViewportSize({ width, height });
     await openMission(page);
-    await expect(page.getByText("Áudio indisponível.", { exact: false })).toBeVisible();
+    await expect(button(page, "Ouvir")).toHaveAccessibleDescription(/Áudio indisponível/);
+    await expect(button(page, "Ouvir").locator(".sound-unavailable")).toBeVisible();
     await button(page, "Ajuda").tap();
     await expect(page.locator(".star-line")).toHaveAttribute("data-help-focus", "");
     await expect(page.locator('[data-suggested="true"]')).toHaveCount(0);

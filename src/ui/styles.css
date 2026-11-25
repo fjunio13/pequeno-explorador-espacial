@@ -140,19 +140,27 @@ button:focus-visible {
   text-align: center;
 }
 
-.audio-status:not([hidden]) {
+.audio-status {
   position: fixed;
-  z-index: 4;
-  inset: auto 0 calc(var(--safe-bottom) + 0.65rem);
-  inline-size: fit-content;
-  max-inline-size: calc(100% - 2rem);
-  margin-inline: auto;
-  padding: 0.6rem 1rem;
-  border: 1px solid #b098e572;
-  border-radius: 0.7rem;
-  color: var(--cream);
-  background: var(--ink);
-  pointer-events: none;
+  inset: 0 auto auto 0;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.sound-unavailable,
+[data-audio-unavailable] .sound-waves {
+  display: none;
+}
+
+[data-audio-unavailable] [data-action="listen"] svg {
+  color: var(--gold);
+}
+
+[data-audio-unavailable] .sound-unavailable {
+  display: inline;
 }
 
 .intro-screen {
