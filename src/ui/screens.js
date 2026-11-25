@@ -42,7 +42,10 @@ export function mapScreen(planets, visits, completed) {
       </div>
       <div class="map-layout">
         <div class="planet-grid" role="group" aria-label="Planetas">${destinations}</div>
-        ${canReply ? control("finale", "Responder ao sinal", "antenna", "primary") : ""}
+        <div class="map-actions">
+          ${control("workshop", "Oficina de Energia", "ship")}
+          ${canReply ? control("finale", "Responder ao sinal", "antenna", "primary") : ""}
+        </div>
       </div>
     </section>`;
 }

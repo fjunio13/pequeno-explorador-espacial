@@ -12,13 +12,14 @@
 | `assets/images/planeta-das-descobertas.webp` | Ilustração gerada no ChatGPT para o mapa, exportada em WebP com transparência |
 | `assets/images/vale-das-descobertas.webp` | Ilustração gerada no ChatGPT para o cenário da missão, a chegada e o desfecho, exportada em WebP |
 | `assets/images/luzinha.webp` | Criatura-luz gerada no ChatGPT para o grupo do vale, exportada em WebP com transparência |
+| `assets/images/oficina-da-nave.webp` | Cabine ilustrada gerada no ChatGPT para a chegada à oficina e a energização da nave, exportada em WebP |
 | Ícones, veículos, robô, elementos do cenário e animações em `src/ui/` e `src/activities/discoveries/` | Traçados e animações originais produzidos para o jogo |
 
 As ilustrações são gerações originais para este projeto. As imagens usam personagens e objetos fictícios. [Guia visual](guia-visual.md)
 
 ## Narração e efeitos
 
-As 51 falas em `assets/audio/` foram sintetizadas em português brasileiro com Piper TTS 1.8.0 e o modelo `pt_BR-faber-medium` na revisão `5ec43b186ef915a195d3ddbcfd9916e76c503c3f`. Os arquivos foram normalizados e exportados em MP3 mono a 22.050 Hz. A revisão de fluidez recortou os pedidos e acertos das Estrelas e a fala de energização dos Cristais. A integração narrativa regravou a abertura e as conclusões das Estrelas e dos Cristais. O catálogo reúne as três chegadas, as falas do vale e o desfecho. [Catálogo de áudio](../src/services/audio-catalog.js)
+As 83 falas em `assets/audio/` foram sintetizadas em português brasileiro com Piper TTS 1.8.0 e o modelo `pt_BR-faber-medium` na revisão `5ec43b186ef915a195d3ddbcfd9916e76c503c3f`. Os arquivos foram normalizados e exportados em MP3 mono a 22.050 Hz. A revisão de fluidez recortou os pedidos e acertos das Estrelas e a fala de energização dos Cristais. A integração narrativa regravou a abertura e as conclusões das Estrelas e dos Cristais. A oficina adicionou 32 falas e regravou a indicação de destinos do mapa. [Catálogo de áudio](../src/services/audio-catalog.js)
 
 O conjunto de treinamento da voz Faber é CC0, conforme a ficha do modelo. A voz-base dessa revisão é a do leitor 92, Cori Samuel, do conjunto Hi-Fi TTS sob CC BY 4.0. Créditos ao OHF-Voice, a Cori Samuel e aos autores do Hi-Fi TTS. O jogo distribui as falas sintetizadas e reproduz os MP3 locais. [Ficha da voz Faber](https://huggingface.co/rhasspy/piper-voices/blob/5ec43b186ef915a195d3ddbcfd9916e76c503c3f/pt/pt_BR/faber/medium/MODEL_CARD) · [Hi-Fi TTS](https://www.openslr.org/109/) · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
@@ -27,6 +28,8 @@ O efeito `desmarcar.mp3` e as três notas iniciais de `conclusao.mp3` são tons 
 Os efeitos `cristais-encaixe.mp3` e `cristais-retirar.mp3` usam a mesma técnica, com notas diferentes. A energização usa uma sequência original em `cristais-ligado.mp3`.
 
 O motivo do sinal usa dois tons breves de 660 Hz e um longo de 880 Hz com envelope suave. Ele abre `cristais-conclusao.mp3` e `descobertas-sinal.mp3`. Em `aventura-conclusao.mp3`, a nave e as luzinhas tocam o motivo uma vez cada.
+
+Os encaixes e as retiradas da oficina reutilizam os efeitos dos Cristais. As falas de resultado da oficina começam com duas notas sintetizadas para o jogo. Em `oficina-pronta.mp3`, quatro notas acompanham a iluminação da nave antes da fala.
 
 As três ilustrações do vale foram geradas com descrições de um planeta azul e lavanda com um vale âmbar, um cenário crepuscular com primeiro plano escuro e uma criatura luminosa de corpo dourado e asas lavanda. O [guia visual](guia-visual.md) descreve como as imagens se combinam na interface.
 

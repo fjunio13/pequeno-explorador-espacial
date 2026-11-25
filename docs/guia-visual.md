@@ -30,3 +30,9 @@ O brilho pequeno indica onde uma criatura está escondida. Ao revelar o esconder
 ## Pistas e conclusão
 
 O mapa usa uma seta dourada para a direção, uma antena menta para o padrão da estação e três luzes coral para a origem do sinal. Cada marca tem forma própria. O desfecho mostra a nave e as luzinhas nas duas pontas do padrão de luz.
+
+## Oficina de Energia
+
+O ícone da nave leva a uma cabine violeta com tubos menta e peças de cobre. O painel de jogo usa fileiras com cinco espaços e uma moldura para cada par de fileiras. Os módulos da bandeja repetem essa geometria em miniatura. O brilho separado do painel cheio permite reconhecer dez de relance.
+
+O dourado indica a carga pedida e o menta acompanha cada encaixe. No desafio de completar, as luzes iniciais aparecem em lavanda e permanecem fixas. Na comparação, os painéis partem da mesma forma e o realce indica as posições que diferem. A onda de luz na cabine marca a conclusão da visita.

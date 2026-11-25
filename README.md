@@ -24,6 +24,10 @@ O botão **Ouvir** repete a fala da tela. Na primeira visita, é possível esper
 
 Cada missão acrescenta uma pista ao mapa durante a sessão. Após a terceira, a nave responde ao sinal das luzinhas. A criança pode jogar qualquer missão de novo, voltar ao mapa ou rever a conclusão geral pelo botão **Responder ao sinal**.
 
+O botão com a nave abre a **Oficina de Energia**. Cada visita tem três desafios curtos. Monte a carga solicitada encaixando grupos e unidades, complete os espaços de um painel e compare duas cargas. Uma fileira cheia tem cinco luzes e duas fileiras formam um painel de dez. Por exemplo, 18 energias cabem em um painel cheio, uma fileira de cinco e três espaços do outro painel.
+
+A oficina começa em **6 a 10**, passa por **11 a 15** e chega a **16 a 20** à medida que as visitas são concluídas. **Mais desafios** abre a faixa seguinte ou uma variação ao chegar à última. **Repetir desafios** reinicia a mesma visita. O botão **Voltar ao mapa** está disponível o tempo todo.
+
 ## Verificar
 
 Use Node.js 24 e Python 3. Os dois primeiros comandos instalam a ferramenta de testes e o Chromium de teste.
@@ -40,7 +44,7 @@ Em Linux, se o Chromium precisar de bibliotecas de sistema, use `npx playwright 
 
 O GitHub Actions executa as verificações nos pull requests para `main` e nos pushes para essa branch.
 
-Os testes de lógica cobrem contagem, associação de números, transferência, acréscimo de uma unidade, pistas e conclusão. No Chromium com emulação de celular, o Playwright verifica toque, arraste, narração, cancelamento de gestos, layout em paisagem e o desfecho nas seis ordens possíveis de missões. A observação em um Android físico complementa os testes automatizados.
+Os testes de lógica cobrem contagem, associação de números, transferência, acréscimo de uma unidade, composição até vinte, complementos, comparações e pistas. No Chromium com emulação de celular, o Playwright verifica toque, arraste, narração, cancelamento de gestos, layout em paisagem, progressão da oficina e o desfecho nas seis ordens possíveis de missões. A observação em um Android físico complementa os testes automatizados.
 
 ## Documentação
 
@@ -50,4 +54,5 @@ Os testes de lógica cobrem contagem, associação de números, transferência, 
 - [Roteiro narrativo aprovado](docs/roteiro-narrativo.md)
 - [Registro dos recursos audiovisuais](docs/recursos-audiovisuais.md)
 - [Capturas da quinta entrega](docs/capturas-quinta-entrega.webp)
+- [Capturas da Oficina de Energia](docs/capturas-oficina-de-energia.webp)
 - [Instruções para agentes](AGENTS.md)

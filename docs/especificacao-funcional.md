@@ -44,6 +44,8 @@ Após concluir uma atividade, a criança vê e ouve a descoberta daquela missão
 
 A nave liga as missões de [A aventura do sinal de luz](roteiro-narrativo.md). Quando as três pistas são reunidas, a nave pisca para as luzinhas do vale e elas respondem. Todas as missões continuam disponíveis.
 
+No mapa, a nave dá acesso à Oficina de Energia a qualquer momento. A conclusão de uma visita acende os sistemas da nave. As três pistas da história são encontradas nos planetas.
+
 ### 2.3. Controles
 
 - Toque em objetos e botões.
@@ -88,6 +90,18 @@ O vale apresenta um grupo de criaturas-luz e três lugares para explorar. Ao toc
 A criança pode tocar nas criaturas para contar e escolher o numeral que representa o novo grupo. O grupo responde com luz e som, e a próxima exploração começa após o feedback. As três rodadas mostram a passagem de 1 para 2, de 3 para 4 e de 4 para 5, com esconderijos diferentes a cada visita.
 
 As pistas indicam o lugar que brilha, apoiam a recontagem e destacam o numeral quando necessário. A criança continua responsável por explorar o lugar e escolher a quantidade.
+
+### Oficina de Energia
+
+**Objetivo** — relacionar numerais de 6 a 20 a grupos visuais, construir quantidades e perceber diferenças entre elas.
+
+Cada visita tem três desafios. Em **Montar a carga**, a criança encaixa e retira módulos inteiros de cinco ou dez e unidades individuais. O painel da nave mostra a quantidade solicitada e o painel ao lado muda com os toques. Uma mesma quantidade aceita combinações diferentes.
+
+Em **Completar o painel**, algumas posições já estão acesas. A criança escolhe um grupo que preencha os espaços livres ou acrescenta unidades. Nas primeiras faixas o painel comporta dez luzes. Na última faixa, um painel cheio acompanha o segundo até ambos somarem vinte.
+
+Em **Comparar cargas**, dois painéis com as mesmas dimensões exibem quantidades distintas. A instrução pede a carga com mais ou menos energia. Após a escolha correta ou durante a ajuda, os numerais e a diferença entre as posições ajudam a interpretar o resultado.
+
+As faixas **6 a 10**, **11 a 15** e **16 a 20** avançam com a conclusão de visitas, independentemente das tentativas. A montagem e a comparação variam dentro da faixa. A criança pode repetir a mesma sequência ou voltar ao mapa entre desafios. Os grupos visuais e as pistas orientam as escolhas, e a próxima rodada começa após a fala e uma breve pausa. Uma correção durante o resultado cancela a passagem.
 
 ### Progressão
 
