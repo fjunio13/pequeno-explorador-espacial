@@ -7,26 +7,32 @@ export function startCounting({ targets, starCount }) {
     throw new RangeError("Use alvos de 1 a 5 dentro da quantidade de estrelas disponíveis.");
   }
 
-  return { targets: [...targets], starCount, round: 0, selected: [], attempts: 0, confirmed: false };
+  return { targets: [...targets], starCount, round: 0, selected: [], attempts: 0 };
 }
 
 export function targetFor(state) {
   return state.targets[state.round];
 }
 
+export function hasTarget(state) {
+  return state.selected.length === targetFor(state);
+}
+
 export function toggleStar(state, index) {
-  if (state.confirmed || !Number.isInteger(index) || index < 0 || index >= state.starCount) {
+  if (!Number.isInteger(index) || index < 0 || index >= state.starCount) {
     return state;
   }
 
   const selected = state.selected.includes(index)
     ? state.selected.filter((star) => star !== index)
     : [...state.selected, index];
-  return { ...state, selected };
+  const addedTooMany = selected.length > state.selected.length && selected.length > targetFor(state);
+  const attempts = addedTooMany ? Math.min(state.attempts + 1, guidedAfter) : state.attempts;
+  return { ...state, selected, attempts };
 }
 
 export function supportFor(state) {
-  if (state.confirmed || state.attempts === 0) return "none";
+  if (hasTarget(state) || state.attempts === 0) return "none";
   if (state.attempts === 1) return "retry";
   if (state.attempts < guidedAfter) return "hint";
   return "guided";
@@ -44,17 +50,19 @@ export function suggestedStar(state) {
     .find((index) => !state.selected.includes(index));
 }
 
-export function checkCount(state) {
-  if (state.confirmed) return state;
-  if (state.selected.length === targetFor(state)) return { ...state, confirmed: true };
+export function requestHelp(state) {
+  if (hasTarget(state)) return state;
+  const attempts = Math.min(Math.max(state.attempts + 1, 2), guidedAfter);
+  return { ...state, attempts };
+}
 
-  if (supportFor(state) === "guided") return toggleStar(state, suggestedStar(state));
-  return { ...state, attempts: state.attempts + 1 };
+export function demonstrateStar(state) {
+  return supportFor(state) === "guided" ? toggleStar(state, suggestedStar(state)) : state;
 }
 
 export function nextRound(state) {
-  if (!state.confirmed) return state;
+  if (!hasTarget(state)) return state;
   if (state.round + 1 === state.targets.length) return null;
 
-  return { ...state, round: state.round + 1, selected: [], attempts: 0, confirmed: false };
+  return { ...state, round: state.round + 1, selected: [], attempts: 0 };
 }

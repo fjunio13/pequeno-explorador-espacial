@@ -1,36 +1,94 @@
 import { audioUrl } from "./audio-catalog.js";
 
+const playbackTimeout = 6000;
+
 export function createAudioService(player, showUnavailable) {
   let instruction;
-  let playback = 0;
+  let current;
 
-  async function play(id) {
+  function play(id) {
     const source = audioUrl(id);
-    const request = ++playback;
+    current?.finish(false);
     showUnavailable(false);
     player.pause();
     player.src = source;
 
-    try {
-      await player.play();
-      return request === playback;
-    } catch {
-      if (request === playback) showUnavailable(true);
-      return false;
+    const listeners = new AbortController();
+    const options = { signal: listeners.signal };
+    let resolve;
+    let timer;
+    const finished = new Promise((done) => { resolve = done; });
+
+    function finish(played, unavailable = false) {
+      if (current?.finish !== finish) return;
+      current = undefined;
+      listeners.abort();
+      clearTimeout(timer);
+      if (unavailable) {
+        player.pause();
+        showUnavailable(true);
+      }
+      resolve(played);
     }
+
+    function unavailable() {
+      finish(false, true);
+    }
+
+    function waitForProgress() {
+      clearTimeout(timer);
+      timer = setTimeout(unavailable, playbackTimeout);
+    }
+
+    current = { id, finished, finish };
+    player.addEventListener("ended", () => {
+      if (player.ended) finish(true);
+    }, options);
+    player.addEventListener("error", () => {
+      if (player.error) unavailable();
+    }, options);
+    player.addEventListener("timeupdate", waitForProgress, options);
+    waitForProgress();
+
+    try {
+      player.play().catch(unavailable);
+    } catch {
+      unavailable();
+    }
+    return finished;
   }
 
-  function instruct(id, { playNow = true } = {}) {
-    instruction = id;
-    if (playNow) return play(id);
+  function playIfIdle(id) {
+    if (!current) return play(id);
+  }
+
+  function interrupt(id) {
+    if (current?.id !== id) return;
+    current.finish(false);
+    player.pause();
+  }
+
+  async function playAfterCurrent(cue) {
+    while (current && instruction === cue) await current.finished;
+    return instruction === cue && play(cue.id);
+  }
+
+  function instruct(id, { playNow = true, afterCurrent = false } = {}) {
+    const cue = { id };
+    instruction = cue;
+    if (!playNow) return;
+    if (!afterCurrent || !current) return play(id);
+
+    if (current.id === id) return current.finished;
+    return playAfterCurrent(cue);
   }
 
   function repeat() {
-    if (instruction) return play(instruction);
+    if (instruction) return instruct(instruction.id);
   }
 
   function stop() {
-    playback++;
+    current?.finish(false);
     instruction = undefined;
     showUnavailable(false);
     player.pause();
@@ -40,5 +98,5 @@ export function createAudioService(player, showUnavailable) {
     }
   }
 
-  return { play, instruct, repeat, stop };
+  return { play, playIfIdle, interrupt, instruct, repeat, stop };
 }

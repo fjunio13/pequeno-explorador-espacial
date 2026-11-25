@@ -17,6 +17,7 @@ O objetivo é estimular a curiosidade, o raciocínio e a compreensão inicial de
 - **Desafios alcançáveis** — oferecer dificuldade progressiva e ajuda quando necessário.
 - **Ausência de punições** — não utilizar vidas, cronômetros, classificações ou mensagens negativas por erros.
 - **Simplicidade** — priorizar uma experiência curta, intuitiva e visualmente agradável.
+- **Fluidez** — reagir imediatamente aos gestos, tornar perceptíveis as consequências e avançar naturalmente após o feedback. Reservar os toques para escolhas e ações significativas, com espaço para ouvir, corrigir e pedir ajuda.
 
 O jogo não terá publicidade, compras, cadastros ou funcionalidades sociais.
 
@@ -64,6 +65,8 @@ A criança deverá localizar e selecionar a quantidade solicitada de estrelas. P
 
 O jogo deverá ajudar a relacionar cada objeto selecionado à sequência de contagem, e o último número à quantidade total.
 
+A rodada avança após a fala de acerto e uma breve pausa. A criança pode corrigir a seleção durante esse intervalo. Se alterar a quantidade, o jogo cancela a passagem e mantém a rodada.
+
 ### Planeta 2 — Cristais
 
 **Objetivo** — associar símbolos numéricos a quantidades concretas.
@@ -73,6 +76,8 @@ A criança deverá arrastar cristais para recipientes identificados com números
 **Faixa inicial** — números de 1 a 5.
 
 O sistema deverá permitir experimentar, corrigir escolhas e receber pistas.
+
+A quantidade certa abre a escolha do numeral. Alterar a carga cancela a escolha anterior. A criança liga a estação com um toque e vê o efeito antes de o jogo seguir à próxima carga.
 
 ### Planeta 3 — Descobertas
 

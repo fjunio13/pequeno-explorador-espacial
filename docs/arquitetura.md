@@ -51,7 +51,9 @@ Os módulos `mountStars` e `mountCrystals` recebem `{ container, configuration, 
 
 Os botões nativos recebem toque, mouse e teclado pela ativação do evento `click`. A área de toque e os estados de seleção, foco e pista são definidos pela interface.
 
-Nos Cristais, os Pointer Events acompanham a peça até qualquer ponto da área de destino. Soltar fora dela ou cancelar o gesto devolve a peça à origem. Um toque sem deslocamento transfere a peça na soltura. Os controles que mantêm a criança na atividade aceitam a soltura logo após um arraste. A troca de tela e a ativação pelo teclado usam o clique nativo. A função de encerramento libera a captura do ponteiro e remove os eventos.
+Nos Cristais, os Pointer Events acompanham a peça até qualquer ponto da área de destino. Soltar fora dela ou cancelar o gesto devolve a peça à origem. Um toque sem deslocamento transfere a peça na soltura. Os controles que mantêm a criança na atividade aceitam a soltura logo após um arraste. O retorno ao mapa e a ativação pelo teclado usam o clique nativo.
+
+As duas atividades usam `round-advance.js` para avançar após o feedback existente e 650 ms de pausa visual. Se o áudio estiver indisponível, o resultado permanece visível por 1,4 s. Repetir a fala de acerto ou de energização renova a espera. Mudar a seleção nas Estrelas cancela a passagem pendente. Ao trocar de tela, a função de encerramento cancela a transição e remove os eventos. Nos Cristais, ela também libera a captura do ponteiro.
 
 Adicionar um novo planeta não deverá exigir modificar a lógica interna dos planetas existentes.
 
@@ -76,9 +78,9 @@ Evitar abstrações excessivamente genéricas. As três atividades poderão comp
 
 `src/main.js` inicia o jogo. `src/core/game.js` registra os planetas, encaminha a seleção para o módulo correspondente e guarda as conclusões por identificador. A ação **Jogar de novo** inicia a missão do planeta que acabou de ser concluído. `src/ui/` contém as telas, os controles e os estilos.
 
-`src/activities/stars/` implementa a contagem de estrelas. Em `src/activities/crystals/`, `logic.js` controla quantidade, pistas e a liberação da estação. `drag.js` cuida dos gestos, e `index.js` liga as regras à tela e ao áudio. A criança confirma a carga, associa o numeral e aciona a energia em passos distintos.
+`src/activities/stars/` implementa a contagem de estrelas. Em `src/activities/crystals/`, `logic.js` controla quantidade, pistas e a liberação da estação. `drag.js` cuida dos gestos, e `index.js` liga as regras à tela e ao áudio. A quantidade certa apresenta os numerais. A criança associa o número e aciona a energia em passos distintos.
 
-`src/services/audio.js` controla um único elemento de áudio. Cada nova mensagem interrompe a anterior. O catálogo em `src/services/audio-catalog.js` associa os identificadores aos arquivos locais e o botão **Ouvir** repete a instrução atual.
+`src/services/audio.js` controla um único elemento de áudio. Instruções prioritárias podem aguardar a fala em curso. Ações rápidas podem dispensar pequenos efeitos enquanto há voz ativa. A conclusão da fala usa o evento `ended`. Em caso de erro ou de reprodução sem progresso, a apresentação visual conduz a atividade. O catálogo em `src/services/audio-catalog.js` associa os identificadores aos arquivos locais e o botão **Ouvir** repete a instrução atual.
 
 O [guia visual](guia-visual.md) registra a direção de arte. O [registro audiovisual](recursos-audiovisuais.md) reúne a origem das ilustrações, falas e efeitos.
 

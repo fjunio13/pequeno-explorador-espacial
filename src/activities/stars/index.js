@@ -1,7 +1,12 @@
 import { bindActions, control, icon } from "../../ui/controls.js";
-import { checkCount, nextRound, startCounting, suggestedStar, supportFor, targetFor, toggleStar } from "./logic.js";
+import { createRoundAdvance } from "../round-advance.js";
+import {
+  demonstrateStar, hasTarget, nextRound, requestHelp, startCounting, suggestedStar, supportFor,
+  targetFor, toggleStar,
+} from "./logic.js";
 
 const hintMessages = {
+  retry: "tentar-novamente",
   hint: "pista",
   guided: "contar-juntos",
 };
@@ -13,12 +18,12 @@ function starButton(index) {
   </button>`;
 }
 
-function activityMarkup({ starCount, targets }) {
-  const stars = Array.from({ length: starCount }, (_, index) => starButton(index)).join("");
+function activityMarkup({ targets, starCount }) {
   const progress = targets.map(() => '<span aria-hidden="true"></span>').join("");
+  const stars = Array.from({ length: starCount }, (_, index) => starButton(index)).join("");
 
   return `
-    <section class="screen mission-screen" data-screen="mission">
+    <section class="screen mission-screen" data-screen="mission" data-planet="stars">
       <header class="screen-toolbar mission-toolbar">
         ${control("map", "Voltar ao mapa", "back")}
         <h1 tabindex="-1">Planeta das Estrelas</h1>
@@ -35,58 +40,75 @@ function activityMarkup({ starCount, targets }) {
             <p class="count-total" data-count></p>
             <p class="count-note" role="status" data-feedback></p>
           </div>
-          ${control("verify", "Conferir", "check", "primary")}
+          ${control("help", "Ajuda", "help")}
         </div>
       </div>
     </section>`;
 }
 
 function instructionFor(state) {
-  if (state.confirmed) return `acerto-${targetFor(state)}`;
-
-  const hint = hintMessages[supportFor(state)];
-  if (!hint) return `pedido-${targetFor(state)}`;
-  return state.selected.length === targetFor(state) ? "conferir-agora" : hint;
+  return hintMessages[supportFor(state)] ?? `pedido-${targetFor(state)}`;
 }
 
 function feedbackFor(state) {
-  if (state.confirmed) return "Você encontrou a quantidade certa!";
-  const support = supportFor(state);
-  if (support === "retry") return "Vamos contar de novo?";
-  if (support === "none") return "";
-  if (state.selected.length === targetFor(state)) return "Agora, toque em Conferir.";
-  if (support === "hint") return "Veja a estrela que está brilhando.";
-  return "Vamos contar juntos.";
+  if (hasTarget(state)) return "Você encontrou a quantidade certa!";
+  switch (supportFor(state)) {
+    case "retry":
+      return state.selected.length > targetFor(state)
+        ? "Toque de novo para desmarcar uma estrela."
+        : "Vamos contar de novo?";
+    case "hint":
+      return "Veja a estrela que está brilhando.";
+    case "guided":
+      return "Vamos contar juntos.";
+    default:
+      return "";
+  }
 }
 
 export function mountStars({ container, configuration, audio, onComplete, onReturn }) {
   let state = startCounting(configuration);
   container.innerHTML = activityMarkup(state);
 
-  const buttons = [...container.querySelectorAll("[data-star]")];
   const stage = container.querySelector(".count-stage");
-  const target = container.querySelector("[data-target]");
-  const unit = container.querySelector("[data-unit]");
-  const count = container.querySelector("[data-count]");
-  const feedback = container.querySelector("[data-feedback]");
-  const progress = container.querySelector("[data-progress]");
-  const verify = container.querySelector('[data-action="verify"]');
+  const sky = stage.querySelector(".star-line");
+  const buttons = [...sky.children];
+  const target = stage.querySelector("[data-target]");
+  const unit = stage.querySelector("[data-unit]");
+  const count = stage.querySelector("[data-count]");
+  const feedback = stage.querySelector("[data-feedback]");
+  const progress = stage.querySelector("[data-progress]");
+  const help = stage.querySelector('[data-action="help"]');
+  const gestures = new AbortController();
+  let pressedRound;
+  sky.addEventListener("pointerdown", (event) => {
+    if (event.isPrimary && event.button === 0) pressedRound = state.round;
+  }, { signal: gestures.signal });
+
+  const transition = createRoundAdvance(() => {
+    state = nextRound(state);
+    if (!state) {
+      onComplete();
+      return;
+    }
+
+    startRound();
+  });
 
   function render() {
     const amount = targetFor(state);
-    const support = supportFor(state);
+    const matched = hasTarget(state);
     const suggestion = suggestedStar(state);
-    const ready = state.selected.length === amount;
-    const lastRound = state.round + 1 === state.targets.length;
+    const countTogether = supportFor(state) === "guided";
 
     target.textContent = amount;
     unit.textContent = amount === 1 ? "estrela" : "estrelas";
     count.textContent = `${state.selected.length} de ${amount}`;
     feedback.textContent = feedbackFor(state);
-    stage.dataset.confirmed = String(state.confirmed);
+    stage.dataset.matched = String(matched);
     progress.setAttribute("aria-label", `Rodada ${state.round + 1} de ${state.targets.length}`);
     for (const [index, dot] of [...progress.children].entries()) {
-      dot.dataset.status = index < state.round || (index === state.round && state.confirmed)
+      dot.dataset.status = index < state.round || (index === state.round && matched)
         ? "done"
         : index === state.round ? "active" : "waiting";
     }
@@ -94,58 +116,76 @@ export function mountStars({ container, configuration, audio, onComplete, onRetu
     for (const [index, button] of buttons.entries()) {
       const position = state.selected.indexOf(index);
       button.setAttribute("aria-pressed", String(position >= 0));
-      button.disabled = state.confirmed;
       button.dataset.suggested = String(index === suggestion);
       button.querySelector(".star-number").textContent = position < 0 ? "" : String(position + 1);
     }
 
-    let label = "Conferir";
-    if (state.confirmed) label = lastRound ? "Concluir" : "Continuar";
-    else if (support === "guided" && !ready) label = "Contar juntos";
-    verify.innerHTML = `${icon(state.confirmed ? "next" : "check")}<span>${label}</span>`;
-    verify.dataset.suggested = String(!state.confirmed && ready && suggestion === null && Boolean(hintMessages[support]));
+    if (matched && document.activeElement === help) {
+      buttons[state.selected.at(-1)].focus({ preventScroll: true });
+    }
+    help.disabled = matched;
+    help.querySelector("span").textContent = countTogether ? "Contar juntos" : "Ajuda";
   }
 
-  function speakCount() {
-    const selection = state.selected.length;
-    audio.instruct(instructionFor(state), { playNow: false });
-    audio.play(selection ? `contagem-${selection}` : "desmarcar");
-  }
-
-  function pick(button) {
-    state = toggleStar(state, Number(button.dataset.star));
+  function startRound() {
     render();
-    speakCount();
+    audio.instruct(instructionFor(state));
   }
 
-  function verifyCount() {
-    if (state.confirmed) {
-      state = nextRound(state);
-      if (!state) {
-        onComplete();
-        return;
-      }
-      render();
-      audio.instruct(instructionFor(state));
+  function applySelection(next) {
+    if (state === next) return;
+
+    const matched = hasTarget(state);
+    const supportChanged = supportFor(next) !== supportFor(state);
+    state = next;
+    transition.cancel();
+    render();
+
+    const success = `acerto-${targetFor(state)}`;
+    if (hasTarget(state)) {
+      transition.schedule(audio.instruct(success, { afterCurrent: true }));
       return;
     }
 
-    const previousCount = state.selected.length;
-    state = checkCount(state);
-    render();
+    if (matched) audio.interrupt(success);
+    if (supportChanged && supportFor(state) !== "none") {
+      audio.instruct(instructionFor(state), { afterCurrent: true });
+      return;
+    }
 
-    if (state.selected.length !== previousCount) speakCount();
-    else if (supportFor(state) === "retry") audio.play("tentar-novamente");
-    else audio.instruct(instructionFor(state));
+    if (matched) audio.instruct(instructionFor(state), { playNow: false });
+    const selection = state.selected.length;
+    audio.playIfIdle(selection ? `contagem-${selection}` : "desmarcar");
+  }
+
+  function askForHelp() {
+    if (supportFor(state) === "guided") {
+      applySelection(demonstrateStar(state));
+      return;
+    }
+
+    state = requestHelp(state);
+    render();
+    audio.instruct(instructionFor(state), { afterCurrent: true });
   }
 
   const unbind = bindActions(container, {
-    star: pick,
-    verify: verifyCount,
-    listen: audio.repeat,
+    star: (button, event) => {
+      // Um toque iniciado durante a celebração não conta para a rodada seguinte.
+      if (event.detail !== 0 && pressedRound !== state.round) return;
+      applySelection(toggleStar(state, Number(button.dataset.star)));
+    },
+    help: askForHelp,
+    listen: () => {
+      const replay = audio.repeat();
+      if (hasTarget(state)) transition.schedule(replay);
+    },
     map: onReturn,
   });
-  render();
-  audio.instruct(instructionFor(state));
-  return unbind;
+  startRound();
+  return () => {
+    transition.cancel();
+    gestures.abort();
+    unbind();
+  };
 }

@@ -27,25 +27,30 @@ export function moveCrystal(state, id, destination) {
     return state;
   }
 
-  const loaded = state.loaded.includes(id);
+  const wasLoaded = state.loaded.includes(id);
+  const adding = destination === "generator" && !wasLoaded;
+  const removing = destination === "reserve" && wasLoaded;
+  if (!adding && !removing) return state;
+
+  const loaded = adding
+    ? [...state.loaded, id]
+    : state.loaded.filter((crystal) => crystal !== id);
+  const target = targetFor(state);
+  if (loaded.length === target) return { ...state, loaded, attempts: 0, phase: "number" };
+
   const attempts = state.phase === "collect" ? state.attempts : 0;
-  if (destination === "generator" && !loaded) {
-    return { ...state, phase: "collect", attempts, loaded: [...state.loaded, id] };
-  }
-  if (destination === "reserve" && loaded) {
-    return { ...state, phase: "collect", attempts, loaded: state.loaded.filter((crystal) => crystal !== id) };
-  }
-  return state;
+  const excess = adding && loaded.length > target ? 1 : 0;
+  return { ...state, loaded, attempts: Math.min(attempts + excess, helpLimit), phase: "collect" };
 }
 
 function tryAgain(state) {
-  return { ...state, attempts: Math.min(state.attempts + 1, helpLimit) };
+  if (state.attempts === helpLimit) return state;
+  return { ...state, attempts: state.attempts + 1 };
 }
 
-export function confirmLoad(state) {
+export function requestHelp(state) {
   if (state.phase !== "collect") return state;
-  if (state.loaded.length !== targetFor(state)) return tryAgain(state);
-  return { ...state, attempts: 0, phase: "number" };
+  return { ...state, attempts: Math.min(Math.max(state.attempts + 1, 2), helpLimit) };
 }
 
 export function chooseNumber(state, number) {

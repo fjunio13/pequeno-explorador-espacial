@@ -84,9 +84,11 @@ export function bindCrystalDrag(screen, move) {
 
   // O ponteiro já foi tratado na soltura. A ativação por teclado continua pelo clique nativo.
   screen.addEventListener("click", (event) => {
-    if (event.detail === 0 || event.pointerId !== ignoredClick || ignoredClick === undefined) return;
-    ignoredClick = undefined;
-    event.stopPropagation();
+    if (event.detail === 0) return;
+    if (event.pointerId === ignoredClick || event.target.closest("[data-crystal]")) {
+      ignoredClick = undefined;
+      event.stopPropagation();
+    }
   }, { ...options, capture: true });
 
   return () => {

@@ -246,6 +246,10 @@
   display: none;
 }
 
+.crystal-footer {
+  min-block-size: 3rem;
+}
+
 .crystal-buttons,
 .crystal-numbers:not([hidden]) {
   display: flex;
