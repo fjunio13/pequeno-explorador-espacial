@@ -73,15 +73,13 @@ A rodada avança após a fala de acerto e uma breve pausa. A criança pode corri
 
 ### Planeta 2 — Cristais
 
-**Objetivo** — associar símbolos numéricos a quantidades concretas.
+**Objetivo** — associar os numerais de 1 a 5 a quantidades concretas e comparar pequenos grupos.
 
-A criança deverá arrastar cristais para recipientes identificados com números ou escolher o recipiente correspondente à quantidade apresentada.
+A visita tem cinco desafios. A criança monta uma carga com o gerador vazio, completa uma carga parcial, retira cristais em excesso, compara dois geradores e resolve uma variação final. As visitas variam a quantidade solicitada e a carga inicial. As interações usam os cristais e os encaixes do gerador.
 
-**Faixa inicial** — números de 1 a 5.
+Na montagem e nas correções, a criança move qualquer peça entre o gerador e a reserva por toque ou arraste. A ajuda distingue encaixes vazios e peças em excesso. A quantidade certa abre a escolha do numeral. Alterar a carga cancela a escolha anterior. A criança usa o botão com o raio para energizar a estação.
 
-O sistema deverá permitir experimentar, corrigir escolhas e receber pistas.
-
-A ajuda na coleta distingue encaixes que faltam e cristais em excesso. A quantidade certa abre a escolha do numeral com ajuda para observar e contar as peças no gerador. Alterar a carga cancela a escolha anterior. Depois de selecionar o numeral, a criança pode pedir ajuda para localizar o botão com o raio e precisa acioná-lo para energizar a estação.
+Na comparação, a criança toca diretamente no gerador com mais ou menos cristais, conforme a fala. Os dois têm a mesma arte, cinco encaixes alinhados e cristais do mesmo tamanho. A ajuda começa pelos dois grupos, mostra os pares e depois destaca as diferenças nos mesmos encaixes dos dois lados. O acerto acende o gerador escolhido e prepara a próxima rodada.
 
 ### Planeta 3 — Descobertas
 

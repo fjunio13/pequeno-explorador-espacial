@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { initialCrystalRoute, openCrystalChallenge, solveCrystalChallenge } from "./cristais-rodadas.js";
 import { readStarAmount, tapStars } from "./estrelas-rodadas.js";
 
 const mission = (page) => page.locator(".crystal-screen");
@@ -165,7 +166,7 @@ test("sinaliza a falta de áudio sem encobrir a ajuda e os numerais", async ({ p
   await expect(button(page, "1")).toHaveAttribute("data-guide", "");
   await button(page, "1").tap();
   await button(page, "Ligar estação").tap();
-  await expect(mission(page).locator("[data-instruction]")).toContainText("Coloque 3 cristais");
+  await expect(mission(page).locator("[data-instruction]")).toHaveText("Complete o gerador com 3 cristais");
 
   await page.unroute("**/assets/audio/*.mp3");
   await listen.tap();
@@ -173,14 +174,14 @@ test("sinaliza a falta de áudio sem encobrir a ajuda e os numerais", async ({ p
   await expect(listen.locator(".sound-unavailable")).toBeHidden();
 });
 
-test("energiza as três cargas e repete sem confirmação intermediária", async ({ page, baseURL }) => {
+test("resolve os cinco desafios e repete sem confirmação intermediária", async ({ page, baseURL }) => {
   test.slow();
   const failures = [];
   page.on("pageerror", (error) => failures.push(error.message));
   page.on("response", (response) => {
     if (response.status() >= 400 || !response.url().startsWith(baseURL)) failures.push(response.url());
   });
-  await openCrystals(page);
+  await openCrystals(page, 3);
   await page.evaluate(() => {
     const player = document.querySelector("#game-audio");
     window.finishedCues = [];
@@ -189,10 +190,10 @@ test("energiza as três cargas e repete sem confirmação intermediária", async
 
   await generator(page).locator(".station-art img").evaluate((image) => image.decode());
   await expect.poll(() => audio(page).evaluate((node) => node.currentTime)).toBeGreaterThan(0);
-  const amounts = [1, 3, 5];
-  for (const amount of amounts) {
-    await expect(mission(page).locator("[data-instruction]")).toContainText(`Coloque ${amount}`, { timeout: 10000 });
-    await completeCharge(page, amount);
+  for (const [index, challenge] of initialCrystalRoute.entries()) {
+    await openCrystalChallenge(page, index + 1);
+    await solveCrystalChallenge(page, challenge);
+    await expect(button(page, "Continuar")).toHaveCount(0);
   }
 
   await expect(page.locator('[data-screen="complete"]')).toHaveAttribute("data-planet", "crystals");
@@ -202,8 +203,10 @@ test("energiza as três cargas e repete sem confirmação intermediária", async
   await page.locator('[data-screen="complete"] .story-picture img').evaluate((image) => image.decode());
 
   const finished = await page.evaluate(() => window.finishedCues);
-  expect(finished.filter((name) => name === "cristais-ligado.mp3")).toHaveLength(3);
-  for (const amount of amounts) expect(finished).toContain(`cristais-pedido-${amount}.mp3`);
+  expect(finished.filter((name) => name === "cristais-ligado.mp3")).toHaveLength(4);
+  for (const cue of ["pedido-1", "completar-3", "reduzir-2", "comparar-mais", "comparacao-certa", "completar-5"]) {
+    expect(finished).toContain(`cristais-${cue}.mp3`);
+  }
 
   await button(page, "Jogar de novo").tap();
   await expect(mission(page).locator("[data-instruction]")).toContainText("2 cristais");
@@ -223,6 +226,72 @@ test("energiza as três cargas e repete sem confirmação intermediária", async
   await expect(button(page, "Planeta das Estrelas")).toHaveAttribute("data-completed", "true");
   await expect(button(page, "Planeta dos Cristais")).toHaveAttribute("data-completed", "true");
   expect(failures).toEqual([]);
+});
+
+test("completa uma carga e corrige a retirada de um cristal a mais", async ({ page }) => {
+  await openCrystals(page, 4);
+  await solveCrystalChallenge(page, initialCrystalRoute[0]);
+  await openCrystalChallenge(page, 2);
+  await expect(generator(page).locator("[data-crystal]")).toHaveCount(1);
+  await expect(generator(page).locator("[data-requested]:not([data-filled])")).toHaveCount(2);
+  await button(page, "Ajuda").tap();
+  await button(page, "Ajuda").tap();
+  await expect(generator(page).locator("[data-load-hint]:not([data-filled])")).toHaveCount(2);
+  const session = await page.context().newCDPSession(page);
+  await dragTouch(session, crystal(page, 1), generator(page));
+  await expect(mission(page)).toHaveAttribute("data-loaded", "2");
+  await crystal(page, 2).tap();
+  await button(page, "3").tap();
+  await button(page, "Ligar estação").tap();
+
+  await openCrystalChallenge(page, 3);
+  await expect(generator(page).locator("[data-crystal]")).toHaveCount(5);
+  await expect(reserve(page).locator("[data-crystal]")).toHaveCount(0);
+  for (let level = 0; level < 3; level++) await button(page, "Ajuda").tap();
+  await expect(generator(page).locator("[data-crystal][data-guide]")).toHaveCount(1);
+  await dragTouch(session, crystal(page, 4), reserve(page));
+  for (const id of [3, 2, 1]) await crystal(page, id).tap();
+  await expect(mission(page)).toHaveAttribute("data-loaded", "1");
+  await expect(reserve(page).locator("[data-crystal]")).toHaveCount(4);
+  for (let level = 0; level < 3; level++) await button(page, "Ajuda").tap();
+  await expect(reserve(page).locator("[data-crystal][data-guide]")).toHaveCount(1);
+  await crystal(page, 4).tap();
+  await expect(mission(page)).toHaveAttribute("data-phase", "number");
+  await expect(generator(page).locator("[data-crystal]")).toHaveCount(2);
+  await session.detach();
+});
+
+test("compara geradores, corrige a escolha e cancela o avanço ao sair", async ({ page }) => {
+  await openCrystals(page, 3);
+  for (const [index, challenge] of initialCrystalRoute.slice(0, 3).entries()) {
+    await openCrystalChallenge(page, index + 1);
+    await solveCrystalChallenge(page, challenge);
+  }
+  await openCrystalChallenge(page, 4);
+  const comparison = mission(page).locator(".crystal-comparison");
+  const left = button(page, "Gerador da esquerda, 4 cristais");
+  const right = button(page, "Gerador da direita, 2 cristais");
+  await expect(mission(page).locator("[data-instruction]")).toHaveText("Qual gerador tem mais cristais?");
+  await button(page, "Ajuda").tap();
+  await expect(comparison.locator("[data-help-focus]")).toHaveCount(2);
+  await right.tap();
+  await expect(comparison.locator("[data-pair]")).toHaveCount(4);
+  await button(page, "Ajuda").tap();
+  await expect(comparison.locator("[data-difference]")).toHaveCount(4);
+  await expect(comparison.locator("[data-chosen], [data-guide]")).toHaveCount(0);
+  await button(page, "Ouvir").tap();
+  await expect(audio(page)).toHaveAttribute("src", /cristais-comparar-mais\.mp3$/);
+  await left.tap();
+  await expect(left).toHaveAttribute("data-chosen", "");
+  await expect(button(page, "1")).toHaveCount(0);
+  await expect(button(page, "Ligar estação")).toHaveCount(0);
+  await button(page, "Ouvir").tap();
+  await expect(audio(page)).toHaveAttribute("src", /cristais-comparacao-certa\.mp3$/);
+  await button(page, "Voltar ao mapa").tap();
+  await expect(audio(page)).toHaveAttribute("src", /mapa\.mp3$/);
+  await expect.poll(() => audio(page).evaluate((node) => node.ended)).toBe(true);
+  await expect(mission(page)).toHaveCount(0);
+  await expect(button(page, "Planeta dos Cristais")).toHaveAttribute("data-completed", "false");
 });
 
 test("sair durante a energização cancela a passagem pendente", async ({ page }) => {
@@ -271,11 +340,12 @@ test("cancela o arraste fora do alvo e limpa o ponteiro ao sair no meio do gesto
 });
 
 test("encaixa as fases e os controles em celulares horizontais estreitos", async ({ page }) => {
+  test.slow();
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const [width, height] of [[568, 320], [667, 375], [780, 360]]) {
     await page.evaluate(() => document.fullscreenElement && document.exitFullscreen());
     await page.setViewportSize({ width, height });
-    await openCrystals(page);
+    await openCrystals(page, 4);
     const snapshot = () => page.evaluate(() => ({
       width: document.documentElement.scrollWidth,
       height: document.documentElement.scrollHeight,
@@ -303,5 +373,19 @@ test("encaixa as fases e os controles em celulares horizontais estreitos", async
     await fit();
     await button(page, "Ligar estação").tap();
     await fit();
+    for (const round of [2, 3]) {
+      await openCrystalChallenge(page, round);
+      await fit();
+      await solveCrystalChallenge(page, initialCrystalRoute[round - 1]);
+    }
+    await openCrystalChallenge(page, 4);
+    for (let level = 0; level < 3; level++) await button(page, "Ajuda").tap();
+    await fit();
+    const gems = await mission(page).locator(".crystal-compare-generator .crystal-socket img").evaluateAll(
+      (images) => images.map((image) => [image.offsetWidth, image.offsetHeight]),
+    );
+    expect(gems).toHaveLength(6);
+    expect(gems.every(([width, height]) => width >= 32 && height >= 32)).toBe(true);
+    expect(Math.max(...gems.map(([width]) => width)) - Math.min(...gems.map(([width]) => width))).toBeLessThanOrEqual(1);
   }
 });

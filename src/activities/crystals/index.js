@@ -1,8 +1,9 @@
-import { bindActions, control } from "../../ui/controls.js";
+import { bindActions, control, icon } from "../../ui/controls.js";
 import { createRoundAdvance } from "../round-advance.js";
 import { bindCrystalDrag } from "./drag.js";
 import {
-  chooseNumber, crystalCount, energize, moveCrystal, nextCharge, requestHelp,
+  challengeFor, chooseGenerator, chooseNumber, crystalCount, energize, isChallengeDone,
+  moveCrystal, nextCharge, requestHelp,
   startCrystals, suggestedTransfer, targetFor,
 } from "./logic.js";
 
@@ -22,6 +23,23 @@ function crystalButton(id) {
   button.dataset.crystal = id;
   button.innerHTML = `<img src="${gem}" alt="" draggable="false">`;
   return button;
+}
+
+function comparisonMarkup(loads) {
+  return loads.map((load, side) => {
+    const name = side === 0 ? "esquerda" : "direita";
+    const sockets = Array.from({ length: crystalCount }, (_, index) =>
+      index < load
+        ? `<span class="crystal-socket" data-filled><img src="${gem}" alt="" draggable="false"></span>`
+        : '<span class="crystal-socket"></span>').join("");
+    return `
+      <button type="button" class="crystal-compare-generator" data-action="compare" data-side="${side}"
+        aria-label="Gerador da ${name}, ${load} ${load === 1 ? "cristal" : "cristais"}">
+        <span class="crystal-compare-label" aria-hidden="true">${icon("tap")} Gerador</span>
+        <span class="station-art"><img src="${station}" alt="" draggable="false"></span>
+        <span class="crystal-sockets" aria-hidden="true">${sockets}</span>
+      </button>`;
+  }).join("");
 }
 
 function activityMarkup(rounds) {
@@ -55,6 +73,7 @@ function activityMarkup(rounds) {
             <div class="crystal-sockets">${slots(true)}</div>
           </section>
         </div>
+        <div class="crystal-comparison" role="group" aria-label="Compare os geradores" hidden></div>
         <div class="crystal-footer">
           <p class="crystal-feedback" role="status" data-crystal-feedback></p>
           <div class="crystal-numbers" role="group" aria-label="Escolha a quantidade" hidden>${numbers}</div>
@@ -70,7 +89,17 @@ function activityMarkup(rounds) {
 
 function feedbackFor(state) {
   const { phase, attempts, loaded } = state;
+  const challenge = challengeFor(state);
   switch (phase) {
+    case "compare": {
+      const cue = challenge.relation === "more" ? "cristais-comparar-mais" : "cristais-comparar-menos";
+      if (attempts === 3) return { cue, note: "Observe os encaixes dourados nos dois geradores." };
+      if (attempts === 2) return { cue: "cristais-comparar-pares", note: "Compare os encaixes, um de cada lado." };
+      if (attempts === 1) return { cue, note: "Observe os cristais nos dois geradores." };
+      return { cue, note: "" };
+    }
+    case "compared":
+      return { cue: "cristais-comparacao-certa", note: "Você encontrou o gerador pedido!" };
     case "number":
       if (attempts === 3) return { cue: "cristais-pista-numero", note: "Veja o número que brilha." };
       if (attempts === 2) return { cue: "cristais-revisar-numero", note: "Conte os cristais do gerador." };
@@ -88,16 +117,32 @@ function feedbackFor(state) {
     return excess ? { cue: "cristais-sobram", note: "Devolva o cristal que brilha." }
       : { cue: "cristais-faltam", note: "Coloque o cristal que brilha." };
   }
-  if (excess) return { cue: "cristais-excesso", note: "Devolva um cristal à reserva." };
+  if (excess) {
+    const cue = challenge.initial > target && attempts < 2 ? `cristais-reduzir-${target}` : "cristais-excesso";
+    const note = challenge.initial > target ? "Devolva os cristais que sobram." : "Devolva um cristal à reserva.";
+    return { cue, note };
+  }
   if (attempts === 2) return { cue: "cristais-espacos", note: "Veja os encaixes que faltam." };
-  return { cue: `cristais-pedido-${target}`, note: attempts ? "Veja os encaixes do gerador." : "" };
+  const cue = challenge.initial > 0 && challenge.initial < target
+    ? `cristais-completar-${target}` : `cristais-pedido-${target}`;
+  return { cue, note: attempts ? "Veja os encaixes do gerador." : "" };
+}
+
+function collectPrompt({ initial, target }, loaded) {
+  if (loaded.length > target && initial > target) {
+    return `Retire cristais até ficar com ${target}`;
+  }
+  if (initial > 0 && initial < target) return `Complete o gerador com ${target} cristais`;
+  return `Coloque ${target} ${target === 1 ? "cristal" : "cristais"} no gerador`;
 }
 
 export function mountCrystals({ container, configuration, audio, onComplete, onReturn }) {
   let state = startCrystals(configuration);
-  container.innerHTML = activityMarkup(state.targets.length);
+  container.innerHTML = activityMarkup(state.challenges.length);
 
   const screen = container.querySelector(".crystal-screen");
+  const workbench = screen.querySelector(".crystal-workbench");
+  const comparison = screen.querySelector(".crystal-comparison");
   const generatorZone = screen.querySelector('[data-zone="generator"]');
   const reserve = [...screen.querySelectorAll('[data-zone="reserve"] .crystal-socket')];
   const generator = [...generatorZone.querySelectorAll(".crystal-socket")];
@@ -126,15 +171,20 @@ export function mountCrystals({ container, configuration, audio, onComplete, onR
 
   function render() {
     const { phase, loaded, round, attempts } = state;
+    const challenge = challengeFor(state);
     const target = targetFor(state);
     const suggestion = suggestedTransfer(state);
     const powered = phase === "powered";
+    const done = isChallengeDone(state);
     const focused = document.activeElement;
 
     screen.dataset.phase = phase;
     screen.dataset.loaded = loaded.length;
-    brief.textContent = {
-      collect: `Coloque ${target} ${target === 1 ? "cristal" : "cristais"} no gerador`,
+    workbench.hidden = challenge.type === "compare";
+    comparison.hidden = !workbench.hidden;
+    brief.textContent = phase === "collect" ? collectPrompt(challenge, loaded) : {
+      compare: challenge.relation === "more" ? "Qual gerador tem mais cristais?" : "Qual gerador tem menos cristais?",
+      compared: "O gerador acendeu!",
       number: "Quantos cristais estão no gerador?",
       activate: "A carga está pronta!",
       powered: "A estação acendeu!",
@@ -142,9 +192,9 @@ export function mountCrystals({ container, configuration, audio, onComplete, onR
     generatorStatus.textContent = powered ? "Ligado" : phase === "activate" ? "Carga pronta" : "Desligado";
     feedback.textContent = feedbackFor(state).note;
     generatorZone.toggleAttribute("data-help-focus", (phase === "collect" || phase === "number") && attempts === 1);
-    progress.setAttribute("aria-label", `Carga ${round + 1} de ${state.targets.length}`);
+    progress.setAttribute("aria-label", `Desafio ${round + 1} de ${state.challenges.length}`);
     for (const [index, dot] of [...progress.children].entries()) {
-      dot.dataset.status = index < round || (index === round && powered)
+      dot.dataset.status = index < round || (index === round && done)
         ? "done"
         : index === round ? "active" : "waiting";
     }
@@ -168,14 +218,31 @@ export function mountCrystals({ container, configuration, audio, onComplete, onR
     }
 
     numberGrid.hidden = phase !== "number";
-    actions.hidden = powered;
+    actions.hidden = done;
     power.hidden = phase !== "activate";
     power.toggleAttribute("data-guide", phase === "activate" && attempts > 0);
     for (const [index, button] of numberButtons.entries()) {
       button.toggleAttribute("data-guide", phase === "number" && attempts >= 3 && index + 1 === loaded.length);
     }
 
-    if (focused === power && power.hidden) listen.focus({ preventScroll: true });
+    if (challenge.type === "compare") {
+      const low = Math.min(...challenge.loads);
+      const high = Math.max(...challenge.loads);
+      for (const [side, button] of [...comparison.children].entries()) {
+        button.disabled = done;
+        button.toggleAttribute("data-help-focus", !done && attempts === 1);
+        button.toggleAttribute("data-chosen", done && side === state.chosen);
+        const sockets = button.querySelectorAll(".crystal-socket");
+        for (const [index, socket] of [...sockets].entries()) {
+          socket.toggleAttribute("data-pair", !done && attempts === 2 && index < low);
+          socket.toggleAttribute("data-difference", !done && attempts === 3 && index >= low && index < high);
+        }
+      }
+    }
+
+    if ((focused === power && power.hidden) || (done && comparison.contains(focused))) {
+      listen.focus({ preventScroll: true });
+    }
     else if (numberButtons.includes(focused) && phase === "activate") power.focus({ preventScroll: true });
     else if (pieces.includes(focused) && !powered) focused.focus({ preventScroll: true });
   }
@@ -200,6 +267,15 @@ export function mountCrystals({ container, configuration, audio, onComplete, onR
     audio.instruct(feedbackFor(state).cue, { afterCurrent: true });
   }
 
+  function compareGenerators(button) {
+    const next = chooseGenerator(state, Number(button.dataset.side));
+    if (next === state && state.phase !== "compare") return;
+    state = next;
+    render();
+    const narration = audio.instruct(feedbackFor(state).cue, { afterCurrent: true });
+    if (isChallengeDone(state)) transition.schedule(narration);
+  }
+
   function powerStation() {
     if (state.phase !== "activate") return;
     state = energize(state);
@@ -216,7 +292,9 @@ export function mountCrystals({ container, configuration, audio, onComplete, onR
 
   function startCharge() {
     for (const piece of pieces) piece.remove();
-    pieces = reserve.map((_, index) => crystalButton(index));
+    const challenge = challengeFor(state);
+    comparison.innerHTML = challenge.type === "compare" ? comparisonMarkup(challenge.loads) : "";
+    pieces = challenge.type === "charge" ? reserve.map((_, index) => crystalButton(index)) : [];
     render();
     audio.instruct(feedbackFor(state).cue);
   }
@@ -225,10 +303,11 @@ export function mountCrystals({ container, configuration, audio, onComplete, onR
     map: onReturn,
     listen: () => {
       const replay = audio.repeat();
-      if (state.phase === "powered") transition.schedule(replay);
+      if (isChallengeDone(state)) transition.schedule(replay);
     },
     power: powerStation,
     number: verifyNumber,
+    compare: compareGenerators,
     crystal: (piece) => move(Number(piece.dataset.crystal),
       piece.closest("[data-zone]").dataset.zone === "reserve" ? "generator" : "reserve"),
     help: askForHelp,

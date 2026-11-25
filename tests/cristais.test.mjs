@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  chooseNumber, crystalConfiguration, energize, moveCrystal, nextCharge,
+  challengeFor, chooseGenerator, chooseNumber, crystalConfiguration, energize, moveCrystal, nextCharge,
   requestHelp, startCrystals, suggestedTransfer, targetFor,
 } from "../src/activities/crystals/logic.js";
 
@@ -10,19 +10,44 @@ function fill(state, amount) {
   return state;
 }
 
-test("as duas rotas curtas incluem todas as quantidades de 1 a 5", () => {
-  const first = crystalConfiguration(0).targets;
-  const second = crystalConfiguration(1).targets;
-  assert.equal(first.length, 3);
-  assert.equal(second.length, 3);
-  assert.deepEqual([...new Set([...first, ...second])].sort(), [1, 2, 3, 4, 5]);
-  for (const targets of [[], [0], [6], [2.5]]) {
-    assert.throws(() => startCrystals({ targets }), RangeError);
+const charge = (target, initial = 0) => ({ type: "charge", target, initial });
+const compare = (loads, relation = "more") => ({ type: "compare", loads, relation });
+
+test("as visitas têm cinco situações válidas e equilibram relação e lado", () => {
+  const layouts = [];
+  const targets = new Set();
+  const positions = new Set();
+  for (let visit = 0; visit < 4; visit++) {
+    const { challenges } = crystalConfiguration(visit);
+    const [build, complete, excess, comparison, final] = challenges;
+    assert.equal(challenges.length, 5);
+    assert.equal(build.initial, 0);
+    assert.ok(complete.initial > 0 && complete.initial < complete.target);
+    assert.ok(excess.initial > excess.target);
+    assert.equal(comparison.type, "compare");
+    assert.equal(final.type, "charge");
+    assert.notEqual(final.target, excess.target);
+    startCrystals({ challenges });
+    for (const challenge of [build, complete, excess, final]) targets.add(challenge.target);
+    const [left, right] = comparison.loads;
+    positions.add(`${comparison.relation}:${left > right ? "left" : "right"}`);
+    layouts.push(JSON.stringify(challenges));
   }
+  assert.equal(new Set(layouts).size, 4);
+  assert.equal(positions.size, 4);
+  assert.deepEqual([...targets].sort(), [1, 2, 3, 4, 5]);
+  assert.deepEqual(crystalConfiguration(4), crystalConfiguration(0));
+});
+
+test("rejeita configurações sem ação, quantidades impossíveis e comparações inválidas", () => {
+  for (const challenges of [
+    [], [charge(0)], [charge(6)], [charge(2.5)], [charge(3, 3)], [charge(4, 6)],
+    [compare([2, 2])], [compare([0, 3])], [compare([2, 6])], [compare([2, 3], "equal")],
+  ]) assert.throws(() => startCrystals({ challenges }), RangeError);
 });
 
 test("abre os numerais ao atingir a carga certa e cancela a escolha ao reorganizar", () => {
-  const start = startCrystals({ targets: [2] });
+  const start = startCrystals({ challenges: [charge(2)] });
   const loaded = fill(start, 2);
   assert.deepEqual(start.loaded, []);
   assert.deepEqual(loaded.loaded, [0, 1]);
@@ -39,7 +64,7 @@ test("abre os numerais ao atingir a carga certa e cancela a escolha ao reorganiz
 });
 
 test("a ajuda distingue falta e excesso sem transferir cristais", () => {
-  let guided = startCrystals({ targets: [3] });
+  let guided = startCrystals({ challenges: [charge(3)] });
   for (const level of [1, 2, 3, 3]) {
     guided = requestHelp(guided);
     assert.equal(guided.attempts, level);
@@ -54,7 +79,7 @@ test("a ajuda distingue falta e excesso sem transferir cristais", () => {
   }
   assert.equal(suggestedTransfer(guided), null);
 
-  const excess = requestHelp(fill(startCrystals({ targets: [3] }), 5));
+  const excess = requestHelp(fill(startCrystals({ challenges: [charge(3)] }), 5));
   assert.equal(excess.phase, "collect");
   assert.deepEqual(suggestedTransfer(excess), { id: 4, destination: "reserve" });
   assert.equal(requestHelp(excess), excess);
@@ -64,7 +89,7 @@ test("a ajuda distingue falta e excesso sem transferir cristais", () => {
 });
 
 test("pedir ajuda no numeral e na ativação mantém a ação explícita da criança", () => {
-  let state = fill(startCrystals({ targets: [2] }), 2);
+  let state = fill(startCrystals({ challenges: [charge(2)] }), 2);
   for (const level of [1, 2, 3]) {
     state = requestHelp(state);
     assert.equal(state.phase, "number");
@@ -84,7 +109,7 @@ test("pedir ajuda no numeral e na ativação mantém a ação explícita da cria
 
 test("só libera a energização com a quantidade e o número corretos", () => {
   for (let count = 1; count <= 5; count++) {
-    const initial = startCrystals({ targets: [count] });
+    const initial = startCrystals({ challenges: [charge(count)] });
     const numbers = fill(initial, count);
     assert.equal(numbers.phase, "number");
     assert.equal(energize(numbers), numbers);
@@ -106,14 +131,70 @@ test("só libera a energização com a quantidade e o número corretos", () => {
   }
 });
 
-test("pede uma nova carga a cada rodada e conclui somente após a última energização", () => {
+test("completa e reduz usando apenas os cinco cristais, com correção em ambas as direções", () => {
+  let state = startCrystals({ challenges: [charge(4, 2), charge(3, 5)] });
+  assert.deepEqual(state.loaded, [0, 1]);
+  state = moveCrystal(state, 1, "reserve");
+  assert.deepEqual(state.loaded, [0]);
+  state = fill(state, 4);
+  assert.equal(state.phase, "number");
+
+  state = nextCharge(energize(chooseNumber(state, 4)));
+  assert.deepEqual(state.loaded, [0, 1, 2, 3, 4]);
+  assert.equal(moveCrystal(state, 5, "generator"), state);
+  assert.equal(nextCharge(state), state);
+  for (let level = 0; level < 3; level++) state = requestHelp(state);
+  assert.deepEqual(suggestedTransfer(state), { id: 4, destination: "reserve" });
+  state = moveCrystal(moveCrystal(state, 4, "reserve"), 1, "reserve");
+  assert.equal(state.phase, "number");
+  state = moveCrystal(state, 2, "reserve");
+  assert.equal(state.phase, "collect");
+  state = moveCrystal(state, 4, "generator");
+  assert.deepEqual(state.loaded, [0, 3, 4]);
+  assert.equal(nextCharge(energize(chooseNumber(state, 3))), null);
+});
+
+test("compara mais e menos nos dois lados e permite corrigir sem confirmar", () => {
+  for (const relation of ["more", "less"]) {
+    for (const loads of [[2, 4], [4, 2]]) {
+      const state = startCrystals({ challenges: [compare(loads, relation)] });
+      const correct = (loads[0] > loads[1]) === (relation === "more") ? 0 : 1;
+      const firstHint = requestHelp(state);
+      assert.equal(firstHint.attempts, 1);
+      const wrong = chooseGenerator(firstHint, 1 - correct);
+      assert.equal(wrong.phase, "compare");
+      assert.equal(wrong.attempts, 2);
+      assert.equal(nextCharge(wrong), wrong);
+      assert.equal(moveCrystal(wrong, 0, "generator"), wrong);
+      assert.equal(chooseNumber(wrong, 2), wrong);
+      const guided = requestHelp(wrong);
+      assert.equal(guided.phase, "compare");
+      assert.equal(guided.chosen, undefined);
+      const solved = chooseGenerator(guided, correct);
+      assert.equal(solved.chosen, correct);
+      assert.equal(solved.phase, "compared");
+      assert.equal(nextCharge(solved), null);
+    }
+  }
+});
+
+test("avança os cinco desafios e encerra somente após resolver a rodada final", () => {
   const configuration = crystalConfiguration(0);
   let state = startCrystals(configuration);
-  for (const target of configuration.targets) {
+  for (const challenge of configuration.challenges) {
+    assert.deepEqual(challengeFor(state), challenge);
+    assert.equal(nextCharge(state), state);
+    if (challenge.type === "compare") {
+      state = nextCharge(chooseGenerator(state, 0));
+      continue;
+    }
+
+    const { initial, target } = challenge;
     assert.equal(targetFor(state), target);
-    assert.equal(state.phase, "collect");
-    assert.deepEqual(state.loaded, []);
-    state = nextCharge(energize(chooseNumber(fill(state, target), target)));
+    assert.equal(state.loaded.length, initial);
+    if (initial < target) state = fill(state, target);
+    else for (let id = target; id < initial; id++) state = moveCrystal(state, id, "reserve");
+    state = nextCharge(energize(chooseNumber(state, target)));
   }
   assert.equal(state, null);
 });
