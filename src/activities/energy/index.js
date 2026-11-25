@@ -25,7 +25,7 @@ function board(challenge) {
     return loads.map((load, side) => `
       <button class="energy-panel energy-side" type="button" data-action="choose" data-value="${side}"
         aria-pressed="false" aria-label="Carga da ${side === 0 ? "esquerda" : "direita"}">
-        <span class="energy-panel-heading"><span>Carga ${side === 0 ? "A" : "B"}</span>
+        <span class="energy-panel-heading"><span>${icon("tap")} Carga ${side === 0 ? "A" : "B"}</span>
           <strong data-comparison-number hidden>${load}</strong></span>
         <span class="energy-frames" aria-hidden="true">${frames(load, capacity)}</span>
       </button>`).join("");

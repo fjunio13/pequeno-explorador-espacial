@@ -44,6 +44,8 @@ Em Linux, se o Chromium precisar de bibliotecas de sistema, use `npx playwright 
 
 O GitHub Actions executa as verificações nos pull requests para `main` e nos pushes para essa branch.
 
+O workflow de publicação é acionado manualmente para a revisão aprovada da `main`. A abertura do pacote para o Pages mostra o identificador da revisão. [Publicação e atualização](docs/publicacao.md)
+
 Os testes de lógica cobrem contagem, associação de números, transferência, acréscimo de uma unidade, composição até vinte, complementos, comparações e pistas. No Chromium com emulação de celular, o Playwright verifica toque, arraste, narração, cancelamento de gestos, layout em paisagem, progressão da oficina e o desfecho nas seis ordens possíveis de missões. A observação em um Android físico complementa os testes automatizados.
 
 ## Documentação
@@ -55,4 +57,5 @@ Os testes de lógica cobrem contagem, associação de números, transferência, 
 - [Registro dos recursos audiovisuais](docs/recursos-audiovisuais.md)
 - [Capturas da quinta entrega](docs/capturas-quinta-entrega.webp)
 - [Capturas da Oficina de Energia](docs/capturas-oficina-de-energia.webp)
+- [Prontidão para a versão 1.0](docs/prontidao-versao-1.md)
 - [Instruções para agentes](AGENTS.md)

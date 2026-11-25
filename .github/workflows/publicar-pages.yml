@@ -1,0 +1,68 @@
+name: Publicar revisão no GitHub Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      revisao:
+        description: SHA completo da main aprovado para publicação
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  conferir-revisao:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Conferir branch e revisão autorizada
+        env:
+          REVISAO_APROVADA: ${{ inputs.revisao }}
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ] || [ "$REVISAO_APROVADA" != "$GITHUB_SHA" ]; then
+            echo "Selecione a main e informe o SHA completo que está na ponta dela." >&2
+            exit 1
+          fi
+
+  verificar:
+    needs: conferir-revisao
+    uses: ./.github/workflows/verificacoes.yml
+
+  preparar:
+    needs: verificar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+      - name: Preparar arquivos versionados
+        run: node scripts/preparar-pages.mjs "$GITHUB_SHA"
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  publicar:
+    needs: preparar
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deploy
+      - name: Registrar o endereço da revisão
+        env:
+          PAGE_URL: ${{ steps.deploy.outputs.page_url }}
+        run: |
+          printf 'Revisão publicada %s\n\n[Abrir esta revisão](%s/revisoes/%s/)\n' \
+            "$GITHUB_SHA" "${PAGE_URL%/}" "$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"

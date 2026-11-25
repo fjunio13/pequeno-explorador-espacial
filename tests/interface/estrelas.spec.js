@@ -21,6 +21,23 @@ function observeAudio(page) {
   });
 }
 
+function clickAfterFeedback(page, cue, action) {
+  return player(page).evaluate((audio, { cue, action }) => {
+    audio.addEventListener("ended", function onEnded() {
+      if (!audio.currentSrc.endsWith(`/${cue}.mp3`)) return;
+      audio.removeEventListener("ended", onEnded);
+
+      // Execute após os ouvintes da mídia e antes da pausa de troca de rodada.
+      setTimeout(() => {
+        const round = document.querySelector("[data-target]")?.textContent;
+        const button = document.querySelector(`button[data-action="${action}"]`);
+        button?.click();
+        window.feedbackClick = { cue, round, clicked: Boolean(button) };
+      }, 0);
+    });
+  }, { cue, action });
+}
+
 test("joga as cinco rodadas por toque e avança depois de ouvir a contagem", async ({ page, baseURL }) => {
   const errors = [];
   const external = [];
@@ -101,22 +118,22 @@ test("corrige um toque após o acerto e pede ajuda sem conferir a rodada", async
 test("renova a pausa com Ouvir e cancela a passagem ao sair", async ({ page }) => {
   await openMission(page);
   await observeAudio(page);
+  await clickAfterFeedback(page, "acerto-1", "listen");
   await star(page, 1).tap();
-  await expect(player(page)).toHaveAttribute("src", /acerto-1\.mp3$/);
-  await expect.poll(() => player(page).evaluate((node) => node.ended)).toBe(true);
-  await expect(target(page)).toHaveText("1");
 
-  await button(page, "Ouvir").tap();
-  await expect.poll(() => player(page).evaluate((node) => !node.ended && node.currentTime > 0)).toBe(true);
-  await expect(target(page)).toHaveText("1");
+  await expect.poll(() => page.evaluate(() => window.feedbackClick)).toEqual({
+    cue: "acerto-1", round: "1", clicked: true,
+  });
   await expect(target(page)).toHaveText("2");
   expect(await page.evaluate(() => window.completedAudio.filter((file) => file === "acerto-1.mp3"))).toHaveLength(2);
 
+  await clickAfterFeedback(page, "acerto-2", "map");
   await star(page, 1).tap();
   await star(page, 2).tap();
-  await expect(player(page)).toHaveAttribute("src", /acerto-2\.mp3$/);
-  await expect.poll(() => player(page).evaluate((node) => node.ended), { intervals: [50, 100, 150] }).toBe(true);
-  await button(page, "Voltar ao mapa").tap();
+  await expect.poll(() => page.evaluate(() => window.feedbackClick)).toEqual({
+    cue: "acerto-2", round: "2", clicked: true,
+  });
+  await expect(page.getByRole("heading", { name: "Mapa espacial" })).toBeVisible();
   await button(page, "Planeta dos Cristais").tap();
   await button(page, "Pular apresentação").tap();
   await expect(player(page)).toHaveAttribute("src", /cristais-pedido-1\.mp3$/);
