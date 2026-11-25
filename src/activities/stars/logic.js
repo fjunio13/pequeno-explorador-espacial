@@ -1,5 +1,22 @@
 const guidedAfter = 3;
 
+export function starConfiguration(visit = 0, random = Math.random) {
+  const targets = [2, 3, 4, 5];
+  // Alternar o número repetido garante uma sequência diferente da visita anterior.
+  const repeated = targets[visit % targets.length];
+  for (let end = targets.length - 1; end > 0; end--) {
+    const index = Math.floor(random() * (end + 1));
+    [targets[end], targets[index]] = [targets[index], targets[end]];
+  }
+
+  const repeatedIndex = targets.indexOf(repeated);
+  const slots = Array.from({ length: targets.length + 1 }, (_, index) => index)
+    .filter((index) => index !== repeatedIndex && index !== repeatedIndex + 1);
+  targets.splice(slots[Math.floor(random() * slots.length)], 0, repeated);
+
+  return { targets: [1, ...targets], starCount: 5 };
+}
+
 export function startCounting({ targets, starCount }) {
   if (!Number.isInteger(starCount) || starCount < 1 || starCount > 5 ||
       !Array.isArray(targets) || targets.length === 0 ||

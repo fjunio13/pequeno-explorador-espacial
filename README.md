@@ -16,15 +16,15 @@ No Windows, use `py -3` no lugar de `python3`. Abra [a página inicial](http://1
 
 Toque em **Começar** e escolha um planeta no mapa. O mesmo toque pede tela cheia nos navegadores compatíveis.
 
-- **Estrelas** — toque para selecionar ou desmarcar estrelas. Ao atingir a quantidade pedida, o jogo diz o total e prepara a próxima rodada. Toque de novo para corrigir a seleção enquanto o resultado permanece na tela.
+- **Estrelas** — toque para selecionar ou desmarcar estrelas. A primeira das seis rodadas pede uma estrela. As demais pedem de duas a cinco em ordem variável. Ao atingir a quantidade pedida, o jogo diz o total e prepara a próxima rodada. Toque de novo para corrigir a seleção enquanto o resultado permanece na tela.
 - **Cristais** — arraste ou toque para mover os cristais entre a reserva e o gerador. A quantidade certa abre as opções de número. Escolha o numeral e ligue a estação. O jogo avança após a estação acender. As três cargas alternam entre **1, 3, 5** e **2, 4, 5** a cada entrada.
-- **Descobertas** — explore a pedra, a flor e o arco do vale. No lugar que brilha, sai mais uma luzinha, que voa até o grupo. Conte as que ficaram juntas e toque no numeral para ver e ouvir a resposta delas. Os três grupos começam com **1, 3 e 4** luzinhas.
+- **Descobertas** — explore a pedra, a flor e o arco do vale. No lugar que brilha, sai mais uma luzinha, que voa até o grupo. As luzinhas visíveis têm um brilho suave para facilitar a contagem. Toque no numeral para ver e ouvir a resposta do grupo. Os três grupos começam com **1, 3 e 4** luzinhas.
 
 O botão **Ouvir** repete a fala da tela. Na primeira visita, é possível esperar a chegada narrada ou pular para a missão. O ícone de livro no mapa permite rever uma chegada. As três missões oferecem pistas progressivas e ajuda guiada.
 
-Cada missão acrescenta uma pista ao mapa durante a sessão. Após a terceira, a nave responde ao sinal das luzinhas. A criança pode jogar qualquer missão de novo, voltar ao mapa ou rever a conclusão geral pelo botão **Responder ao sinal**.
+Cada missão acrescenta uma pista ao mapa durante a sessão. **Próxima missão** oferece um planeta que ainda está pendente. **Jogar de novo** e **Voltar ao mapa** continuam disponíveis. Após a terceira pista, a nave responde ao sinal das luzinhas. O mapa permite escolher qualquer planeta e rever a conclusão geral pelo botão **Responder ao sinal**.
 
-O botão com a nave abre a **Oficina de Energia**. Cada visita tem três desafios curtos. Monte a carga solicitada encaixando grupos e unidades, complete os espaços de um painel e compare duas cargas. Uma fileira cheia tem cinco luzes e duas fileiras formam um painel de dez. Por exemplo, 18 energias cabem em um painel cheio, uma fileira de cinco e três espaços do outro painel.
+O botão com a nave abre a **Oficina de Energia**. Cada visita tem três desafios curtos. Monte a carga solicitada encaixando grupos e unidades, preencha os espaços contornados para completar o painel e compare duas cargas. Uma fileira cheia tem cinco luzes e duas fileiras formam um painel de dez. Por exemplo, 18 energias cabem em um painel cheio, uma fileira de cinco e três espaços do outro painel.
 
 A oficina começa em **6 a 10**, passa por **11 a 15** e chega a **16 a 20** à medida que as visitas são concluídas. **Mais desafios** abre a faixa seguinte ou uma variação ao chegar à última. **Repetir desafios** reinicia a mesma visita. O botão **Voltar ao mapa** está disponível o tempo todo.
 
@@ -58,4 +58,6 @@ Os testes de lógica cobrem contagem, associação de números, transferência, 
 - [Capturas da quinta entrega](docs/capturas-quinta-entrega.webp)
 - [Capturas da Oficina de Energia](docs/capturas-oficina-de-energia.webp)
 - [Prontidão para a versão 1.0](docs/prontidao-versao-1.md)
+- [Capturas da oitava entrega](docs/capturas-oitava-entrega/)
+- [Plano de evolução](docs/plano-evolucao.md)
 - [Instruções para agentes](AGENTS.md)

@@ -110,7 +110,13 @@ export function arrivalScreen(planet) {
     </section>`;
 }
 
-export function completeScreen(planet) {
+export function completeScreen(planet, nextPlanet) {
+  const next = nextPlanet ? `
+    <button class="button button--primary next-mission" type="button" data-action="next-mission"
+      data-planet="${nextPlanet.id}" aria-description="${nextPlanet.name}">
+      <img src="${nextPlanet.image}" alt="">
+      <span>Próxima missão</span>${icon("next")}
+    </button>` : "";
   return `
     <section class="screen sky-screen story-screen complete-screen" data-screen="complete" data-planet="${planet.id}">
       <div class="screen-toolbar screen-toolbar--end">${control("listen", "Ouvir", "sound")}</div>
@@ -121,7 +127,8 @@ export function completeScreen(planet) {
             ${icon(planet.discovery.symbol)} ${planet.discovery.text}
           </p>
           <div class="mission-links">
-            ${control("mission", "Jogar de novo", "repeat", "primary")}
+            ${next}
+            ${control("mission", "Jogar de novo", "repeat")}
             ${control("map", "Voltar ao mapa", "back")}
           </div>
         </div>

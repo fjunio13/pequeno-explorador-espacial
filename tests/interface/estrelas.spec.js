@@ -1,12 +1,14 @@
 import { expect, test } from "@playwright/test";
+import { readStarAmount, starRound, tapStars } from "./estrelas-rodadas.js";
 
 const button = (page, name) => page.getByRole("button", { name, exact: true });
 const star = (page, index) => button(page, `Estrela ${index}`);
 const target = (page) => page.locator("[data-target]");
 const player = (page) => page.locator("#game-audio");
 
-async function openMission(page) {
+async function openMission(page, playbackRate = 1) {
   await page.goto("./");
+  await player(page).evaluate((audio, rate) => { audio.defaultPlaybackRate = rate; }, playbackRate);
   await button(page, "Começar").tap();
   await button(page, "Planeta das Estrelas").tap();
   await button(page, "Pular apresentação").tap();
@@ -38,7 +40,8 @@ function clickAfterFeedback(page, cue, action) {
   }, { cue, action });
 }
 
-test("joga as cinco rodadas por toque e avança depois de ouvir a contagem", async ({ page, baseURL }) => {
+test("joga seis rodadas, avança após ouvir a contagem e varia ao repetir", async ({ page, baseURL }) => {
+  test.slow();
   const errors = [];
   const external = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -49,15 +52,18 @@ test("joga as cinco rodadas por toque e avança depois de ouvir a contagem", asy
     if (!request.url().startsWith(baseURL)) external.push(request.url());
   });
 
-  await openMission(page);
+  await openMission(page, 2);
   await observeAudio(page);
   await expect(player(page)).toHaveAttribute("src", /pedido-1\.mp3$/);
   await expect.poll(() => player(page).evaluate((node) => node.currentTime)).toBeGreaterThan(0);
   await expect(button(page, "Conferir")).toHaveCount(0);
   await expect(button(page, "Continuar")).toHaveCount(0);
 
-  for (let amount = 1; amount <= 5; amount++) {
-    await expect(target(page)).toHaveText(String(amount), { timeout: 9000 });
+  const targets = [];
+  await expect(page.getByRole("group", { name: "Estrelas para contar" }).getByRole("button")).toHaveCount(5);
+  for (let round = 1; round <= 6; round++) {
+    const amount = await readStarAmount(page, round);
+    targets.push(amount);
     await expect(page.locator("[data-count]")).toHaveText(`0 de ${amount}`);
     for (let index = 1; index <= amount; index++) {
       await star(page, index).tap();
@@ -72,13 +78,24 @@ test("joga as cinco rodadas por toque e avança depois de ouvir a contagem", asy
 
   await expect(page.getByRole("heading", { name: "Missão concluída!" })).toBeVisible();
   await expect(player(page)).toHaveAttribute("src", /conclusao\.mp3$/);
-  const expected = Array.from({ length: 5 }, (_, index) =>
-    [`pedido-${index + 1}.mp3`, `acerto-${index + 1}.mp3`]).flat();
+  expect(targets[0]).toBe(1);
+  expect([...new Set(targets.slice(1))].sort()).toEqual([2, 3, 4, 5]);
+  expect(targets.every((amount, index) => amount !== targets[index - 1])).toBe(true);
+  const expected = targets.flatMap((amount) => [`pedido-${amount}.mp3`, `acerto-${amount}.mp3`]);
   const spokenRounds = await page.evaluate(() => window.completedAudio.filter((name) => /^(pedido|acerto)-/.test(name)));
   expect(spokenRounds).toEqual(expected);
 
+  await player(page).evaluate((audio) => { audio.defaultPlaybackRate = 4; });
   await button(page, "Jogar de novo").tap();
   await expect(page.locator("[data-count]")).toHaveText("0 de 1");
+  const replay = [];
+  for (let round = 1; round <= 6; round++) {
+    const amount = await readStarAmount(page, round);
+    replay.push(amount);
+    await tapStars(page, amount);
+  }
+  expect(replay).not.toEqual(targets);
+  await expect(page.getByRole("heading", { name: "Missão concluída!" })).toBeVisible();
   await button(page, "Voltar ao mapa").tap();
   await expect(page.getByRole("heading", { name: "Mapa espacial" })).toBeVisible();
   await expect(player(page)).toHaveAttribute("src", /mapa\.mp3$/);
@@ -112,7 +129,7 @@ test("corrige um toque após o acerto e pede ajuda sem conferir a rodada", async
   await button(page, "Ouvir").tap();
   await expect(player(page)).toHaveAttribute("src", /acerto-1\.mp3$/);
   await expect(target(page)).toHaveText("1");
-  await expect(target(page)).toHaveText("2", { timeout: 8500 });
+  await expect(starRound(page, 2)).toBeVisible({ timeout: 8500 });
 });
 
 test("renova a pausa com Ouvir e cancela a passagem ao sair", async ({ page }) => {
@@ -124,14 +141,14 @@ test("renova a pausa com Ouvir e cancela a passagem ao sair", async ({ page }) =
   await expect.poll(() => page.evaluate(() => window.feedbackClick)).toEqual({
     cue: "acerto-1", round: "1", clicked: true,
   });
-  await expect(target(page)).toHaveText("2");
+  const amount = await readStarAmount(page, 2);
   expect(await page.evaluate(() => window.completedAudio.filter((file) => file === "acerto-1.mp3"))).toHaveLength(2);
 
-  await clickAfterFeedback(page, "acerto-2", "map");
-  await star(page, 1).tap();
-  await star(page, 2).tap();
+  const cue = `acerto-${amount}`;
+  await clickAfterFeedback(page, cue, "map");
+  await tapStars(page, amount);
   await expect.poll(() => page.evaluate(() => window.feedbackClick)).toEqual({
-    cue: "acerto-2", round: "2", clicked: true,
+    cue, round: String(amount), clicked: true,
   });
   await expect(page.getByRole("heading", { name: "Mapa espacial" })).toBeVisible();
   await button(page, "Planeta dos Cristais").tap();
@@ -153,7 +170,7 @@ test("o tutorial continua jogável sem áudio em paisagem", async ({ page }) => 
   await expect(page.getByText("Áudio indisponível.", { exact: false })).toBeVisible();
   await star(page, 1).tap();
   await expect(page.getByText("Você encontrou a quantidade certa!")).toBeVisible();
-  await expect(target(page)).toHaveText("2");
+  await expect(starRound(page, 2)).toBeVisible();
   const layout = await page.evaluate(() => ({
     width: document.documentElement.scrollWidth,
     height: document.documentElement.scrollHeight,
@@ -175,8 +192,8 @@ test("um toque iniciado na celebração não seleciona estrela na rodada seguint
     type: "touchStart",
     touchPoints: [{ x: x + width / 2, y: y + height / 2 }],
   });
-  await expect(target(page)).toHaveText("2");
+  const amount = await readStarAmount(page, 2);
   await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
-  await expect(page.locator("[data-count]")).toHaveText("0 de 2");
+  await expect(page.locator("[data-count]")).toHaveText(`0 de ${amount}`);
   await session.detach();
 });

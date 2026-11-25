@@ -36,11 +36,11 @@ A referência estética será a imagem de aventura espacial infantil selecionada
 
 ### 2.2. Navegação
 
-**Fluxo principal** — Tela inicial → Mapa espacial → Planeta → Atividade → Conclusão → Mapa espacial.
+**Fluxo principal** — Tela inicial → Mapa espacial → Planeta → Atividade → Conclusão → Próxima missão, repetição ou mapa.
 
 A criança pode selecionar os planetas em qualquer ordem. A primeira visita inclui uma chegada narrada e pulável. O mapa oferece a opção de rever uma chegada já visitada.
 
-Após concluir uma atividade, a criança vê e ouve a descoberta daquela missão e pode retornar ao mapa ou jogar de novo. O mapa registra uma pista visual por planeta durante a sessão.
+Após concluir uma atividade, a criança vê e ouve a descoberta daquela missão. **Próxima missão** mostra a imagem do primeiro planeta pendente, seguindo a ordem de referência Estrelas, Cristais e Descobertas. A criança pode jogar de novo ou voltar ao mapa para escolher outro destino. O mapa registra uma pista visual por planeta durante a sessão.
 
 A nave liga as missões de [A aventura do sinal de luz](roteiro-narrativo.md). Quando as três pistas são reunidas, a nave pisca para as luzinhas do vale e elas respondem. Todas as missões continuam disponíveis.
 
@@ -63,7 +63,7 @@ Não haverá controles virtuais complexos nem necessidade de movimentos precisos
 
 A criança deverá localizar e selecionar a quantidade solicitada de estrelas. Por exemplo, a narração pede quatro estrelas. A criança toca nas estrelas, que são destacadas e contadas.
 
-**Faixa inicial** — quantidades de 1 a 5.
+**Faixa inicial** — quantidades de 1 a 5. Em cada visita, a primeira rodada pede uma estrela. Nas cinco rodadas seguintes, a ordem é embaralhada e um dos números de 2 a 5 aparece duas vezes, em rodadas separadas. O número repetido muda a cada visita.
 
 O jogo deverá ajudar a relacionar cada objeto selecionado à sequência de contagem, e o último número à quantidade total.
 
@@ -91,13 +91,15 @@ A criança pode tocar nas criaturas para contar e escolher o numeral que represe
 
 As pistas indicam o lugar que brilha, apoiam a recontagem e destacam o numeral quando necessário. A criança continua responsável por explorar o lugar e escolher a quantidade.
 
+As luzinhas visíveis têm um brilho suave durante a busca e a contagem. Na ajuda para recontar, o brilho se intensifica junto da numeração. Com movimento reduzido, o destaque permanece estático.
+
 ### Oficina de Energia
 
 **Objetivo** — relacionar numerais de 6 a 20 a grupos visuais, construir quantidades e perceber diferenças entre elas.
 
 Cada visita tem três desafios. Em **Montar a carga**, a criança encaixa e retira módulos inteiros de cinco ou dez e unidades individuais. O painel da nave mostra a quantidade solicitada e o painel ao lado muda com os toques. Uma mesma quantidade aceita combinações diferentes.
 
-Em **Completar o painel**, algumas posições já estão acesas. A criança escolhe um grupo que preencha os espaços livres ou acrescenta unidades. Nas primeiras faixas o painel comporta dez luzes. Na última faixa, um painel cheio acompanha o segundo até ambos somarem vinte.
+Em **Completar o painel**, algumas posições já estão acesas. Um contorno luminoso identifica as posições que faltam desde o começo e se intensifica com a ajuda. A criança escolhe um grupo que preencha os espaços livres ou acrescenta unidades. O contorno acompanha a carga e desaparece ao completar o painel. Com movimento reduzido, ele permanece estático. Nas primeiras faixas o painel comporta dez luzes. Na última faixa, um painel cheio acompanha o segundo até ambos somarem vinte.
 
 Em **Comparar cargas**, dois painéis do mesmo tamanho têm um ícone de toque e exibem quantidades distintas. A instrução pede a carga com mais ou menos energia. A resposta correta pode aparecer de qualquer lado. Após o acerto ou durante a ajuda, os numerais e a diferença entre as posições acesas ajudam a interpretar o resultado.
 

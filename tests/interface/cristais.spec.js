@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { readStarAmount, tapStars } from "./estrelas-rodadas.js";
 
 const mission = (page) => page.locator(".crystal-screen");
 const reserve = (page) => mission(page).locator('[data-zone="reserve"]');
@@ -135,7 +136,7 @@ test("energiza as três cargas e repete sem confirmação intermediária", async
   await expect(page.getByText("Estação acesa e padrão de luz")).toBeVisible();
   await expect(audio(page)).toHaveAttribute("src", /cristais-conclusao\.mp3$/);
   await expect.poll(() => audio(page).evaluate((node) => node.currentTime)).toBeGreaterThan(0);
-  await page.locator('[data-screen="complete"] img').evaluate((image) => image.decode());
+  await page.locator('[data-screen="complete"] .story-picture img').evaluate((image) => image.decode());
 
   const finished = await page.evaluate(() => window.finishedCues);
   expect(finished.filter((name) => name === "cristais-ligado.mp3")).toHaveLength(3);
@@ -151,9 +152,8 @@ test("energiza as três cargas e repete sem confirmação intermediária", async
   await button(page, "Planeta das Estrelas").tap();
   await button(page, "Pular apresentação").tap();
   await expect(page.getByRole("heading", { name: "Planeta das Estrelas" })).toBeVisible();
-  for (let amount = 1; amount <= 5; amount++) {
-    await expect(page.locator("[data-target]")).toHaveText(String(amount));
-    for (let id = 1; id <= amount; id++) await button(page, `Estrela ${id}`).tap();
+  for (let round = 1; round <= 6; round++) {
+    await tapStars(page, await readStarAmount(page, round));
   }
   await expect(page.locator('[data-screen="complete"]')).toHaveAttribute("data-planet", "stars");
   await button(page, "Voltar ao mapa").tap();

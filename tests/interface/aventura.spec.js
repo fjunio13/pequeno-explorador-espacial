@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
+import { readStarAmount, tapStars } from "./estrelas-rodadas.js";
 
 test.describe.configure({ mode: "parallel" });
 
 const planets = {
-  stars: { name: "Planeta das Estrelas", clue: "direction", audio: "conclusao.mp3" },
-  crystals: { name: "Planeta dos Cristais", clue: "antenna", audio: "cristais-conclusao.mp3" },
-  discoveries: { name: "Planeta das Descobertas", clue: "lights", audio: "descobertas-conclusao.mp3" },
+  stars: { name: "Planeta das Estrelas", clue: "direction", audio: "conclusao.mp3", arrival: "estrelas-chegada" },
+  crystals: { name: "Planeta dos Cristais", clue: "antenna", audio: "cristais-conclusao.mp3", arrival: "cristais-chegada" },
+  discoveries: { name: "Planeta das Descobertas", clue: "lights", audio: "descobertas-conclusao.mp3", arrival: "descobertas-chegada" },
 };
 const orders = [
   ["stars", "crystals", "discoveries"], ["stars", "discoveries", "crystals"],
@@ -39,17 +40,21 @@ async function openMap(page, playbackRate = 1) {
   await button(page, "Começar").tap();
 }
 
+async function skipArrival(page, planet) {
+  await expect(screen(page, "arrival")).toHaveAttribute("data-planet", planet);
+  await expect(player(page)).toHaveAttribute("src", new RegExp(`/${planets[planet].arrival}\\.mp3$`));
+  await button(page, "Pular apresentação").tap();
+}
+
 async function choosePlanet(page, planet) {
   await button(page, planets[planet].name).tap();
-  await expect(screen(page, "arrival")).toHaveAttribute("data-planet", planet);
-  await button(page, "Pular apresentação").tap();
+  await skipArrival(page, planet);
 }
 
 async function playMission(page, planet) {
   if (planet === "stars") {
-    for (const amount of [1, 2, 3, 4, 5]) {
-      await expect(page.locator("[data-target]")).toHaveText(String(amount));
-      for (let index = 1; index <= amount; index++) await button(page, `Estrela ${index}`).tap();
+    for (let round = 1; round <= 6; round++) {
+      await tapStars(page, await readStarAmount(page, round));
     }
   } else if (planet === "crystals") {
     for (const amount of [1, 3, 5]) {
@@ -99,6 +104,23 @@ test("a apresentação aguarda a fala repetida, pode ser revista e é interrompi
   await expect(screen(page, "mission")).toHaveAttribute("data-planet", "stars");
 });
 
+test("Próxima missão abre direto um planeta visitado que ainda está pendente", async ({ page }) => {
+  await openMap(page, 4);
+  await choosePlanet(page, "crystals");
+  await button(page, "Voltar ao mapa").tap();
+
+  await choosePlanet(page, "stars");
+  await playMission(page, "stars");
+  await expect(player(page)).toHaveAttribute("src", /conclusao\.mp3$/);
+  await button(page, "Próxima missão").tap();
+  await expect(screen(page, "arrival")).toHaveCount(0);
+  await expect(screen(page, "mission")).toHaveAttribute("data-planet", "crystals");
+  await expect(player(page)).toHaveAttribute("src", /cristais-pedido-2\.mp3$/);
+  await button(page, "Voltar ao mapa").tap();
+  await expect(clues(page)).toHaveCount(1);
+  await expect(button(page, planets.crystals.name)).toHaveAttribute("data-completed", "false");
+});
+
 for (const [orderIndex, order] of orders.entries()) {
   test(`registra as três pistas e conclui em ordem ${orderIndex + 1} (${order.join(" → ")})`, async ({ page, baseURL }) => {
     test.slow();
@@ -110,15 +132,47 @@ for (const [orderIndex, order] of orders.entries()) {
     });
     await openMap(page, 4);
     await expect(clues(page)).toHaveCount(0);
+    await choosePlanet(page, order[0]);
     for (const [index, planet] of order.entries()) {
-      await choosePlanet(page, planet);
       await playMission(page, planet);
       await expectLandscapeFit(page);
-      if (index === order.length - 1) break;
+      const nextButton = button(page, "Próxima missão");
+      if (index === order.length - 1) {
+        await expect(nextButton).toHaveCount(0);
+        break;
+      }
+
+      const completed = order.slice(0, index + 1);
+      const recommended = Object.keys(planets).find((id) => !completed.includes(id));
+      await expect(nextButton).toHaveAttribute("data-planet", recommended);
+      await expect(nextButton).toHaveAccessibleDescription(planets[recommended].name);
+      if (orderIndex === 0 && index === 0) {
+        await page.evaluate(() => document.fullscreenElement && document.exitFullscreen());
+        for (const [width, height] of [[667, 375], [780, 360], [568, 320]]) {
+          await page.setViewportSize({ width, height });
+          await expectLandscapeFit(page);
+          for (const name of ["Próxima missão", "Jogar de novo", "Voltar ao mapa"]) {
+            const rect = await button(page, name).boundingBox();
+            expect(Math.min(rect.width, rect.height)).toBeGreaterThanOrEqual(48);
+            expect(rect.x).toBeGreaterThanOrEqual(0);
+            expect(rect.y).toBeGreaterThanOrEqual(0);
+            expect(rect.x + rect.width).toBeLessThanOrEqual(width);
+            expect(rect.y + rect.height).toBeLessThanOrEqual(height);
+          }
+        }
+      }
+
+      const destination = order[index + 1];
+      if (destination === recommended) {
+        await nextButton.tap();
+        await skipArrival(page, destination);
+        continue;
+      }
       await button(page, "Voltar ao mapa").tap();
       await expect(clues(page)).toHaveCount(index + 1);
       await expect(button(page, planets[planet].name).locator(`[data-clue="${planets[planet].clue}"]`)).toBeVisible();
       await expect(button(page, "Responder ao sinal")).toHaveCount(0);
+      await choosePlanet(page, destination);
     }
 
     await expect(screen(page, "finale")).toBeVisible({ timeout: 10000 });
