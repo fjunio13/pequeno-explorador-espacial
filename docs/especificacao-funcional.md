@@ -99,7 +99,7 @@ Cada visita tem três desafios. Em **Montar a carga**, a criança encaixa e reti
 
 Em **Completar o painel**, algumas posições já estão acesas. A criança escolhe um grupo que preencha os espaços livres ou acrescenta unidades. Nas primeiras faixas o painel comporta dez luzes. Na última faixa, um painel cheio acompanha o segundo até ambos somarem vinte.
 
-Em **Comparar cargas**, dois painéis com as mesmas dimensões exibem quantidades distintas. A instrução pede a carga com mais ou menos energia. Após a escolha correta ou durante a ajuda, os numerais e a diferença entre as posições ajudam a interpretar o resultado.
+Em **Comparar cargas**, dois painéis do mesmo tamanho têm um ícone de toque e exibem quantidades distintas. A instrução pede a carga com mais ou menos energia. A resposta correta pode aparecer de qualquer lado. Após o acerto ou durante a ajuda, os numerais e a diferença entre as posições acesas ajudam a interpretar o resultado.
 
 As faixas **6 a 10**, **11 a 15** e **16 a 20** avançam com a conclusão de visitas, independentemente das tentativas. A montagem e a comparação variam dentro da faixa. A criança pode repetir a mesma sequência ou voltar ao mapa entre desafios. Os grupos visuais e as pistas orientam as escolhas, e a próxima rodada começa após a fala e uma breve pausa. Uma correção durante o resultado cancela a passagem.
 

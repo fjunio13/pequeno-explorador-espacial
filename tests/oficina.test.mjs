@@ -33,6 +33,8 @@ test("as visitas curtas cobrem os numerais de 6 a 20 nas três faixas", () => {
     }
   }
   assert.deepEqual(covered.sort((a, b) => a - b), Array.from({ length: 15 }, (_, i) => i + 6));
+  const openingSides = [0, 1, 2].map((band) => correctSide(energyConfiguration(band, 0)[2]));
+  assert.deepEqual([...new Set(openingSides)].sort(), [0, 1]);
 });
 
 test("as fileiras de cinco e os painéis de dez representam exatamente a quantidade", () => {

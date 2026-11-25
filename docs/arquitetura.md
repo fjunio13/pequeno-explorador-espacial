@@ -108,6 +108,8 @@ O layout será projetado prioritariamente para celulares na orientação horizon
 
 Quando aberto na vertical, poderá apresentar uma orientação visual solicitando que o usuário gire o aparelho. Não dependerá de bloqueio automático de orientação, pois navegadores móveis podem restringir esse recurso.
 
+O toque em **Começar** abre o mapa e inicia a narração antes de solicitar tela cheia no mesmo gesto. Se o navegador recusar a solicitação, o mapa funciona na aba.
+
 ## 6.7. Publicação
 
 O jogo será distribuído como site estático pelo GitHub Pages. Atualizações serão realizadas por meio do repositório. A publicação deverá ocorrer somente após a execução satisfatória das verificações automatizadas.
@@ -116,4 +118,4 @@ O jogo deverá ser funcional sem cadastro ou autenticação. A primeira versão 
 
 A URL do GitHub Pages deverá ser tratada como publicamente acessível. Não deverão ser incluídos dados pessoais da criança ou recursos privados no conteúdo publicado.
 
-A entrada fica na raiz. Referências como `./src/ui/styles.css` funcionam também sob `/pequeno-explorador-espacial/`. O arquivo `.nojekyll` prepara a publicação direta dos arquivos estáticos. A configuração da hospedagem fica para a etapa de publicação. [Documentação do GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
+A entrada fica na raiz. As referências relativas permitem servir o jogo em um subdiretório como `/pequeno-explorador-espacial/`. O artefato do Pages agrupa módulos e recursos em `revisoes/<SHA>/` e inclui `.nojekyll`. O workflow manual confere o SHA aprovado da `main`, reutiliza as verificações e publica o artefato. A ativação da origem GitHub Actions exige autorização administrativa. [Publicação e atualização no navegador](publicacao.md)

@@ -128,7 +128,7 @@ test("repete o mesmo conjunto de desafios e progride até os painéis de vinte",
   await expect(room(page).locator("[data-total]")).toHaveText("0");
   await button(page, "Voltar ao mapa").tap();
   await button(page, "Oficina de Energia").tap();
-  await finishWorkshop(page, { target: 13, modules: [10, 1, 1, 1], fill: 2, choice: "direita", checkFit: true });
+  await finishWorkshop(page, { target: 13, modules: [10, 1, 1, 1], fill: 2, choice: "esquerda", checkFit: true });
   await button(page, "Mais desafios").tap();
   await expect(add(page, 10).locator(".energy-piece i")).toHaveCount(10);
   await expect(room(page).locator(".energy-goal .energy-frame")).toHaveCount(2);
