@@ -20,7 +20,7 @@ Toque em **Começar** e escolha um planeta no mapa. O mesmo toque pede tela chei
 - **Cristais** — arraste ou toque para mover os cristais entre a reserva e o gerador. A quantidade certa abre as opções de número. Escolha o numeral e ligue a estação. O jogo avança após a estação acender. As três cargas alternam entre **1, 3, 5** e **2, 4, 5** a cada entrada.
 - **Descobertas** — explore a pedra, a flor e o arco do vale. No lugar que brilha, sai mais uma luzinha, que voa até o grupo. As luzinhas visíveis têm um brilho suave para facilitar a contagem. Toque no numeral para ver e ouvir a resposta do grupo. Os três grupos começam com **1, 3 e 4** luzinhas.
 
-O botão **Ouvir** repete a fala da tela. Na primeira visita, é possível esperar a chegada narrada ou pular para a missão. O ícone de livro no mapa permite rever uma chegada. As três missões oferecem pistas progressivas e ajuda guiada.
+O botão **Ouvir** repete a instrução ou a pista atual. **Ajuda** fica disponível desde o início de cada desafio, inclusive durante a escolha do número e a ativação nos Cristais. Pedir ajuda de novo acrescenta pistas visuais e faladas. A criança executa cada ação sugerida. Na primeira visita, é possível esperar a chegada narrada ou pular para a missão. O ícone de livro no mapa permite rever uma chegada.
 
 Cada missão acrescenta uma pista ao mapa durante a sessão. **Próxima missão** oferece um planeta que ainda está pendente. **Jogar de novo** e **Voltar ao mapa** continuam disponíveis. Após a terceira pista, a nave responde ao sinal das luzinhas. O mapa permite escolher qualquer planeta e rever a conclusão geral pelo botão **Responder ao sinal**.
 
@@ -61,5 +61,6 @@ O GitHub Pages serve o `index.html` da raiz da branch selecionada. Para homologa
 - [Capturas da Oficina de Energia](docs/capturas-oficina-de-energia.webp)
 - [Prontidão para a versão 1.0](docs/prontidao-versao-1.md)
 - [Capturas da oitava entrega](docs/capturas-oitava-entrega/)
+- [Capturas da assistência progressiva](docs/capturas-decima-entrega/)
 - [Plano de evolução](docs/plano-evolucao.md)
 - [Instruções para agentes](AGENTS.md)

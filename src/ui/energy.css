@@ -177,6 +177,12 @@
   gap: clamp(0.14rem, 0.55vw, 0.44rem);
 }
 
+.energy-row[data-row-guide] {
+  border-radius: 0.25rem;
+  outline: 1px solid #ffda81c2;
+  outline-offset: 1px;
+}
+
 .energy-cell {
   display: block;
   inline-size: clamp(0.7rem, 2.04vw, 1.65rem);

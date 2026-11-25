@@ -33,7 +33,11 @@ test("explorar lugares diferentes oferece pistas sem liberar a criatura por cont
   const { hidingPlace } = sceneFor(state);
   const other = hidingPlaces.find((place) => place !== hidingPlace);
   assert.equal(explore(state, "sky"), state);
-  for (const attempt of [1, 2, 3, 3]) {
+  state = requestHelp(state);
+  assert.equal(state.attempts, 1);
+  assert.equal(state.phase, "search");
+  assert.equal(visibleCount(state), 1);
+  for (const attempt of [2, 3, 3]) {
     state = explore(state, other);
     assert.equal(state.attempts, attempt);
     assert.equal(state.phase, "search");

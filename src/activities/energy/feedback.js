@@ -1,4 +1,4 @@
-import { isSolved } from "./logic.js";
+import { energyTotal, isSolved } from "./logic.js";
 
 export function roundPrompt(challenge) {
   if (challenge.mode === "build") return "Monte a carga";
@@ -22,13 +22,23 @@ export function feedbackFor(state) {
     return { cue, note: "Carga pronta!" };
   }
 
-  if (attempts >= 3) return { cue: "oficina-pista", note: "Toque no que está brilhando." };
-  if (issue === "excess") return { cue: "oficina-retirar", note: "Toque em menos para retirar energia." };
-  if (issue === "space") return { cue: "oficina-sem-espaco", note: "Experimente um grupo menor." };
-  if (attempts > 0 && mode === "compare") {
-    return { cue: "oficina-comparar-ajuda", note: "Veja onde as fileiras são diferentes." };
+  if (!attempts) return { cue: instructionFor(challenge), note: "" };
+  if (mode === "compare") {
+    if (attempts === 3) {
+      const cue = challenge.relation === "more" ? "oficina-pista-mais" : "oficina-pista-menos";
+      return { cue, note: "Compare os espaços marcados." };
+    }
+    if (attempts === 2) return { cue: "oficina-comparar-fileiras", note: "Compare as fileiras dos dois lados." };
+    return { cue: "oficina-comparar-ajuda", note: "Olhe as duas cargas." };
   }
-  if (attempts >= 2) return { cue: "oficina-espacos", note: "Veja quais espaços faltam." };
-  if (attempts === 1) return { cue: "oficina-grupos", note: "Uma fileira cheia tem cinco energias." };
-  return { cue: instructionFor(challenge), note: "" };
+
+  if (energyTotal(state) > target) return { cue: "oficina-retirar", note: "Toque em menos para retirar energia." };
+  if (issue === "space" && attempts === 1) return { cue: "oficina-sem-espaco", note: "Experimente um grupo menor." };
+  if (mode === "complete") {
+    if (attempts === 3) return { cue: "oficina-encaixar-espacos", note: "Compare os espaços com as luzes das peças." };
+    return { cue: "oficina-espacos", note: "Veja os espaços que faltam." };
+  }
+  if (attempts === 3) return { cue: "oficina-pista", note: "Experimente a peça que brilha." };
+  if (attempts === 2) return { cue: "oficina-espacos", note: "Veja quantas luzes ainda faltam." };
+  return { cue: "oficina-grupos", note: "Olhe as fileiras do pedido e da sua carga." };
 }

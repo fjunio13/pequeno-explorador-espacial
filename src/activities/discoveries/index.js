@@ -72,15 +72,15 @@ function cueFor(state) {
     ][attempts];
   }
   if (phase === "lit") return "descobertas-sinal";
-  return ["descobertas-chegou", "tentar-novamente", "descobertas-contar", "descobertas-numero"][attempts];
+  return ["descobertas-chegou", "descobertas-contar", "descobertas-contar", "descobertas-numero"][attempts];
 }
 
 function feedbackFor({ phase, attempts }) {
   if (phase === "lit") return "";
   if (phase === "search") {
-    return ["", "Experimente outro lugar.", "Veja o contorno dourado.", "Toque no brilho dourado."][attempts];
+    return ["", "Olhe os esconderijos.", "Veja onde o brilho aparece.", "Toque no brilho dourado."][attempts];
   }
-  return ["Mais uma chegou!", "Vamos contar de novo?", "Conte cada luzinha.", "Veja o número que brilha."][attempts];
+  return ["Mais uma chegou!", "Veja as luzinhas juntas.", "Toque em cada luzinha para contar.", "Veja o número que brilha."][attempts];
 }
 
 export function mountDiscoveries({ container, configuration, audio, onComplete, onReturn }) {
@@ -88,6 +88,8 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
   container.innerHTML = activityMarkup(configuration.length);
 
   const screen = container.querySelector(".discovery-screen");
+  const group = screen.querySelector(".discovery-group");
+  const hollows = screen.querySelector(".discovery-hollows");
   const creatures = [...screen.querySelectorAll(".glow-creature")];
   const spots = [...screen.querySelectorAll(".discovery-spot")];
   const numbers = [...screen.querySelectorAll(".discovery-number")];
@@ -100,6 +102,7 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
   const gestures = new AbortController();
   let flight;
   let pressedRound;
+  let lastCounted = 0;
 
   screen.querySelector(".discovery-board").addEventListener("pointerdown", (event) => {
     if (event.isPrimary && event.button === 0) pressedRound = state.round;
@@ -111,6 +114,14 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
     else onComplete();
   });
 
+  function markCount() {
+    const guide = state.phase === "count" && state.attempts >= 2 && lastCounted < visibleCount(state);
+    for (const [index, creature] of creatures.entries()) {
+      creature.toggleAttribute("data-counted", index + 1 === lastCounted);
+      creature.toggleAttribute("data-count-hint", guide && index === lastCounted);
+    }
+  }
+
   function render() {
     const scene = sceneFor(state);
     const { phase, attempts, round } = state;
@@ -119,6 +130,8 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
     const total = visibleCount(state);
 
     screen.dataset.phase = phase;
+    hollows.toggleAttribute("data-help-focus", searching && attempts === 1);
+    group.toggleAttribute("data-help-focus", phase === "count" && attempts === 1);
     prompt.textContent = searching ? "Procure o brilho no vale" : lit ? "As luzinhas piscaram juntas!" : "Quantas luzinhas estão juntas?";
     feedback.textContent = feedbackFor(state);
     progress.setAttribute("aria-label", `Descoberta ${round + 1} de ${configuration.length}`);
@@ -132,13 +145,13 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
       const hiding = searching && spot.dataset.place === scene.hidingPlace;
       spot.disabled = !searching;
       spot.toggleAttribute("data-glint", hiding);
-      spot.toggleAttribute("data-guide", hiding && attempts >= 2);
+      spot.toggleAttribute("data-bright", hiding && attempts >= 2);
+      spot.toggleAttribute("data-guide", hiding && attempts === 3);
     }
     for (const [index, creature] of creatures.entries()) {
       creature.hidden = index >= total;
       creature.disabled = lit;
       creature.toggleAttribute("data-new", !searching && index === total - 1);
-      creature.toggleAttribute("data-count-hint", phase === "count" && attempts >= 2);
     }
     for (const [index, button] of numbers.entries()) {
       const value = scene.numbers[index];
@@ -148,12 +161,13 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
       button.toggleAttribute("data-guide", phase === "count" && attempts >= 3 && value === total);
       button.toggleAttribute("data-answered", lit && value === total);
     }
+    markCount();
     help.disabled = lit;
   }
 
   function startRound() {
     for (const spot of spots) spot.removeAttribute("data-explored");
-    for (const creature of creatures) creature.removeAttribute("data-counted");
+    lastCounted = 0;
     render();
     audio.instruct(cueFor(state));
   }
@@ -176,6 +190,7 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
     const focused = document.activeElement === spot;
     state = explore(state, spot.dataset.place);
     spot.setAttribute("data-explored", "");
+    if (state.phase === "count") lastCounted = 0;
     render();
     if (state.phase === "count") {
       flyFrom(origin, creatures[visibleCount(state) - 1]);
@@ -192,6 +207,7 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
     },
     help: () => {
       state = requestHelp(state);
+      if (state.phase === "count") lastCounted = 0;
       render();
       audio.instruct(cueFor(state), { afterCurrent: true });
     },
@@ -200,13 +216,15 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
     },
     count: (creature, event) => {
       if (event.detail !== 0 && pressedRound !== state.round) return;
-      for (const item of creatures) item.toggleAttribute("data-counted", item === creature);
-      audio.playIfIdle(`contagem-${creature.dataset.count}`);
+      lastCounted = Number(creature.dataset.count);
+      markCount();
+      audio.playIfIdle(`contagem-${lastCounted}`);
     },
     number: (button, event) => {
       if (event.detail !== 0 && pressedRound !== state.round) return;
       const focused = document.activeElement === button;
       state = chooseNumber(state, Number(button.textContent));
+      if (state.phase === "count") lastCounted = 0;
       render();
       const response = audio.instruct(cueFor(state), { afterCurrent: true });
       if (state.phase === "lit") {

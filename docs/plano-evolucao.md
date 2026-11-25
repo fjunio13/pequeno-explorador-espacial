@@ -6,15 +6,18 @@
 | --- | --- |
 | Implementado e homologado na revisão do PR #9 | Três planetas, Oficina de Energia, três pistas reunidas em qualquer ordem e desfecho atual |
 | Integrado na oitava entrega, PR #10 | Seis rodadas variáveis nas Estrelas com abertura fixa, atalho **Próxima missão**, brilho das luzinhas e destaque dos espaços faltantes na Oficina |
-| Implementado na nona entrega, em revisão | Publicação direta pela raiz da branch no GitHub Pages, com retorno à `main` após o merge |
-| Aprovado como direção de planejamento | Priorizar autonomia, diversificar os Cristais e as Descobertas, desenvolver um desfecho interativo e homologar o ciclo em Android físico |
-| Depende de aprovação específica | Implementação das etapas 10 a 14 e suas escolhas de mecânica, aprovação do roteiro do novo desfecho e decisões de versão e publicação |
+| Integrado na nona entrega, PR #11 | Publicação direta pela raiz da branch no GitHub Pages, com retorno à `main` após o merge |
+| Implementado na décima entrega, para homologação | Ajuda desde a primeira tentativa, pistas progressivas nos três planetas e nas três modalidades da Oficina de Energia |
+| Aprovado como direção de planejamento | Diversificar os Cristais e as Descobertas, planejar um desfecho interativo e homologar o ciclo em Android físico |
+| Depende de aprovação específica | Implementação das etapas 11 a 14, aprovação do roteiro do novo desfecho e decisões de versão e publicação |
 
 As etapas abaixo são a referência para futuras entregas. A especificação funcional, a arquitetura e o roteiro vigentes continuam orientando o jogo. O [guia de publicação](publicacao.md) registra o fluxo aprovado para colocar uma revisão no ar.
 
 ## Etapa 10 — Autonomia e assistência progressiva
 
-Revisar a ajuda dos planetas e da Oficina de Energia. Observar onde a criança demora a agir por não entender o objetivo. Oferecer apoio antes do bloqueio, aumentar a orientação conforme a dificuldade e combinar a narração com o destaque da região relevante. A ação que resolve o desafio deve continuar com a criança.
+As Estrelas orientam a seleção e a retirada. Os Cristais oferecem ajuda nos encaixes, na escolha do numeral e no botão de energização. As Descobertas orientam a busca e destacam as luzinhas uma a uma na recontagem. Na Oficina, a assistência sinaliza falta ou excesso na montagem, espaços livres no painel e diferenças entre posições correspondentes na comparação. A criança realiza cada ação sugerida e pode repetir a fala pelo botão **Ouvir**. [Capturas da assistência](capturas-decima-entrega/)
+
+A orientação espontânea por inatividade fica adiada. Sem observação em aparelho real, uma pausa pode significar que a criança está olhando o cenário ou pensando. A ajuda sob demanda evita interromper esse tempo. Na homologação, observar se a criança encontra o ícone de ajuda sozinha, reconhece o próximo gesto a partir da pista e precisa de intervenção de um adulto após uma pausa longa.
 
 A persistência de desempenho entre sessões depende de aprovação adicional.
 

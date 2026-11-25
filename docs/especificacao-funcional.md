@@ -67,6 +67,8 @@ A criança deverá localizar e selecionar a quantidade solicitada de estrelas. P
 
 O jogo deverá ajudar a relacionar cada objeto selecionado à sequência de contagem, e o último número à quantidade total.
 
+A ajuda distingue estrelas que ainda precisam acender e estrelas a mais. A orientação guiada marca uma estrela por vez para a criança tocar.
+
 A rodada avança após a fala de acerto e uma breve pausa. A criança pode corrigir a seleção durante esse intervalo. Se alterar a quantidade, o jogo cancela a passagem e mantém a rodada.
 
 ### Planeta 2 — Cristais
@@ -79,7 +81,7 @@ A criança deverá arrastar cristais para recipientes identificados com números
 
 O sistema deverá permitir experimentar, corrigir escolhas e receber pistas.
 
-A quantidade certa abre a escolha do numeral. Alterar a carga cancela a escolha anterior. A criança liga a estação com um toque e vê o efeito antes de o jogo seguir à próxima carga.
+A ajuda na coleta distingue encaixes que faltam e cristais em excesso. A quantidade certa abre a escolha do numeral com ajuda para observar e contar as peças no gerador. Alterar a carga cancela a escolha anterior. Depois de selecionar o numeral, a criança pode pedir ajuda para localizar o botão com o raio e precisa acioná-lo para energizar a estação.
 
 ### Planeta 3 — Descobertas
 
@@ -91,7 +93,7 @@ A criança pode tocar nas criaturas para contar e escolher o numeral que represe
 
 As pistas indicam o lugar que brilha, apoiam a recontagem e destacam o numeral quando necessário. A criança continua responsável por explorar o lugar e escolher a quantidade.
 
-As luzinhas visíveis têm um brilho suave durante a busca e a contagem. Na ajuda para recontar, o brilho se intensifica junto da numeração. Com movimento reduzido, o destaque permanece estático.
+As luzinhas visíveis têm um brilho suave durante a busca e a contagem. Na ajuda para recontar, o contorno acompanha a próxima luzinha e o toque mostra sua posição na contagem. Com movimento reduzido, o destaque permanece estático.
 
 ### Oficina de Energia
 
@@ -101,7 +103,7 @@ Cada visita tem três desafios. Em **Montar a carga**, a criança encaixa e reti
 
 Em **Completar o painel**, algumas posições já estão acesas. Um contorno luminoso identifica as posições que faltam desde o começo e se intensifica com a ajuda. A criança escolhe um grupo que preencha os espaços livres ou acrescenta unidades. O contorno acompanha a carga e desaparece ao completar o painel. Com movimento reduzido, ele permanece estático. Nas primeiras faixas o painel comporta dez luzes. Na última faixa, um painel cheio acompanha o segundo até ambos somarem vinte.
 
-Em **Comparar cargas**, dois painéis do mesmo tamanho têm um ícone de toque e exibem quantidades distintas. A instrução pede a carga com mais ou menos energia. A resposta correta pode aparecer de qualquer lado. Após o acerto ou durante a ajuda, os numerais e a diferença entre as posições acesas ajudam a interpretar o resultado.
+Em **Comparar cargas**, dois painéis do mesmo tamanho têm um ícone de toque e exibem quantidades distintas. A instrução pede a carga com mais ou menos energia. A resposta correta pode aparecer de qualquer lado. A ajuda destaca as fileiras e, no nível avançado, os espaços correspondentes em que as cargas diferem. Os totais aparecem após o acerto.
 
 As faixas **6 a 10**, **11 a 15** e **16 a 20** avançam com a conclusão de visitas, independentemente das tentativas. A montagem e a comparação variam dentro da faixa. A criança pode repetir a mesma sequência ou voltar ao mapa entre desafios. Os grupos visuais e as pistas orientam as escolhas, e a próxima rodada começa após a fala e uma breve pausa. Uma correção durante o resultado cancela a passagem.
 
@@ -113,15 +115,13 @@ Não será implementado inicialmente um sistema complexo de adaptação automát
 
 ## 4. Feedback e apoio à criança
 
-As atividades deverão distinguir respostas corretas, tentativas incorretas e pedidos de ajuda.
+O botão **Ajuda** fica disponível desde o início de cada fase interativa. Pedidos repetidos ou escolhas que precisam de ajuste avançam a orientação até o terceiro nível.
 
-### Comportamento recomendado
+1. **Reorientação** — retomar o objetivo e chamar a atenção para a área de ação.
+2. **Pista específica** — distinguir falta e excesso, apoiar a contagem ou indicar grupos a observar.
+3. **Orientação guiada** — destacar uma ação possível ou a região que permite tomar a decisão.
 
-1. **Primeira tentativa incorreta** — feedback neutro e possibilidade de tentar novamente.
-2. **Dificuldade persistente** — apresentação de uma pista visual ou sonora.
-3. **Nova dificuldade** — demonstração orientada, permitindo que a criança participe da solução.
-
-O jogo não deverá permanecer indefinidamente em uma atividade que a criança não consegue concluir.
+A criança realiza o toque, arraste ou escolha para continuar. A fala pode ser repetida em **Ouvir**. Quando o áudio falha, o ícone de som fica riscado e os destaques visuais continuam disponíveis. O nível de ajuda pertence à fase ou rodada em curso.
 
 As mensagens positivas deverão valorizar a descoberta, a exploração e a perseverança, evitando elogios excessivos e repetitivos.
 

@@ -1,15 +1,9 @@
 import { bindActions, control, icon } from "../../ui/controls.js";
 import { createRoundAdvance } from "../round-advance.js";
 import {
-  demonstrateStar, hasTarget, nextRound, requestHelp, startCounting, suggestedStar, supportFor,
+  hasTarget, nextRound, requestHelp, startCounting, suggestedStar, supportFor,
   targetFor, toggleStar,
 } from "./logic.js";
-
-const hintMessages = {
-  retry: "tentar-novamente",
-  hint: "pista",
-  guided: "contar-juntos",
-};
 
 function starButton(index) {
   return `<button class="star-button" type="button" data-action="star" data-star="${index}"
@@ -46,23 +40,23 @@ function activityMarkup({ targets, starCount }) {
     </section>`;
 }
 
-function instructionFor(state) {
-  return hintMessages[supportFor(state)] ?? `pedido-${targetFor(state)}`;
-}
-
 function feedbackFor(state) {
-  if (hasTarget(state)) return "Você encontrou a quantidade certa!";
+  const amount = targetFor(state);
+  const excess = state.selected.length > amount;
+  const request = `pedido-${amount}`;
+  if (hasTarget(state)) return { cue: `acerto-${amount}`, note: "Você encontrou a quantidade certa!" };
   switch (supportFor(state)) {
-    case "retry":
-      return state.selected.length > targetFor(state)
-        ? "Toque de novo para desmarcar uma estrela."
-        : "Vamos contar de novo?";
+    case "orient":
+      return excess ? { cue: "estrelas-sobram", note: "Toque numa estrela acesa para apagar." }
+        : { cue: request, note: "Veja as estrelas para contar." };
     case "hint":
-      return "Veja a estrela que está brilhando.";
+      return excess ? { cue: "estrelas-sobram", note: "Apague uma das estrelas acesas." }
+        : { cue: "estrelas-faltam", note: "Ainda faltam estrelas. Veja as apagadas." };
     case "guided":
-      return "Vamos contar juntos.";
+      return excess ? { cue: "estrelas-guia-retirar", note: "Toque na estrela marcada para apagar." }
+        : { cue: "contar-juntos", note: "Toque na estrela que brilha." };
     default:
-      return "";
+      return { cue: request, note: "" };
   }
 }
 
@@ -99,12 +93,14 @@ export function mountStars({ container, configuration, audio, onComplete, onRetu
     const amount = targetFor(state);
     const matched = hasTarget(state);
     const suggestion = suggestedStar(state);
-    const countTogether = supportFor(state) === "guided";
+    const support = supportFor(state);
+    const excess = state.selected.length > amount;
 
     target.textContent = amount;
     unit.textContent = amount === 1 ? "estrela" : "estrelas";
     count.textContent = `${state.selected.length} de ${amount}`;
-    feedback.textContent = feedbackFor(state);
+    feedback.textContent = feedbackFor(state).note;
+    sky.toggleAttribute("data-help-focus", support === "orient");
     stage.dataset.matched = String(matched);
     progress.setAttribute("aria-label", `Rodada ${state.round + 1} de ${state.targets.length}`);
     for (const [index, dot] of [...progress.children].entries()) {
@@ -117,6 +113,7 @@ export function mountStars({ container, configuration, audio, onComplete, onRetu
       const position = state.selected.indexOf(index);
       button.setAttribute("aria-pressed", String(position >= 0));
       button.dataset.suggested = String(index === suggestion);
+      button.toggleAttribute("data-help-choice", support === "hint" && (position >= 0) === excess);
       button.querySelector(".star-number").textContent = position < 0 ? "" : String(position + 1);
     }
 
@@ -124,49 +121,43 @@ export function mountStars({ container, configuration, audio, onComplete, onRetu
       buttons[state.selected.at(-1)].focus({ preventScroll: true });
     }
     help.disabled = matched;
-    help.querySelector("span").textContent = countTogether ? "Contar juntos" : "Ajuda";
   }
 
   function startRound() {
     render();
-    audio.instruct(instructionFor(state));
+    audio.instruct(feedbackFor(state).cue);
   }
 
   function applySelection(next) {
     if (state === next) return;
 
     const matched = hasTarget(state);
-    const supportChanged = supportFor(next) !== supportFor(state);
+    const previousCue = feedbackFor(state).cue;
     state = next;
     transition.cancel();
     render();
 
-    const success = `acerto-${targetFor(state)}`;
+    const cue = feedbackFor(state).cue;
     if (hasTarget(state)) {
-      transition.schedule(audio.instruct(success, { afterCurrent: true }));
+      transition.schedule(audio.instruct(cue, { afterCurrent: true }));
       return;
     }
 
-    if (matched) audio.interrupt(success);
-    if (supportChanged && supportFor(state) !== "none") {
-      audio.instruct(instructionFor(state), { afterCurrent: true });
+    if (matched) audio.interrupt(previousCue);
+    if (cue !== previousCue && supportFor(state) !== "none") {
+      audio.instruct(cue, { afterCurrent: true });
       return;
     }
 
-    if (matched) audio.instruct(instructionFor(state), { playNow: false });
+    if (matched) audio.instruct(cue, { playNow: false });
     const selection = state.selected.length;
     audio.playIfIdle(selection ? `contagem-${selection}` : "desmarcar");
   }
 
   function askForHelp() {
-    if (supportFor(state) === "guided") {
-      applySelection(demonstrateStar(state));
-      return;
-    }
-
     state = requestHelp(state);
     render();
-    audio.instruct(instructionFor(state), { afterCurrent: true });
+    audio.instruct(feedbackFor(state).cue, { afterCurrent: true });
   }
 
   const unbind = bindActions(container, {

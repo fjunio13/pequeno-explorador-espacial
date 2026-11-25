@@ -50,18 +50,15 @@ export function toggleStar(state, index) {
 
 export function supportFor(state) {
   if (hasTarget(state) || state.attempts === 0) return "none";
-  if (state.attempts === 1) return "retry";
+  if (state.attempts === 1) return "orient";
   if (state.attempts < guidedAfter) return "hint";
   return "guided";
 }
 
 export function suggestedStar(state) {
-  const support = supportFor(state);
-  if (support !== "hint" && support !== "guided") return null;
+  if (supportFor(state) !== "guided") return null;
 
-  const target = targetFor(state);
-  if (state.selected.length === target) return null;
-  if (state.selected.length > target) return state.selected.at(-1);
+  if (state.selected.length > targetFor(state)) return state.selected.at(-1);
 
   return Array.from({ length: state.starCount }, (_, index) => index)
     .find((index) => !state.selected.includes(index));
@@ -69,12 +66,7 @@ export function suggestedStar(state) {
 
 export function requestHelp(state) {
   if (hasTarget(state)) return state;
-  const attempts = Math.min(Math.max(state.attempts + 1, 2), guidedAfter);
-  return { ...state, attempts };
-}
-
-export function demonstrateStar(state) {
-  return supportFor(state) === "guided" ? toggleStar(state, suggestedStar(state)) : state;
+  return { ...state, attempts: Math.min(state.attempts + 1, guidedAfter) };
 }
 
 export function nextRound(state) {

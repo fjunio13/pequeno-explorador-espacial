@@ -55,6 +55,8 @@ Nos Cristais, os Pointer Events acompanham a peça até qualquer ponto da área 
 
 As atividades usam `round-advance.js` para avançar após o feedback e 650 ms de pausa visual. Se o áudio estiver indisponível, o resultado permanece visível por 1,4 s. Repetir a fala de resultado renova a espera. Mudar a seleção nas Estrelas ou corrigir a carga na Oficina cancela a passagem pendente. Ao trocar de tela, a função de encerramento cancela a transição e remove os eventos. Nos Cristais, ela também libera a captura do ponteiro. Nas Descobertas, cancela o voo da criatura.
 
+Cada atividade mantém o nível de ajuda no estado local da fase ou rodada. A interface seleciona a pista a partir desse estado e da quantidade atual. Pedir ajuda modifica a orientação e a instrução que pode ser repetida pelo serviço de áudio. As escolhas, transferências e ativações continuam nos controles da atividade. Os destaques são atributos de estado renderizados por CSS e saem da tela com o restante da atividade.
+
 Adicionar um novo planeta não deverá exigir modificar a lógica interna dos planetas existentes.
 
 Evitar abstrações excessivamente genéricas. As três atividades poderão compartilhar infraestrutura sem necessariamente compartilhar suas mecânicas educativas.
@@ -90,7 +92,7 @@ O núcleo abre a oficina pela nave no mapa e mantém a faixa e as visitas da ofi
 
 Os estilos da missão das Descobertas e da modalidade **Completar o painel** animam apenas a opacidade dos brilhos. O estado da atividade determina quais elementos recebem destaque. Trocar de tela remove esses elementos. A regra de movimento reduzido desativa as animações e conserva a sinalização estática.
 
-`src/services/audio.js` controla um único elemento de áudio. Instruções prioritárias podem aguardar a fala em curso. Ações rápidas podem dispensar pequenos efeitos enquanto há voz ativa. A conclusão da fala usa o evento `ended`. Em caso de erro ou de reprodução sem progresso, a apresentação visual conduz a atividade. O catálogo em `src/services/audio-catalog.js` associa os identificadores aos arquivos locais e o botão **Ouvir** repete a instrução atual.
+`src/services/audio.js` controla um único elemento de áudio. Instruções prioritárias podem aguardar a fala em curso. Ações rápidas podem dispensar pequenos efeitos enquanto há voz ativa. A conclusão da fala usa o evento `ended`. Em caso de erro ou de reprodução sem progresso, **Ouvir** mostra o ícone riscado, a mensagem de status fica disponível para leitores de tela e a apresentação visual conduz a atividade. O catálogo em `src/services/audio-catalog.js` associa os identificadores aos arquivos locais e o botão **Ouvir** repete a instrução atual.
 
 O [guia visual](guia-visual.md) registra a direção de arte. O [registro audiovisual](recursos-audiovisuais.md) reúne a origem das ilustrações, falas e efeitos.
 

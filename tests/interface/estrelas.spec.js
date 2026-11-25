@@ -110,19 +110,22 @@ test("corrige um toque após o acerto e pede ajuda sem conferir a rodada", async
   await expect.poll(() => player(page).evaluate((node) => node.currentTime)).toBeGreaterThan(0);
 
   await star(page, 2).tap();
-  await expect(page.getByText("Toque de novo para desmarcar uma estrela.")).toBeVisible();
-  await expect(player(page)).toHaveAttribute("src", /tentar-novamente\.mp3$/);
-  await expect.poll(() => player(page).evaluate((node) => node.ended), { intervals: [50, 100, 150] }).toBe(true);
+  await expect(page.getByText("Toque numa estrela acesa para apagar.")).toBeVisible();
+  await expect(player(page)).toHaveAttribute("src", /estrelas-sobram\.mp3$/);
   await expect(target(page)).toHaveText("1");
   await expect(page.locator("[data-count]")).toHaveText("2 de 1");
   await expect(page.locator(".count-stage")).toHaveAttribute("data-matched", "false");
 
   await button(page, "Ajuda").tap();
+  await expect(page.locator(".star-button[data-help-choice]")).toHaveCount(2);
+  await expect(page.locator('[data-suggested="true"]')).toHaveCount(0);
+  await button(page, "Ajuda").tap();
   await expect(star(page, 2)).toHaveAttribute("data-suggested", "true");
   await button(page, "Ajuda").tap();
-  await expect(button(page, "Contar juntos")).toBeVisible();
   await expect(page.locator("[data-count]")).toHaveText("2 de 1");
-  await button(page, "Contar juntos").tap();
+  await button(page, "Ouvir").tap();
+  await expect(player(page)).toHaveAttribute("src", /estrelas-guia-retirar\.mp3$/);
+  await star(page, 2).tap();
   await expect(star(page, 2)).toHaveAttribute("aria-pressed", "false");
   await expect(page.locator("[data-count]")).toHaveText("1 de 1");
 
@@ -165,20 +168,35 @@ test("renova a pausa com Ouvir e cancela a passagem ao sair", async ({ page }) =
 
 test("o tutorial continua jogável sem áudio em paisagem", async ({ page }) => {
   await page.route("**/assets/audio/*.mp3", (route) => route.abort());
-  await page.setViewportSize({ width: 568, height: 320 });
-  await openMission(page);
-  await expect(page.getByText("Áudio indisponível.", { exact: false })).toBeVisible();
-  await star(page, 1).tap();
-  await expect(page.getByText("Você encontrou a quantidade certa!")).toBeVisible();
-  await expect(starRound(page, 2)).toBeVisible();
-  const layout = await page.evaluate(() => ({
-    width: document.documentElement.scrollWidth,
-    height: document.documentElement.scrollHeight,
-    sizes: [...document.querySelectorAll("main button")].map((item) => Math.min(item.offsetWidth, item.offsetHeight)),
-  }));
-  expect(layout.width).toBeLessThanOrEqual(568);
-  expect(layout.height).toBeLessThanOrEqual(320);
-  expect(Math.min(...layout.sizes)).toBeGreaterThanOrEqual(48);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const [width, height] of [[568, 320], [667, 375], [780, 360]]) {
+    await page.evaluate(() => document.fullscreenElement && document.exitFullscreen());
+    await page.setViewportSize({ width, height });
+    await openMission(page);
+    await expect(button(page, "Ouvir")).toHaveAccessibleDescription(/Áudio indisponível/);
+    await expect(button(page, "Ouvir").locator(".sound-unavailable")).toBeVisible();
+    await button(page, "Ajuda").tap();
+    await expect(page.locator(".star-line")).toHaveAttribute("data-help-focus", "");
+    await expect(page.locator('[data-suggested="true"]')).toHaveCount(0);
+    await button(page, "Ajuda").tap();
+    await expect(page.locator(".star-button[data-help-choice]")).toHaveCount(5);
+    await button(page, "Ajuda").tap();
+    await expect(star(page, 1)).toHaveAttribute("data-suggested", "true");
+    await expect(star(page, 1)).toHaveCSS("animation-name", "none");
+    await expect(page.locator("[data-count]")).toHaveText("0 de 1");
+    const layout = await page.evaluate(() => ({
+      width: document.documentElement.scrollWidth,
+      height: document.documentElement.scrollHeight,
+      sizes: [...document.querySelectorAll("main button")].map((item) => Math.min(item.offsetWidth, item.offsetHeight)),
+    }));
+    expect(layout.width).toBeLessThanOrEqual(width + 1);
+    expect(layout.height).toBeLessThanOrEqual(height + 1);
+    expect(Math.min(...layout.sizes)).toBeGreaterThanOrEqual(48);
+    await star(page, 1).tap();
+    await expect(page.getByText("Você encontrou a quantidade certa!")).toBeVisible();
+    await expect(starRound(page, 2)).toBeVisible();
+    await expect(page.locator("[data-help-focus]")).toHaveCount(0);
+  }
 });
 
 test("um toque iniciado na celebração não seleciona estrela na rodada seguinte", async ({ page }) => {
