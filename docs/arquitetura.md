@@ -47,13 +47,13 @@ Todas as atividades deverão respeitar uma interface comum. Ao iniciar uma ativi
 
 A atividade deverá inicializar seus elementos, processar as interações e sinalizar a conclusão. Ao ser encerrada, deverá liberar seus controles, animações e demais recursos temporários.
 
-Os módulos `mountStars`, `mountCrystals` e `mountDiscoveries` recebem `{ container, configuration, audio, onComplete, onReturn }` e retornam uma função de encerramento. O núcleo chama essa função e interrompe o áudio ao trocar de tela. A atividade usa as funções recebidas para comunicar a conclusão e a saída.
+Os módulos `mountStars`, `mountCrystals`, `mountDiscoveries` e `mountEnergy` recebem `{ container, configuration, audio, onComplete, onReturn }` e retornam uma função de encerramento. O núcleo chama essa função e interrompe o áudio ao trocar de tela. A atividade usa as funções recebidas para comunicar a conclusão e a saída.
 
 Os botões nativos recebem toque, mouse e teclado pela ativação do evento `click`. A área de toque e os estados de seleção, foco e pista são definidos pela interface.
 
 Nos Cristais, os Pointer Events acompanham a peça até qualquer ponto da área de destino. Soltar fora dela ou cancelar o gesto devolve a peça à origem. Um toque sem deslocamento transfere a peça na soltura. Os controles que mantêm a criança na atividade aceitam a soltura logo após um arraste. O retorno ao mapa e a ativação pelo teclado usam o clique nativo.
 
-As três atividades usam `round-advance.js` para avançar após o feedback e 650 ms de pausa visual. Se o áudio estiver indisponível, o resultado permanece visível por 1,4 s. Repetir a fala de resultado renova a espera. Mudar a seleção nas Estrelas cancela a passagem pendente. Ao trocar de tela, a função de encerramento cancela a transição e remove os eventos. Nos Cristais, ela também libera a captura do ponteiro. Nas Descobertas, cancela o voo da criatura.
+As atividades usam `round-advance.js` para avançar após o feedback e 650 ms de pausa visual. Se o áudio estiver indisponível, o resultado permanece visível por 1,4 s. Repetir a fala de resultado renova a espera. Mudar a seleção nas Estrelas ou corrigir a carga na Oficina cancela a passagem pendente. Ao trocar de tela, a função de encerramento cancela a transição e remove os eventos. Nos Cristais, ela também libera a captura do ponteiro. Nas Descobertas, cancela o voo da criatura.
 
 Adicionar um novo planeta não deverá exigir modificar a lógica interna dos planetas existentes.
 
@@ -66,7 +66,7 @@ Evitar abstrações excessivamente genéricas. As três atividades poderão comp
 | `index.html` | Ponto de entrada |
 | `src/` | Código do jogo |
 | `src/core/` | Estado e navegação |
-| `src/activities/` | Módulos dos planetas |
+| `src/activities/` | Módulos dos planetas e da oficina |
 | `src/ui/` | Elementos e apresentação |
 | `src/services/` | Áudio e serviços compartilhados |
 | `assets/images/` | Imagens |
@@ -83,6 +83,10 @@ O núcleo reutiliza `round-advance.js` nas chegadas e após a fala da terceira p
 `src/activities/stars/` implementa a contagem de estrelas. Em `src/activities/crystals/`, `logic.js` controla quantidade, pistas e a liberação da estação. `drag.js` cuida dos gestos, e `index.js` liga as regras à tela e ao áudio. A quantidade certa apresenta os numerais. A criança associa o número e aciona a energia em passos distintos.
 
 Em `src/activities/discoveries/`, `logic.js` mantém o esconderijo, a quantidade inicial, a chegada de uma unidade e a escolha do numeral. `index.js` conecta a exploração do cenário, os controles de contagem, o voo da criatura e a reação do grupo. Cada rodada só avança após a criança identificar a nova quantidade.
+
+Em `src/activities/energy/`, `configuration.js` organiza as três faixas e as variações de cada visita. `logic.js` controla a composição da carga, os complementos, as comparações e a representação em fileiras. `feedback.js` escolhe a mensagem visual e a fala. `index.js` renderiza os painéis e recebe as interações, e `screens.js` apresenta a chegada e a nave energizada.
+
+O núcleo abre a oficina pela nave no mapa e mantém a faixa e as visitas da oficina durante a sessão. Repetir reutiliza a configuração da última visita. O módulo comunica a conclusão da oficina por `onComplete`. O desfecho da aventura consulta o conjunto de pistas dos três planetas.
 
 `src/services/audio.js` controla um único elemento de áudio. Instruções prioritárias podem aguardar a fala em curso. Ações rápidas podem dispensar pequenos efeitos enquanto há voz ativa. A conclusão da fala usa o evento `ended`. Em caso de erro ou de reprodução sem progresso, a apresentação visual conduz a atividade. O catálogo em `src/services/audio-catalog.js` associa os identificadores aos arquivos locais e o botão **Ouvir** repete a instrução atual.
 

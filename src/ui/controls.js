@@ -6,6 +6,7 @@ const paths = {
   sound: '<path d="M3 9h4l5-4v14l-5-4H3V9Zm13-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>',
   help: '<circle cx="12" cy="12" r="9"/><path d="M9.3 8.8a2.8 2.8 0 0 1 5.4 1c0 2-2.7 2.1-2.7 4m0 3h.01"/>',
   bolt: '<path d="m13 2-9 12h7l-1 8 10-12h-7l1-8Z" fill="currentColor" stroke="none"/>',
+  ship: '<path d="M9 15c-1-4 1-8 4-10 3-2 6-2 8-2 0 2 0 5-2 8-2 3-6 5-10 4Zm0-5-4 1-2 4h6m5 0-1 4-4 2v-6m-4 3-2 3 3-2"/><circle cx="15.5" cy="8.5" r="1.5"/>',
   star: '<path d="m12 2.5 2.9 5.9 6.5 1-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5-4.7-4.6 6.5-1L12 2.5Z"/>',
   spark: '<path d="M12 2c0 6-4 10-10 10 6 0 10 4 10 10 0-6 4-10 10-10-6 0-10-4-10-10Z" fill="currentColor" stroke="none"/>',
   direction: '<path d="M4 20 20 4m-8 0h8v8"/><circle cx="7" cy="9" r="1.3"/><circle cx="15" cy="19" r="1.3"/>',

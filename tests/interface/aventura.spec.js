@@ -147,6 +147,21 @@ for (const [orderIndex, order] of orders.entries()) {
       await expect(clues(page)).toHaveCount(3);
       await button(page, "Responder ao sinal").tap();
       await expect(screen(page, "finale")).toBeVisible();
+
+      await button(page, "Voltar ao mapa").tap();
+      await button(page, "Oficina de Energia").tap();
+      await button(page, "Pular apresentação").tap();
+      const energy = screen(page, "energy");
+      for (const value of [5, 1, 1]) await energy.locator(`[data-action="add"][data-value="${value}"]`).tap();
+      await expect(energy).toHaveAttribute("data-mode", "complete");
+      await energy.locator('[data-action="add"][data-value="3"]').tap();
+      await expect(energy).toHaveAttribute("data-mode", "compare");
+      await button(page, "Carga da direita").tap();
+      await expect(screen(page, "energy-complete")).toBeVisible();
+      await button(page, "Voltar ao mapa").tap();
+      await expect(clues(page)).toHaveCount(3);
+      await button(page, "Responder ao sinal").tap();
+      await expect(screen(page, "finale")).toBeVisible();
     }
     expect(errors).toEqual([]);
   });

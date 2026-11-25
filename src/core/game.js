@@ -2,6 +2,9 @@ import { mountCrystals } from "../activities/crystals/index.js";
 import { crystalConfiguration } from "../activities/crystals/logic.js";
 import { mountDiscoveries } from "../activities/discoveries/index.js";
 import { discoveryConfiguration } from "../activities/discoveries/logic.js";
+import { mountEnergy } from "../activities/energy/index.js";
+import { energyConfiguration, lastEnergyBand } from "../activities/energy/configuration.js";
+import { energyArrivalScreen, energyCompleteScreen } from "../activities/energy/screens.js";
 import { createRoundAdvance } from "../activities/round-advance.js";
 import { mountStars } from "../activities/stars/index.js";
 import { bindActions } from "../ui/controls.js";
@@ -40,8 +43,10 @@ const planets = [
 export function startGame(container, audio) {
   let closeScreen = () => {};
   let finaleShown = false;
+  let energyBand = 0;
   const completed = new Set();
   const visits = new Map();
+  const energyVisits = Array(lastEnergyBand + 1).fill(0);
 
   function open(mount, { focus = true } = {}) {
     closeScreen();
@@ -98,6 +103,7 @@ export function startGame(container, audio) {
         else arrive(planet);
       },
       arrival: (button) => arrive(planets.find((item) => item.id === button.dataset.planet)),
+      workshop: enterWorkshop,
       finale,
     }, "mapa");
   }
@@ -128,6 +134,29 @@ export function startGame(container, audio) {
   function finale() {
     finaleShown = true;
     show(finaleScreen(), { map }, "aventura-conclusao");
+  }
+
+  function enterWorkshop() {
+    const begin = () => runWorkshop(energyBand);
+    if (energyVisits.some(Boolean)) begin();
+    else show(energyArrivalScreen(), { map, skip: begin }, "oficina-chegada", { onEnd: begin });
+  }
+
+  function runWorkshop(band, configuration = energyConfiguration(band, energyVisits[band]++)) {
+    open(() => mountEnergy({
+      container, configuration, audio, onReturn: map,
+      onComplete: () => finishWorkshop(band, configuration),
+    }));
+  }
+
+  function finishWorkshop(band, configuration) {
+    const nextBand = Math.min(band + 1, lastEnergyBand);
+    energyBand = Math.max(energyBand, nextBand);
+    show(energyCompleteScreen(), {
+      map,
+      replay: () => runWorkshop(band, configuration),
+      next: () => runWorkshop(nextBand),
+    }, "oficina-pronta");
   }
 
   home({ focus: false });
