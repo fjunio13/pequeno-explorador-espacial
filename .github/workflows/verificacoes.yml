@@ -22,12 +22,12 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
-      - name: Verificar a sintaxe do JavaScript
-        run: npm run check
-      - name: Testar a página de entrada
-        run: npm test
       - name: Instalar dependências de desenvolvimento
         run: npm ci
+      - name: Verificar a sintaxe do JavaScript
+        run: npm run check
+      - name: Testar a lógica e os recursos locais
+        run: npm test
       - name: Instalar Chromium
         run: npx playwright install --with-deps --only-shell chromium
       - name: Testar a interface móvel

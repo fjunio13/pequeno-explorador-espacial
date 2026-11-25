@@ -8,9 +8,14 @@
     <script type="module" src="./src/main.js"></script>
   </head>
   <body>
-    <main>
-      <h1>Pequeno Explorador Espacial</h1>
-      <p class="orientation-hint">Vire o aparelho para jogar na horizontal.</p>
+    <p class="orientation-hint" role="status">Vire o aparelho para jogar na horizontal.</p>
+    <main id="game">
+      <noscript>
+        <h1>Pequeno Explorador Espacial</h1>
+        <p>Ative o JavaScript para jogar.</p>
+      </noscript>
     </main>
+    <p id="audio-status" class="audio-status" role="status" hidden>Áudio indisponível. Toque em Ouvir para tentar de novo.</p>
+    <audio id="game-audio" preload="none"></audio>
   </body>
 </html>

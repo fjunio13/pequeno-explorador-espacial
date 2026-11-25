@@ -47,6 +47,10 @@ Todas as atividades deverão respeitar uma interface comum. Ao iniciar uma ativi
 
 A atividade deverá inicializar seus elementos, processar as interações e sinalizar a conclusão. Ao ser encerrada, deverá liberar seus controles, animações e demais recursos temporários.
 
+Na primeira missão, `mountStars({ container, configuration, audio, onComplete, onReturn })` retorna a função que desativa os eventos da atividade. O núcleo chama essa função e interrompe o áudio ao trocar de tela. A atividade usa as funções recebidas para comunicar a conclusão e a saída.
+
+Os botões nativos recebem toque, mouse e teclado pela ativação do evento `click`. A área de toque e os estados de seleção, foco e pista são definidos pela interface.
+
 Adicionar um novo planeta não deverá exigir modificar a lógica interna dos planetas existentes.
 
 Evitar abstrações excessivamente genéricas. As três atividades poderão compartilhar infraestrutura sem necessariamente compartilhar suas mecânicas educativas.
@@ -68,7 +72,11 @@ Evitar abstrações excessivamente genéricas. As três atividades poderão comp
 | `AGENTS.md` | Instruções permanentes para agentes |
 | `.github/workflows/` | Automações de testes e publicação |
 
-A fundação usa apenas os diretórios necessários à página inicial e às verificações. `src/main.js` é o ponto de entrada JavaScript. `src/ui/styles.css` contém os estilos da página. Os demais diretórios de referência entram quando tiverem conteúdo.
+`src/main.js` inicia o jogo. `src/core/game.js` controla abertura, mapa, atividade e conclusão. `src/ui/` contém as telas, os controles e os estilos. `src/activities/stars/` implementa a atividade e mantém a lógica de contagem separada do DOM.
+
+`src/services/audio.js` controla um único elemento de áudio. Cada nova mensagem interrompe a anterior. O catálogo em `src/services/audio-catalog.js` associa os identificadores aos arquivos locais e o botão **Ouvir** repete a instrução atual.
+
+O [guia visual](guia-visual.md) registra a direção de arte. O [registro audiovisual](recursos-audiovisuais.md) reúne a origem das ilustrações, falas e efeitos.
 
 Playwright é uma dependência de desenvolvimento. O navegador carrega diretamente os arquivos estáticos do jogo.
 
