@@ -19,11 +19,13 @@ As ilustrações são gerações originais para este projeto. As imagens usam pe
 
 ## Narração e efeitos
 
-As 103 falas em `assets/audio/` foram sintetizadas em português brasileiro com Piper TTS 1.8.0 e o modelo `pt_BR-faber-medium` na revisão `5ec43b186ef915a195d3ddbcfd9916e76c503c3f`. Os arquivos foram normalizados e exportados em MP3 mono a 22.050 Hz. A revisão de fluidez recortou os pedidos e acertos das Estrelas e a fala de energização dos Cristais. A integração narrativa regravou a abertura e as conclusões das Estrelas e dos Cristais. A oficina adicionou 32 falas e regravou a indicação de destinos do mapa. [Catálogo de áudio](../src/services/audio-catalog.js)
+As 108 falas em `assets/audio/` foram sintetizadas em português brasileiro com Piper TTS 1.8.0 e o modelo `pt_BR-faber-medium` na revisão `5ec43b186ef915a195d3ddbcfd9916e76c503c3f`. Os arquivos foram normalizados e exportados em MP3 mono a 22.050 Hz. A revisão de fluidez recortou os pedidos e acertos das Estrelas e a fala de energização dos Cristais. A integração narrativa regravou a abertura e as conclusões das Estrelas e dos Cristais. A oficina adicionou 32 falas e regravou a indicação de destinos do mapa. [Catálogo de áudio](../src/services/audio-catalog.js)
 
 A décima entrega acrescentou nove falas curtas de assistência. Elas orientam seleção e retirada de estrelas, falta e excesso de cristais, complementação e comparação na oficina. A fala de reorientação no vale e a pista de montagem na oficina foram regravadas. A instrução do antigo botão **Ajudar**, que movia um cristal, foi removida. Os novos destaques usam os gráficos existentes e estilos CSS.
 
 A décima primeira entrega acrescentou doze falas com a mesma voz e normalização. Os prefixos `cristais-completar-` e `cristais-reduzir-` identificam os pedidos por quantidade. As falas `cristais-comparar-mais`, `cristais-comparar-menos`, `cristais-comparar-pares` e `cristais-comparacao-certa` orientam e confirmam a comparação. A tela de comparação usa duas instâncias da estação e do cristal já presentes no jogo.
+
+A décima segunda entrega acrescentou cinco falas com a mesma voz e normalização. Elas fazem as três perguntas de comparação do vale e orientam a observação dos grupos e dos pares. As falas de busca, chegada e acerto e as ilustrações do vale e das luzinhas foram reaproveitadas.
 
 O conjunto de treinamento da voz Faber é CC0, conforme a ficha do modelo. A voz-base dessa revisão é a do leitor 92, Cori Samuel, do conjunto Hi-Fi TTS sob CC BY 4.0. Créditos ao OHF-Voice, a Cori Samuel e aos autores do Hi-Fi TTS. O jogo distribui as falas sintetizadas e reproduz os MP3 locais. [Ficha da voz Faber](https://huggingface.co/rhasspy/piper-voices/blob/5ec43b186ef915a195d3ddbcfd9916e76c503c3f/pt/pt_BR/faber/medium/MODEL_CARD) · [Hi-Fi TTS](https://www.openslr.org/109/) · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 

@@ -1,7 +1,7 @@
 import { bindActions, control, icon, lightPattern } from "../../ui/controls.js";
 import { createRoundAdvance } from "../round-advance.js";
 import {
-  chooseNumber, explore, hidingPlaces, nextDiscovery, requestHelp, sceneFor, startDiscovery, visibleCount,
+  chooseGroup, chooseNumber, explore, hidingPlaces, nextDiscovery, requestHelp, sceneFor, startDiscovery, visibleCount,
 } from "./logic.js";
 
 const lightling = new URL("../../../assets/images/luzinha.webp", import.meta.url).href;
@@ -21,6 +21,28 @@ const scenery = {
   },
 };
 
+const comparisons = {
+  more: ["Qual grupo tem mais luzinhas?", "descobertas-mais"],
+  less: ["Qual grupo tem menos luzinhas?", "descobertas-menos"],
+  equal: ["Os grupos têm a mesma quantidade?", "descobertas-iguais"],
+};
+
+function comparisonMarkup(groups) {
+  return groups.map(({ amount, layout }, index) => {
+    const side = index === 0 ? "left" : "right";
+    const name = index === 0 ? "esquerda" : "direita";
+    const creatures = Array.from({ length: amount }, (_, index) => `
+      <span class="glow-creature" aria-hidden="true">
+        <img src="${lightling}" alt="" draggable="false">
+        <span class="discovery-count-mark">${index + 1}</span>
+      </span>`).join("");
+    return `<button class="discovery-group-choice" data-action="compare" data-choice="${side}"
+      type="button" aria-label="Grupo da ${name}, ${amount} ${amount === 1 ? "luzinha" : "luzinhas"}">
+      <span class="discovery-formation" data-layout="${layout}">${creatures}</span>
+    </button>`;
+  }).join("");
+}
+
 function activityMarkup(rounds) {
   const spots = hidingPlaces.map((place) => `
     <button type="button" class="discovery-spot" data-action="explore" data-place="${place}"
@@ -32,7 +54,7 @@ function activityMarkup(rounds) {
     <button type="button" class="glow-creature" data-action="count" data-count="${index + 1}"
       aria-label="Luzinha ${index + 1}" hidden>
       <img src="${lightling}" alt="" draggable="false">
-      <span aria-hidden="true">${index + 1}</span>
+      <span class="discovery-count-mark" aria-hidden="true">${index + 1}</span>
     </button>`).join("");
   const numbers = [0, 1, 2].map(() =>
     '<button class="discovery-number" type="button" data-action="number"></button>').join("");
@@ -52,11 +74,14 @@ function activityMarkup(rounds) {
         <div class="discovery-valley">
           <div class="discovery-group" role="group" aria-label="Grupo de luzinhas">${creatures}</div>
           <div class="discovery-hollows" role="group" aria-label="Lugares para explorar">${spots}</div>
+          <div class="discovery-comparison" role="group" aria-label="Compare os grupos do vale" hidden></div>
           ${lightPattern}
         </div>
         <div class="discovery-dock">
           <p role="status" data-feedback></p>
           <div class="discovery-numbers" role="group" aria-label="Quantas luzinhas?">${numbers}</div>
+          <button class="discovery-number discovery-equal" type="button"
+            data-action="compare" data-choice="equal" aria-label="Iguais" hidden>=</button>
           ${control("help", "Ajuda", "help")}
         </div>
       </div>
@@ -72,11 +97,19 @@ function cueFor(state) {
     ][attempts];
   }
   if (phase === "lit") return "descobertas-sinal";
+  if (phase === "compare") {
+    if (attempts === 1) return "descobertas-comparar-grupos";
+    if (attempts >= 2) return "descobertas-comparar-pares";
+    return comparisons[sceneFor(state).relation][1];
+  }
   return ["descobertas-chegou", "descobertas-contar", "descobertas-contar", "descobertas-numero"][attempts];
 }
 
 function feedbackFor({ phase, attempts }) {
   if (phase === "lit") return "";
+  if (phase === "compare") {
+    return ["", "Olhe os dois lados do vale.", "Conte uma luzinha de cada lado.", "Veja se sobra alguma luzinha."][attempts];
+  }
   if (phase === "search") {
     return ["", "Olhe os esconderijos.", "Veja onde o brilho aparece.", "Toque no brilho dourado."][attempts];
   }
@@ -90,9 +123,11 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
   const screen = container.querySelector(".discovery-screen");
   const group = screen.querySelector(".discovery-group");
   const hollows = screen.querySelector(".discovery-hollows");
-  const creatures = [...screen.querySelectorAll(".glow-creature")];
+  const creatures = [...group.querySelectorAll(".glow-creature")];
+  const comparison = screen.querySelector(".discovery-comparison");
+  const equals = screen.querySelector(".discovery-equal");
   const spots = [...screen.querySelectorAll(".discovery-spot")];
-  const numbers = [...screen.querySelectorAll(".discovery-number")];
+  const numbers = [...screen.querySelectorAll('[data-action="number"]')];
   const progress = screen.querySelector("[data-progress]");
   const prompt = screen.querySelector("[data-prompt]");
   const feedback = screen.querySelector("[data-feedback]");
@@ -125,14 +160,15 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
   function render() {
     const scene = sceneFor(state);
     const { phase, attempts, round } = state;
-    const searching = phase === "search";
+    const comparing = scene.kind === "compare";
     const lit = phase === "lit";
-    const total = visibleCount(state);
-
     screen.dataset.phase = phase;
-    hollows.toggleAttribute("data-help-focus", searching && attempts === 1);
-    group.toggleAttribute("data-help-focus", phase === "count" && attempts === 1);
-    prompt.textContent = searching ? "Procure o brilho no vale" : lit ? "As luzinhas piscaram juntas!" : "Quantas luzinhas estão juntas?";
+    screen.dataset.mode = scene.kind;
+    group.hidden = comparing;
+    hollows.hidden = comparing;
+    comparison.hidden = !comparing;
+    equals.hidden = !comparing;
+    help.disabled = lit;
     feedback.textContent = feedbackFor(state);
     progress.setAttribute("aria-label", `Descoberta ${round + 1} de ${configuration.length}`);
     for (const [index, dot] of [...progress.children].entries()) {
@@ -140,6 +176,31 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
         ? "done"
         : index === round ? "active" : "waiting";
     }
+
+    if (comparing) {
+      for (const button of numbers) button.hidden = true;
+      const pairs = Math.min(...scene.groups.map(({ amount }) => amount));
+      prompt.textContent = lit ? "As luzinhas piscaram juntas!" : comparisons[scene.relation][0];
+      equals.disabled = lit;
+      equals.toggleAttribute("data-answered", state.choice === "equal");
+      for (const choice of comparison.children) {
+        choice.disabled = lit;
+        choice.toggleAttribute("data-help-focus", !lit && attempts === 1);
+        choice.toggleAttribute("data-chosen", lit && (state.choice === "equal" || choice.dataset.choice === state.choice));
+        for (const [index, creature] of [...choice.firstElementChild.children].entries()) {
+          creature.toggleAttribute("data-pair", !lit && attempts >= 2 && index < pairs);
+          creature.toggleAttribute("data-unpaired", !lit && attempts === 3 && index >= pairs);
+        }
+      }
+      return;
+    }
+
+    const searching = phase === "search";
+    const total = visibleCount(state);
+    group.dataset.layout = scene.layout;
+    hollows.toggleAttribute("data-help-focus", searching && attempts === 1);
+    group.toggleAttribute("data-help-focus", phase === "count" && attempts === 1);
+    prompt.textContent = searching ? "Procure o brilho no vale" : lit ? "As luzinhas piscaram juntas!" : "Quantas luzinhas estão juntas?";
 
     for (const spot of spots) {
       const hiding = searching && spot.dataset.place === scene.hidingPlace;
@@ -162,10 +223,13 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
       button.toggleAttribute("data-answered", lit && value === total);
     }
     markCount();
-    help.disabled = lit;
   }
 
   function startRound() {
+    flight?.cancel();
+    flight = undefined;
+    const scene = sceneFor(state);
+    comparison.innerHTML = scene.kind === "compare" ? comparisonMarkup(scene.groups) : "";
     for (const spot of spots) spot.removeAttribute("data-explored");
     lastCounted = 0;
     render();
@@ -199,6 +263,19 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
     audio.instruct(cueFor(state), { afterCurrent: true });
   }
 
+  function answer(button, event, next) {
+    if (event.detail !== 0 && pressedRound !== state.round) return;
+    const focused = document.activeElement === button;
+    state = next;
+    if (state.phase === "count") lastCounted = 0;
+    render();
+    const response = audio.instruct(cueFor(state), { afterCurrent: true });
+    if (state.phase === "lit") {
+      if (focused) listen.focus({ preventScroll: true });
+      advance.schedule(response);
+    }
+  }
+
   const unbind = bindActions(container, {
     map: onReturn,
     listen: () => {
@@ -220,18 +297,8 @@ export function mountDiscoveries({ container, configuration, audio, onComplete, 
       markCount();
       audio.playIfIdle(`contagem-${lastCounted}`);
     },
-    number: (button, event) => {
-      if (event.detail !== 0 && pressedRound !== state.round) return;
-      const focused = document.activeElement === button;
-      state = chooseNumber(state, Number(button.textContent));
-      if (state.phase === "count") lastCounted = 0;
-      render();
-      const response = audio.instruct(cueFor(state), { afterCurrent: true });
-      if (state.phase === "lit") {
-        if (focused) listen.focus({ preventScroll: true });
-        advance.schedule(response);
-      }
-    },
+    number: (button, event) => answer(button, event, chooseNumber(state, Number(button.textContent))),
+    compare: (button, event) => answer(button, event, chooseGroup(state, button.dataset.choice)),
   });
 
   startRound();
