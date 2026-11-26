@@ -190,6 +190,12 @@ button:focus-visible {
   position: absolute;
   inset-block-start: var(--space-y);
   inset-inline-end: var(--space-x);
+  display: flex;
+  gap: 0.45rem;
+}
+
+:fullscreen .intro-audio [data-action="fullscreen"] {
+  display: none;
 }
 
 .intro-copy {

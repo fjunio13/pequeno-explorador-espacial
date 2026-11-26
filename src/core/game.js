@@ -88,15 +88,16 @@ export function startGame(container, audio) {
   }
 
   function home(options) {
-    show(homeScreen(), { start }, "inicio", { ...options, playNow: false });
+    show(homeScreen(document.fullscreenEnabled), { start, fullscreen }, "inicio", { ...options, playNow: false });
   }
 
-  async function start() {
-    // Inicie a narração antes que o pedido de tela cheia consuma o gesto.
+  function start() {
     if (prologueSeen) map();
     else prologue();
-    if (!document.fullscreenEnabled || document.fullscreenElement) return;
+  }
 
+  async function fullscreen() {
+    if (document.fullscreenElement) return;
     try {
       await document.documentElement.requestFullscreen({ navigationUI: "hide" });
     } catch {

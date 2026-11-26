@@ -3,6 +3,7 @@ const paths = {
   next: '<path d="M4 12h16m-7-7 7 7-7 7"/>',
   play: '<path d="M8 5.5v13L18 12 8 5.5Z" fill="currentColor" stroke-linejoin="round"/>',
   repeat: '<path d="M20 11a8 8 0 1 0-2 6m2-11v5h-5"/>',
+  fullscreen: '<path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/>',
   sound: '<path d="M3 9h4l5-4v14l-5-4H3V9Z"/><path class="sound-waves" d="M16 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/><path class="sound-unavailable" d="m4 3 16 18"/>',
   help: '<circle cx="12" cy="12" r="9"/><path d="M9.3 8.8a2.8 2.8 0 0 1 5.4 1c0 2-2.7 2.1-2.7 4m0 3h.01"/>',
   tap: '<path d="M9 13V7a1.5 1.5 0 0 1 3 0v4l5 1a2.5 2.5 0 0 1 2 3l-1 4a2 2 0 0 1-2 2h-4a2 2 0 0 1-1.6-.8L6.5 15a1.4 1.4 0 0 1 2.2-1.7l.3.3M4 8l1 .5M7 3l.6 1M14 3l-.5 1"/>',

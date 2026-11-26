@@ -39,12 +39,12 @@ const button = (page, name) => page.getByRole("button", { name, exact: true });
 const player = (page) => page.locator("#game-audio");
 const prologue = (page) => page.locator('[data-screen="prologue"]');
 
-test("Começar abre a história em tela cheia e Ouvir repete o primeiro trecho", async ({ page }) => {
+test("Começar abre a história na aba e Ouvir repete o primeiro trecho", async ({ page }) => {
   await page.goto("./");
   await player(page).evaluate((audio) => { audio.defaultPlaybackRate = 2; });
   await button(page, "Começar").tap();
   await expect(prologue(page)).toBeVisible();
-  await expect.poll(() => page.evaluate(() => document.fullscreenElement === document.documentElement)).toBe(true);
+  expect(await page.evaluate(() => document.fullscreenElement)).toBeNull();
   await expect(player(page)).toHaveAttribute("src", /farol-quem-piscou\.mp3$/);
   await expect(player(page)).toHaveAttribute("src", /farol-escolher-planeta\.mp3$/);
   await expect(prologue(page).locator(".prologue-planets img").first()).toBeVisible();
@@ -67,6 +67,7 @@ test("permite pular e rever a introdução mesmo se a tela cheia for recusada", 
     };
   });
   await page.goto("./");
+  await button(page, "Tela cheia").tap();
   await button(page, "Começar").tap();
   await expect(prologue(page)).toBeVisible();
   await button(page, "Pular apresentação").tap();

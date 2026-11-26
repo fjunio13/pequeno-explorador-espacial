@@ -15,11 +15,14 @@ export const shipArt = `<svg class="story-ship" viewBox="0 0 144 94" fill="none"
             <circle class="ship-lamp" cx="129" cy="47" r="5" fill="#fff0a6"/>
           </svg>`;
 
-export function homeScreen() {
+export function homeScreen(fullscreenAvailable) {
   return `
     <section class="screen intro-screen" data-screen="home">
       <img class="intro-art" src="${launchArt}" alt="" width="1600" height="900">
-      <div class="intro-audio">${control("listen", "Ouvir", "sound")}</div>
+      <div class="intro-audio">
+        ${fullscreenAvailable ? control("fullscreen", "Tela cheia", "fullscreen") : ""}
+        ${control("listen", "Ouvir", "sound")}
+      </div>
       <div class="intro-copy">
         <h1 tabindex="-1">Pequeno Explorador <strong>Espacial</strong></h1>
         ${control("start", "Começar", "play", "primary")}

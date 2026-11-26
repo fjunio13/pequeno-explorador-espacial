@@ -112,7 +112,7 @@ O layout será projetado prioritariamente para celulares na orientação horizon
 
 Quando aberto na vertical, poderá apresentar uma orientação visual solicitando que o usuário gire o aparelho. Não dependerá de bloqueio automático de orientação, pois navegadores móveis podem restringir esse recurso.
 
-O toque em **Começar** abre a introdução na primeira visita e o mapa nas seguintes, com solicitação de tela cheia no mesmo gesto. Se o navegador recusar a solicitação, o mapa funciona na aba.
+O toque em **Começar** abre a introdução na primeira visita e o mapa nas seguintes. O botão **Tela cheia** da abertura faz a solicitação separadamente. Se o navegador recusar, a aventura continua na aba.
 
 ## 6.7. Publicação
 
