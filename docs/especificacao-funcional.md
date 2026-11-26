@@ -83,15 +83,13 @@ Na comparação, a criança toca diretamente no gerador com mais ou menos crista
 
 ### Planeta 3 — Descobertas
 
-**Objetivo** — introduzir intuitivamente a ideia de acrescentar uma unidade.
+**Objetivo** — perceber a chegada de mais uma unidade e comparar grupos de uma a cinco luzinhas.
 
-O vale apresenta um grupo de criaturas-luz e três lugares para explorar. Ao tocar no brilho entre a pedra, a flor e o arco, a criança chama uma criatura escondida. Ela voa até as que já estavam juntas.
+A visita tem cinco desafios. Nos dois primeiros, a criança explora a pedra, a flor e o arco do vale. Tocar no brilho chama mais uma criatura, que voa até as demais. A criança pode tocar nas criaturas para contar e escolher o numeral do novo total. As luzinhas podem aparecer em uma fileira ou em dois agrupamentos, com o mesmo tamanho de personagem em todas as posições.
 
-A criança pode tocar nas criaturas para contar e escolher o numeral que representa o novo grupo. O grupo responde com luz e som, e a próxima exploração começa após o feedback. As três rodadas mostram a passagem de 1 para 2, de 3 para 4 e de 4 para 5, com esconderijos diferentes a cada visita.
+Nos três desafios seguintes, a criança compara grupos de lados diferentes do vale. Ela toca no grupo pedido ou no botão **=** quando as quantidades são iguais. Os grupos têm o mesmo tamanho de personagem. Grupos iguais podem ocupar disposições diferentes. O botão **=** está presente nas três comparações, e a ordem das perguntas varia entre visitas.
 
-As pistas indicam o lugar que brilha, apoiam a recontagem e destacam o numeral quando necessário. A criança continua responsável por explorar o lugar e escolher a quantidade.
-
-As luzinhas visíveis têm um brilho suave durante a busca e a contagem. Na ajuda para recontar, o contorno acompanha a próxima luzinha e o toque mostra sua posição na contagem. Com movimento reduzido, o destaque permanece estático.
+A ajuda começa pela observação dos dois grupos e depois marca pares e possíveis sobras. Na busca e na contagem, ela orienta o esconderijo ou a próxima luzinha. A criança faz cada escolha. O acerto mantém a resposta de luz e som e a pausa antes do desafio seguinte. Com movimento reduzido, as pistas permanecem estáticas. Concluir a visita registra a pista das luzinhas.
 
 ### Oficina de Energia
 

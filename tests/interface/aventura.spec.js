@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { initialDiscoveryRoute, openDiscoveryRound, solveDiscoveryRound } from "./descobertas-rodadas.js";
 import { initialCrystalRoute, openCrystalChallenge, solveCrystalChallenge } from "./cristais-rodadas.js";
 import { readStarAmount, tapStars } from "./estrelas-rodadas.js";
 
@@ -52,7 +53,7 @@ async function choosePlanet(page, planet) {
   await skipArrival(page, planet);
 }
 
-async function playMission(page, planet) {
+async function playMission(page, planet, discoveryRoute = initialDiscoveryRoute) {
   if (planet === "stars") {
     for (let round = 1; round <= 6; round++) {
       await tapStars(page, await readStarAmount(page, round));
@@ -63,13 +64,9 @@ async function playMission(page, planet) {
       await solveCrystalChallenge(page, challenge);
     }
   } else {
-    for (const amount of [2, 4, 5]) {
-      const hiddenPlace = screen(page, "mission").locator("[data-glint]");
-      await expect(hiddenPlace).toBeVisible();
-      await expect(page.locator(".glow-creature:not([hidden])")).toHaveCount(amount - 1);
-      await hiddenPlace.tap();
-      await expect(page.locator(".glow-creature:not([hidden])")).toHaveCount(amount);
-      await button(page, String(amount)).tap();
+    for (const [index, answer] of discoveryRoute.entries()) {
+      await openDiscoveryRound(page, index + 1);
+      await solveDiscoveryRound(page, answer);
     }
   }
   await expect(screen(page, "complete")).toHaveAttribute("data-planet", planet);
@@ -194,7 +191,7 @@ for (const [orderIndex, order] of orders.entries()) {
 
     if (orderIndex === 0) {
       await button(page, planets.discoveries.name).tap();
-      await playMission(page, "discoveries");
+      await playMission(page, "discoveries", [2, 5, "right", "equal", "left"]);
       await expect.poll(() => player(page).evaluate((audio) => audio.ended)).toBe(true);
       await page.waitForTimeout(800);
       await expect(screen(page, "complete")).toBeVisible();

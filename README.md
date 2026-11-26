@@ -18,7 +18,7 @@ Toque em **Começar** e escolha um planeta no mapa. O mesmo toque pede tela chei
 
 - **Estrelas** — toque para selecionar ou desmarcar estrelas. A primeira das seis rodadas pede uma estrela. As demais pedem de duas a cinco em ordem variável. Ao atingir a quantidade pedida, o jogo diz o total e prepara a próxima rodada. Toque de novo para corrigir a seleção enquanto o resultado permanece na tela.
 - **Cristais** — arraste ou toque para mover os cristais entre a reserva e o gerador. A quantidade certa abre as opções de número. Escolha o numeral e ligue a estação. O jogo avança após a estação acender. Cada visita tem cinco desafios, com montagem, complemento, retirada de excesso e comparação. Para comparar, toque diretamente no gerador pedido.
-- **Descobertas** — explore a pedra, a flor e o arco do vale. No lugar que brilha, sai mais uma luzinha, que voa até o grupo. As luzinhas visíveis têm um brilho suave para facilitar a contagem. Toque no numeral para ver e ouvir a resposta do grupo. Os três grupos começam com **1, 3 e 4** luzinhas.
+- **Descobertas** — explore a pedra, a flor e o arco do vale. No lugar que brilha, sai mais uma luzinha, que voa até o grupo. As luzinhas visíveis têm um brilho suave para facilitar a contagem. Toque no numeral para ver e ouvir a resposta do grupo. Cada visita tem duas buscas com formações variadas e três comparações. Toque em um grupo para responder ou em **=** quando tiverem a mesma quantidade.
 
 O botão **Ouvir** repete a instrução ou a pista atual. **Ajuda** fica disponível desde o início de cada desafio, inclusive durante a escolha do número e a ativação nos Cristais. Pedir ajuda de novo acrescenta pistas visuais e faladas. A criança executa cada ação sugerida. Na primeira visita, é possível esperar a chegada narrada ou pular para a missão. O ícone de livro no mapa permite rever uma chegada.
 
@@ -63,5 +63,6 @@ O GitHub Pages serve o `index.html` da raiz da branch selecionada. Para homologa
 - [Capturas da oitava entrega](docs/capturas-oitava-entrega/)
 - [Capturas da assistência progressiva](docs/capturas-decima-entrega/)
 - [Capturas da ampliação dos Cristais](docs/capturas-decima-primeira-entrega/)
+- [Capturas da ampliação das Descobertas](docs/capturas-decima-segunda-entrega/)
 - [Plano de evolução](docs/plano-evolucao.md)
 - [Instruções para agentes](AGENTS.md)

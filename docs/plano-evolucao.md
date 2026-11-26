@@ -8,9 +8,10 @@
 | Integrado na oitava entrega, PR #10 | Seis rodadas variáveis nas Estrelas com abertura fixa, atalho **Próxima missão**, brilho das luzinhas e destaque dos espaços faltantes na Oficina |
 | Integrado na nona entrega, PR #11 | Publicação direta pela raiz da branch no GitHub Pages, com retorno à `main` após o merge |
 | Homologado na décima entrega, PR #12 | Ajuda desde a primeira tentativa, pistas progressivas nos três planetas e nas três modalidades da Oficina de Energia |
-| Implementado na décima primeira entrega, para homologação | Cinco situações por visita nos Cristais, com carga vazia, complemento, excesso, comparação e variação final |
-| Aprovado como direção de planejamento | Diversificar as Descobertas, planejar um desfecho interativo e homologar o ciclo em Android físico |
-| Depende de aprovação específica | Implementação das etapas 12 a 14, aprovação do roteiro do novo desfecho e decisões de versão e publicação |
+| Incorporado e homologado na décima primeira entrega, PR #13 | Cinco situações por visita nos Cristais, com carga vazia, complemento, excesso, comparação e variação final |
+| Implementado na décima segunda entrega, para homologação | Dois encontros de busca e três comparações no Planeta das Descobertas, com variação de formações entre visitas |
+| Aprovado como direção de planejamento | Planejar um desfecho interativo e homologar o ciclo em Android físico |
+| Depende de aprovação específica | Implementação das etapas 13 e 14, aprovação do roteiro do novo desfecho e decisões de versão e publicação |
 
 As etapas abaixo são a referência para futuras entregas. A especificação funcional, a arquitetura e o roteiro vigentes continuam orientando o jogo. O [guia de publicação](publicacao.md) registra o fluxo aprovado para colocar uma revisão no ar.
 
@@ -30,9 +31,9 @@ A duração de três a cinco minutos é uma hipótese para observação em Andro
 
 ## Etapa 12 — Ampliação do Planeta das Descobertas
 
-Avaliar cerca de cinco ou seis encontros com as luzinhas. Variar esconderijos, agrupamentos e a disposição de grupos com a mesma quantidade. Considerar comparar dois grupos, identificar mais, menos e igual e perceber uma criatura a mais ou a menos.
+A missão tem dois encontros com esconderijos diferentes e três comparações de **mais**, **menos** e **igual**. Quatro roteiros variam esconderijos, quantidades, formações, lados e ordem das relações. A mesma quantidade aparece em fileiras ou agrupamentos. O símbolo **=** aparece em todas as comparações. A assistência por pares permite observar o que sobra e mantém a decisão com a criança. [Capturas dos desafios](capturas-decima-segunda-entrega/)
 
-Planejar as variações de modo que a criança possa resolver o desafio pela quantidade, independentemente da posição dos objetos.
+Na homologação em Android físico, observar se a criança encontra as luzinhas, consegue contar em ambas as formações e reconhece o símbolo **=** com a narração. Três a cinco minutos continua sendo uma hipótese de duração.
 
 ## Etapa 13 — Novo desfecho narrativo
 
