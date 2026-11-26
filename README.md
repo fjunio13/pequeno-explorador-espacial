@@ -2,6 +2,8 @@
 
 Jogo educativo de matemática e exploração espacial para navegador móvel em paisagem. Na aventura do sinal de luz, a criança pode visitar os planetas das Estrelas, dos Cristais e das Descobertas em qualquer ordem.
 
+A aventura começa com um sinal luminoso. Após reunir as três pistas, a criança pode responder à luz das criaturas e acender o farol do vale. [Roteiro da aventura](docs/roteiro-narrativo.md)
+
 ## Executar localmente
 
 Na pasta do projeto, inicie um servidor HTTP com Python 3.

@@ -36,13 +36,13 @@ A referência estética será a imagem de aventura espacial infantil selecionada
 
 ### 2.2. Navegação
 
-**Fluxo principal** — Tela inicial → Mapa espacial → Planeta → Atividade → Conclusão → Próxima missão, repetição ou mapa.
+**Fluxo principal** — Tela inicial → Introdução pulável na primeira abertura da sessão → Mapa espacial → Planeta → Atividade → Conclusão → Próxima missão, repetição ou mapa.
 
 A criança pode selecionar os planetas em qualquer ordem. A primeira visita inclui uma chegada narrada e pulável. O mapa oferece a opção de rever uma chegada já visitada.
 
 Após concluir uma atividade, a criança vê e ouve a descoberta daquela missão. **Próxima missão** mostra a imagem do primeiro planeta pendente, seguindo a ordem de referência Estrelas, Cristais e Descobertas. A criança pode jogar de novo ou voltar ao mapa para escolher outro destino. O mapa registra uma pista visual por planeta durante a sessão.
 
-A nave liga as missões de [A aventura do sinal de luz](roteiro-narrativo.md). Quando as três pistas são reunidas, a nave pisca para as luzinhas do vale e elas respondem. Todas as missões continuam disponíveis.
+A nave liga as missões de [A aventura do sinal de luz](roteiro-narrativo.md). Quando as três pistas são reunidas, a criança pode piscar para as luzinhas do vale. Elas se reúnem no arco e acendem o farol. O mapa oferece **Rever o começo** e, depois do gesto final, **Rever o final**. Todas as missões continuam disponíveis.
 
 No mapa, a nave dá acesso à Oficina de Energia a qualquer momento. A conclusão de uma visita acende os sistemas da nave. As três pistas da história são encontradas nos planetas.
 

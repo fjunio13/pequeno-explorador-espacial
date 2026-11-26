@@ -10,8 +10,8 @@
 | Homologado na décima entrega, PR #12 | Ajuda desde a primeira tentativa, pistas progressivas nos três planetas e nas três modalidades da Oficina de Energia |
 | Incorporado e homologado na décima primeira entrega, PR #13 | Cinco situações por visita nos Cristais, com carga vazia, complemento, excesso, comparação e variação final |
 | Implementado na décima segunda entrega, para homologação | Dois encontros de busca e três comparações no Planeta das Descobertas, com variação de formações entre visitas |
-| Aprovado como direção de planejamento | Planejar um desfecho interativo e homologar o ciclo em Android físico |
-| Depende de aprovação específica | Implementação das etapas 13 e 14, aprovação do roteiro do novo desfecho e decisões de versão e publicação |
+| Implementado na 13ª entrega, fase B | O Farol das Luzinhas, com abertura, conclusões independentes e desfecho interativo |
+| Depende de aprovação específica | Homologação geral em Android físico e decisões de versão estável |
 
 As etapas abaixo são a referência para futuras entregas. A especificação funcional, a arquitetura e o roteiro vigentes continuam orientando o jogo. O [guia de publicação](publicacao.md) registra o fluxo aprovado para colocar uma revisão no ar.
 
@@ -37,15 +37,7 @@ Na homologação em Android físico, observar se a criança encontra as luzinhas
 
 ## Etapa 13 — Novo desfecho narrativo
 
-**O Farol das Luzinhas** é uma proposta conceitual que precisa de aprovação de roteiro antes de desenvolvimento ou produção audiovisual. As criaturas enviam o sinal porque seu farol parou. As Estrelas indicam a direção, os Cristais fornecem energia e as Descobertas identificam quem chamou.
-
-1. Reunir as três pistas.
-2. Descobrir que o farol deixou de funcionar.
-3. Pedir à criança uma ação simples para ajudar.
-4. Acender o farol de novo.
-5. Celebrar com uma recompensa visual.
-
-Prever a opção de rever a cena pelo mapa e indicar sua conclusão na sessão. Usar o [roteiro vigente](roteiro-narrativo.md) para conferir a continuidade durante o planejamento.
+**O Farol das Luzinhas** implementa o roteiro aprovado no PR #15. A criança investiga o sinal em qualquer ordem e manda um “oi” tocando na luz da nave. As criaturas se reúnem e iluminam o arco de boas-vindas. O mapa guarda o resultado durante a sessão e permite rever a cena. [Roteiro completo](propostas/farol-das-luzinhas-roteiro.md)
 
 ## Etapa 14 — Homologação do ciclo de melhorias
 

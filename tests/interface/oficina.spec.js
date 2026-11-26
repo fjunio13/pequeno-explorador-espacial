@@ -21,6 +21,7 @@ async function openMap(page, rate = 4) {
   await page.goto("./");
   await player(page).evaluate((audio, rate) => { audio.defaultPlaybackRate = rate; }, rate);
   await button(page, "Começar").tap();
+  await button(page, "Pular apresentação").tap();
 }
 
 async function firstWorkshop(page) {

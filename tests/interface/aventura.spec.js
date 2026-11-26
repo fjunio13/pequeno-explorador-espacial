@@ -40,6 +40,7 @@ async function openMap(page, playbackRate = 1) {
     audio.addEventListener("ended", () => window.finishedStory.push(audio.currentSrc.split("/").at(-1)));
   }, playbackRate);
   await button(page, "Começar").tap();
+  await button(page, "Pular apresentação").tap();
 }
 
 async function skipArrival(page, planet) {
@@ -120,7 +121,8 @@ test("Próxima missão abre direto um planeta visitado que ainda está pendente"
 for (const [orderIndex, order] of orders.entries()) {
   test(`registra as três pistas e conclui em ordem ${orderIndex + 1} (${order.join(" → ")})`, async ({ page, baseURL }) => {
     test.slow();
-    if (orderIndex === 0) await page.setViewportSize({ width: 568, height: 320 });
+    const [width, height] = [[568, 320], [667, 375], [780, 360]][orderIndex % 3];
+    await page.setViewportSize({ width, height });
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
     page.on("response", (response) => {
@@ -176,11 +178,43 @@ for (const [orderIndex, order] of orders.entries()) {
     await expect(screen(page, "finale")).toBeVisible({ timeout: 10000 });
     await expectLandscapeFit(page);
     expect(await page.evaluate(() => window.finishedStory)).toContain(planets[order.at(-1)].audio);
-    await expect(player(page)).toHaveAttribute("src", /aventura-conclusao\.mp3$/);
+    const finale = screen(page, "finale");
+    await expect(finale.locator(".farol-clues [data-clue]")).toHaveCount(3);
+    await expect(finale).toHaveAttribute("data-phase", "gather");
+    await expect(button(page, "Mandar um oi")).toBeHidden();
+    await expect(player(page)).toHaveAttribute("src", /farol-convite\.mp3$/);
+    await expect(button(page, "Mandar um oi")).toBeVisible();
+    await expectLandscapeFit(page);
+    await expect(player(page)).toHaveAttribute("src", /farol-mandar-oi\.mp3$/);
     await expect(screen(page, "finale").locator(".story-ship")).toBeVisible();
-    await expect(screen(page, "finale").locator(".story-lights img")).toHaveCount(3);
-    await screen(page, "finale").locator(".story-lights img").first().evaluate((image) => image.decode());
+    await expect(screen(page, "finale").locator(".farol-valley img")).toHaveCount(3);
+    await screen(page, "finale").locator(".farol-valley img").first().evaluate((image) => image.decode());
+    if (orderIndex === 0) {
+      await button(page, "Voltar ao mapa").tap();
+      await expect(button(page, "Responder ao sinal")).toBeVisible();
+      await expect(button(page, "Rever o final")).toBeHidden();
+      await button(page, "Responder ao sinal").tap();
+      await expect(finale).toHaveAttribute("data-phase", "gather");
+      await button(page, "Pular apresentação").tap();
+    }
+    const lamp = button(page, "Mandar um oi");
+    const bounds = await lamp.boundingBox();
+    expect(Math.min(bounds.width, bounds.height)).toBeGreaterThanOrEqual(48);
+    await lamp.tap();
+    await expect(finale).toHaveAttribute("data-phase", "reply");
+    await expect(lamp).toBeHidden();
+    if (orderIndex === 0) {
+      await page.touchscreen.tap(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+      await button(page, "Ouvir").tap();
+      await expect(player(page)).toHaveAttribute("src", /farol-sinal\.mp3$/);
+    }
+    if (orderIndex !== 0) {
+      await expect(finale).toHaveAttribute("data-phase", "celebrate");
+      await expectLandscapeFit(page);
+      await expect(player(page)).toHaveAttribute("src", /farol-celebracao\.mp3$/);
+    }
     await button(page, "Voltar ao mapa").tap();
+    await expect(button(page, "Rever o final")).toBeVisible();
     await expect(clues(page)).toHaveCount(3);
     await expectLandscapeFit(page);
     for (const [id, { name, clue }] of Object.entries(planets)) {
@@ -197,8 +231,17 @@ for (const [orderIndex, order] of orders.entries()) {
       await expect(screen(page, "complete")).toBeVisible();
       await button(page, "Voltar ao mapa").tap();
       await expect(clues(page)).toHaveCount(3);
-      await button(page, "Responder ao sinal").tap();
-      await expect(screen(page, "finale")).toBeVisible();
+      await button(page, "Rever o final").tap();
+      await expect(finale).toHaveAttribute("data-phase", "gather");
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await page.route("**/farol-*.mp3", (route) => route.abort());
+      await button(page, "Pular apresentação").tap();
+      await expect(finale).toHaveAttribute("data-phase", "invite");
+      await expect(lamp).toBeEnabled();
+      await lamp.tap();
+      await expect(finale).toHaveAttribute("data-phase", "celebrate");
+      await expect(finale.locator(".farol-edge")).toHaveCSS("opacity", "1");
+      await page.unroute("**/farol-*.mp3");
 
       await button(page, "Voltar ao mapa").tap();
       await button(page, "Oficina de Energia").tap();
@@ -212,9 +255,32 @@ for (const [orderIndex, order] of orders.entries()) {
       await expect(screen(page, "energy-complete")).toBeVisible();
       await button(page, "Voltar ao mapa").tap();
       await expect(clues(page)).toHaveCount(3);
-      await button(page, "Responder ao sinal").tap();
+      await button(page, "Rever o final").tap();
       await expect(screen(page, "finale")).toBeVisible();
     }
     expect(errors).toEqual([]);
   });
 }
+
+test("sair da terceira conclusão conserva o convite e repetir a missão dispensa abertura automática", async ({ page }) => {
+  test.slow();
+  await openMap(page, 4);
+  for (const planet of ["stars", "crystals", "discoveries"]) {
+    await choosePlanet(page, planet);
+    await playMission(page, planet);
+    await button(page, "Voltar ao mapa").tap();
+  }
+  await expect(button(page, "Responder ao sinal")).toBeVisible();
+  await expect(clues(page)).toHaveCount(3);
+
+  await button(page, planets.discoveries.name).tap();
+  await playMission(page, "discoveries", [2, 5, "right", "equal", "left"]);
+  await expect.poll(() => player(page).evaluate((audio) => audio.ended)).toBe(true);
+  // A passagem automática aconteceria depois da pausa visual da conclusão.
+  await expect(screen(page, "complete")).toBeVisible();
+  await page.waitForTimeout(850);
+  await expect(screen(page, "complete")).toBeVisible();
+  await button(page, "Voltar ao mapa").tap();
+  await button(page, "Responder ao sinal").tap();
+  await expect(screen(page, "finale")).toHaveAttribute("data-phase", "gather");
+});

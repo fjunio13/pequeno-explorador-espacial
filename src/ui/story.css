@@ -132,7 +132,8 @@
 .story-route {
   inline-size: 86%;
   fill: currentColor;
-  animation: celebrate 710ms ease-out both;
+  stroke-dasharray: 240;
+  animation: trace-route 1.8s ease-out both;
 }
 
 .story-star {
@@ -167,7 +168,7 @@
 
 .story-station[data-discovered="true"] .robot-arm {
   transform-origin: 40px 46px;
-  animation: robot-wave 850ms ease-in-out 2;
+  animation: robot-wave 850ms ease-in-out 2 both;
 }
 
 .story-valley {
@@ -231,41 +232,8 @@
 
 .story-station .light-pattern { color: var(--mint); }
 
-.story-valley[data-discovered="true"] .story-lights,
-.finale-picture .story-lights {
-  animation: light-reply 870ms ease-in-out both;
-}
-
-.finale-picture {
-  grid-template-columns: 0.9fr auto 1.15fr;
-  gap: clamp(0.2rem, 1vw, 1rem);
-  padding: clamp(0.4rem, 1.35vw, 1.2rem);
-}
-
-.story-ship {
-  inline-size: 100%;
-  filter: drop-shadow(0 0.45rem 0.6rem #170f3fa9);
-  animation: float 3s ease-in-out infinite;
-}
-
-.ship-lamp {
-  animation: signal-note 550ms ease-out 2;
-  filter: drop-shadow(0 0 0.3rem #ffda7c);
-}
-
-.finale-picture .light-pattern {
-  position: static;
-  transform: none;
-}
-
-.finale-picture .story-lights {
-  inline-size: 100%;
-  padding: 0;
-  animation-delay: 960ms;
-}
-
-.finale-picture .story-lights img {
-  inline-size: 33%;
+.story-valley[data-discovered="true"] .story-lights {
+  animation: story-beats 1.95s ease-in-out 400ms both;
 }
 
 @keyframes signal-note {
@@ -322,3 +290,379 @@
     block-size: clamp(4.5rem, 35svh, 7.4rem);
   }
 }
+
+.map-navigation {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.map-navigation [data-action="prologue"] {
+  inline-size: 3rem;
+  padding: 0;
+}
+
+.map-navigation [data-action="prologue"] span {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+@keyframes trace-route {
+  from { stroke-dashoffset: 240; }
+  to { stroke-dashoffset: 0; }
+}
+
+.story-station .station-signal,
+.story-station .station-reply {
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  z-index: 1;
+}
+
+.station-signal {
+  inset: 1% 36% auto auto;
+  inline-size: 16%;
+  color: var(--mint);
+  animation: story-beats 1.95s ease-in-out 1s both;
+}
+
+.station-reply {
+  inset: auto auto 5% 0;
+  inline-size: 27%;
+  filter: drop-shadow(0 0 0.35rem #94f2cf94);
+  animation: story-beats 1.95s ease-in-out 3s both;
+}
+
+.station-signal svg { inline-size: 65%; }
+.station-reply svg { inline-size: 100%; }
+
+.station-signal .light-pattern,
+.station-reply .light-pattern {
+  position: static;
+  transform: none;
+  font-size: clamp(0.7rem, 1.55vw, 1rem);
+}
+
+.prologue-toolbar {
+  position: absolute;
+  inset: var(--space-y) var(--space-x) auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.prologue-screen .intro-copy {
+  max-inline-size: min(49%, 34rem);
+  padding-block: 4rem 1rem;
+}
+
+.prologue-screen .intro-copy h1 {
+  color: var(--gold);
+  font-size: clamp(2rem, 5.7vw, 5.2rem);
+}
+
+.story-caption {
+  color: var(--cream);
+  font-size: clamp(0.87rem, 2.4vw, 1.28rem);
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.prologue-screen .story-caption {
+  min-block-size: 2.55em;
+  margin-block: 0.65rem 0.5rem;
+  text-shadow: 0 1px 7px #060312;
+}
+
+.prologue-planets {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.35rem, 1.4vw, 1rem);
+  visibility: hidden;
+}
+
+.prologue-planets img {
+  inline-size: clamp(2.2rem, 7.5vw, 5.7rem);
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+[data-phase="choice"] .prologue-planets {
+  visibility: visible;
+  animation: arrive 360ms ease-out both;
+}
+
+.prologue-signal {
+  position: absolute;
+  inset: 26% auto auto 53%;
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  color: var(--gold);
+  filter: drop-shadow(0 0 0.65rem #fff293);
+  pointer-events: none;
+}
+
+.prologue-screen[data-phase="signal"]::before {
+  position: absolute;
+  inset: 23% auto auto 73%;
+  inline-size: clamp(1.2rem, 4vw, 2.8rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff0a76b, transparent 68%);
+  animation: story-beats 1.95s ease-in-out both;
+  pointer-events: none;
+  content: "";
+}
+
+.prologue-signal > svg { inline-size: clamp(1.15rem, 3.7vw, 2.7rem); }
+.prologue-signal .light-pattern { visibility: hidden; }
+[data-phase="signal"] .prologue-signal > svg { animation: story-beats 1.95s ease-in-out both; }
+:is([data-phase="signal"], [data-phase="choice"]) .prologue-signal .light-pattern { visibility: visible; }
+
+.farol-screen {
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  gap: clamp(0.35rem, 1.6svh, 0.75rem);
+  justify-items: center;
+}
+
+.farol-screen .screen-toolbar {
+  inline-size: 100%;
+  align-self: start;
+}
+
+.farol-screen h1 {
+  text-align: center;
+  font-size: clamp(1.3rem, 4.5vw, 3.25rem);
+  color: var(--gold);
+}
+
+.farol-stage {
+  position: relative;
+  isolation: isolate;
+  inline-size: min(100%, 57rem);
+  min-block-size: 8rem;
+  border: 1px solid #796296;
+  border-radius: clamp(0.8rem, 2vw, 1.5rem);
+  background: #242045 url("../../assets/images/vale-das-descobertas.webp") center 54% / cover;
+  box-shadow: inset 0 0 3rem #130c3659;
+}
+
+.farol-clues {
+  position: absolute;
+  inset: 8% 0 auto;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: clamp(0.5rem, 3.3vw, 2rem);
+  pointer-events: none;
+}
+
+.farol-clues > span {
+  display: grid;
+  place-items: center;
+  inline-size: clamp(2rem, 6vw, 3.75rem);
+  aspect-ratio: 1;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  color: var(--clue-color);
+  background: #282040;
+  position: relative;
+  animation: arrive 450ms ease-out both;
+}
+
+.farol-clues > span:nth-child(2) { animation-delay: 750ms; }
+.farol-clues > span:nth-child(3) { animation-delay: 1500ms; }
+.farol-clues svg { inline-size: 56%; }
+
+.farol-clues .light-pattern {
+  position: absolute;
+  inset: 100% auto auto;
+  margin-block-start: 0.28rem;
+  font-size: 0.73rem;
+  color: var(--mint);
+}
+
+.farol-clues > span:not(:last-child)::after {
+  position: absolute;
+  inset: 50% auto auto 100%;
+  inline-size: clamp(0.45rem, 3vw, 1.7rem);
+  border-block-start: 1px dashed #fbe1bd99;
+  content: "";
+}
+.farol-screen:not([data-phase="gather"]) .farol-clues { visibility: hidden; }
+
+.farol-ship {
+  position: absolute;
+  inset: 48% auto auto 4%;
+  inline-size: 33%;
+  transform: translateY(-50%);
+}
+
+.farol-ship .story-ship {
+  display: block;
+  inline-size: 100%;
+  filter: drop-shadow(0 0.45rem 0.5rem #160e377e);
+}
+
+.farol-screen[data-phase="gather"] .story-ship {
+  animation: point-to-valley 900ms ease-out both;
+}
+
+@keyframes point-to-valley {
+  from { transform: translateX(-6%) rotate(8deg); }
+  to { transform: none; }
+}
+
+.farol-lamp {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  inset: 50% auto auto 91%;
+  inline-size: clamp(3rem, 8.5vw, 4.5rem);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border: 2px solid #fff1a5;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff2a8 0% 18%, #e29a46 56%, #876044 98%);
+  color: #241735;
+  box-shadow: 0 0 1rem #ffe486, 0 0 0 4px #332751b0;
+}
+
+.farol-lamp svg { inline-size: 57%; }
+.farol-screen button[hidden], .prologue-screen button[hidden] { display: none; }
+
+:is([data-phase="reply"], [data-phase="celebrate"]) .ship-lamp {
+  fill: #fff8ce;
+  filter: drop-shadow(0 0 4px #fff1a1);
+}
+
+[data-phase="reply"] .ship-lamp { animation: story-beats 1.95s ease-in-out both; }
+[data-phase="celebrate"] .farol-ship .story-ship { filter: drop-shadow(0 0 0.65rem #ffdb70bb); }
+
+.farol-message {
+  position: absolute;
+  inset: 43% auto auto 39%;
+  z-index: 1;
+  opacity: 0;
+}
+
+[data-phase="reply"] .farol-message {
+  opacity: 1;
+  animation: travel-to-valley 1.35s ease-out both;
+}
+
+@keyframes travel-to-valley {
+  from { transform: translateX(0); opacity: 0.65; }
+  78% { opacity: 1; }
+  to { transform: translateX(clamp(3.5rem, 19vw, 10rem)); opacity: 0; }
+}
+
+.farol-valley {
+  position: absolute;
+  inset: 8% 6% 4% auto;
+  inline-size: 48%;
+}
+
+.farol-arch {
+  position: absolute;
+  inset: auto 0 0 auto;
+  inline-size: min(84%, 33svh);
+  filter: drop-shadow(0 0.4rem 0.5rem #241236a8);
+}
+
+.farol-edge {
+  fill: none;
+  stroke: #ffe39a;
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+[data-phase="celebrate"] .farol-arch {
+  filter: drop-shadow(0 0 0.7rem #ffdb62c9);
+}
+
+[data-phase="celebrate"] .farol-stone { fill: #e5a34d; }
+[data-phase="celebrate"] .farol-edge {
+  opacity: 1;
+  animation: glow-arch 580ms ease-out both;
+}
+
+@keyframes glow-arch {
+  from { opacity: 0.25; }
+  to { opacity: 1; }
+}
+[data-phase="celebrate"] .farol-stage {
+  box-shadow: inset 0 -1.1rem 2.6rem -0.7rem #f0a25c8c, 0 0 1.2rem #ffce6754;
+}
+
+.farol-lead, .farol-friends {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.farol-lead {
+  inset: auto 1% 47% auto;
+  inline-size: min(83%, 32svh);
+}
+
+.farol-friends {
+  inset: auto 0 7% auto;
+  inline-size: min(84%, 33svh);
+  justify-content: space-between;
+}
+
+.farol-valley img {
+  display: block;
+  inline-size: clamp(1.75rem, 7.2svh, 4.75rem);
+  block-size: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 0.43rem #ffc45fa1);
+}
+
+[data-phase="gather"] .farol-valley { opacity: 0.65; }
+
+[data-phase="reveal"] .farol-lead {
+  animation: land-on-arch 950ms ease-out both;
+}
+
+[data-phase="reply"] .farol-friends {
+  animation: join-the-arch 900ms 1.12s ease-in-out both;
+}
+
+[data-phase="celebrate"] .farol-friends {
+  inset-block-end: 47%;
+}
+
+@keyframes land-on-arch {
+  from { transform: translate(-45%, 70%); }
+  to { transform: none; }
+}
+
+@keyframes join-the-arch {
+  from { inset-block-end: 7%; }
+  to { inset-block-end: 47%; }
+}
+
+@keyframes story-beats {
+  0%, 4%, 20%, 28%, 44%, 52%, 90%, 100% { opacity: 0.76; }
+  11%, 35%, 63%, 82% { opacity: 1; filter: brightness(1.45); }
+}
+
+.farol-footer {
+  display: flex;
+  min-block-size: 3rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.farol-footer .story-caption { text-align: center; }
+.farol-footer .button { flex: none; }
+.farol-footer p:empty { display: none; }

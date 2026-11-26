@@ -10,6 +10,7 @@ async function openMission(page, playbackRate = 1) {
   await page.goto("./");
   await player(page).evaluate((audio, rate) => { audio.defaultPlaybackRate = rate; }, playbackRate);
   await button(page, "Começar").tap();
+  await button(page, "Pular apresentação").tap();
   await button(page, "Planeta das Estrelas").tap();
   await button(page, "Pular apresentação").tap();
   await expect(page.getByRole("heading", { name: "Planeta das Estrelas" })).toBeVisible();

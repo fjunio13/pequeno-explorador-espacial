@@ -13,6 +13,7 @@ async function openCrystals(page, playbackRate = 1) {
   await page.goto("./");
   await audio(page).evaluate((node, rate) => { node.defaultPlaybackRate = rate; }, playbackRate);
   await button(page, "Começar").tap();
+  await button(page, "Pular apresentação").tap();
   await button(page, "Planeta dos Cristais").tap();
   await button(page, "Pular apresentação").tap();
   await expect(mission(page)).toHaveAttribute("data-phase", "collect");
