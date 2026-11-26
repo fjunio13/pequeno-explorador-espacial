@@ -1,8 +1,8 @@
 # O Farol das Luzinhas
 
-**Proposta narrativa aguardando aprovação · 13ª entrega, fase A**
+**Roteiro aprovado no PR #15 e implementado na 13ª entrega, fase B**
 
-Aventura *A aventura do sinal de luz*. Leitura de referência na `main` após o PR #14, revisão `f8a709b`. O [roteiro vigente](../roteiro-narrativo.md) é a referência do jogo publicado. Este documento descreve a experiência proposta para a fase seguinte.
+Aventura *A aventura do sinal de luz*. Leitura de referência na `main` após o PR #14, revisão `f8a709b`. O [roteiro vigente](../roteiro-narrativo.md) resume a experiência implementada.
 
 ## Parte A — Sinopse
 
@@ -124,9 +124,9 @@ As composições usam a paleta e as silhuetas do [guia visual](../guia-visual.md
 5. Usar o serviço de voz e a transição cancelável existentes. Aguardar o fim real das falas para as passagens naturais. Permitir pular a preparação do final. Na espera pelo toque, manter apenas o alvo e os controles de ouvir ou sair.
 6. Na homologação posterior, percorrer as seis rotas da matriz e interromper a terceira conclusão e o final antes e depois do toque. Em Android físico, observar se a criança escolhe livremente o primeiro destino, se entende que pode tocar na luz sem um adulto apontar e se atribui o arco aceso à troca de “ois”. As estimativas de tempo da parte C são hipóteses de encenação.
 
-## Parte H — Decisões para aprovação
+## Parte H — Decisões aprovadas
 
-1. **O sentido do farol.** Aprovar o arco de boas-vindas que as próprias criaturas iluminam ao receber a resposta, em substituição à hipótese de um farol avariado.
-2. **O gesto que encerra a história.** Aprovar o “oi” enviado por um toque na luz da nave, a reunião das criaturas como resposta e o farol aceso no mapa como lembrança que pode ser revista.
+1. **O sentido do farol.** O arco de boas-vindas é o lugar que as próprias criaturas iluminam ao receber a resposta, em substituição à hipótese de um farol avariado.
+2. **O gesto que encerra a história.** A criança envia o “oi” com um toque na luz da nave. As criaturas se reúnem em resposta. O farol aceso no mapa guarda o encontro e permite revê-lo.
 
-A aprovação deste roteiro fixa as falas, as cenas e o comportamento para a fase de implementação. A produção audiovisual e a programação pertencem àquela fase.
+A aprovação do PR #15 fixou as falas, as cenas e o comportamento usados na implementação.

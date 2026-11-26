@@ -3,7 +3,17 @@ import { control, icon, lightPattern } from "./controls.js";
 const launchArt = new URL("../../assets/images/astronauta-e-nave.webp", import.meta.url).href;
 const station = new URL("../../assets/images/estacao-cristais.webp", import.meta.url).href;
 const lightling = new URL("../../assets/images/luzinha.webp", import.meta.url).href;
-const creature = `<img src="${lightling}" alt="" width="280" height="252">`;
+export const creature = `<img src="${lightling}" alt="" width="280" height="252">`;
+
+export const shipArt = `<svg class="story-ship" viewBox="0 0 144 94" fill="none">
+            <path d="M35 47C24 35 13 42 5 53c9 8 20 14 31 5" fill="#ffc979"/>
+            <path d="m57 27-12-14-20 3 7 27m23 20-8 16-24-2 9-28" fill="#df826b" stroke="#ffb088" stroke-width="2"/>
+            <path d="M29 36c21-23 71-24 108 3l4 8-4 8c-37 30-86 29-108 6Z" fill="#ffe7cb" stroke="#fec091" stroke-width="3"/>
+            <path d="M119 29q13 7 22 18-8 12-22 19-11-21 0-37Z" fill="#ef9a82"/>
+            <circle cx="78" cy="45" r="17" fill="#294161" stroke="#d4ae93" stroke-width="4"/>
+            <path d="M69 41q4-8 13-7" stroke="#9ee8d0" stroke-width="4" stroke-linecap="round"/>
+            <circle class="ship-lamp" cx="129" cy="47" r="5" fill="#fff0a6"/>
+          </svg>`;
 
 export function homeScreen() {
   return `
@@ -17,7 +27,7 @@ export function homeScreen() {
     </section>`;
 }
 
-export function mapScreen(planets, visits, completed) {
+export function mapScreen(planets, visits, completed, signalSent) {
   const destinations = planets.map(({ id, image, name, discovery }) => `
     <div class="orbit">
       <button class="planet-button" type="button" data-action="mission" data-planet="${id}" aria-label="${name}"
@@ -36,7 +46,10 @@ export function mapScreen(planets, visits, completed) {
   return `
     <section class="screen sky-screen map-screen" data-screen="map">
       <div class="screen-toolbar">
-        ${control("home", "Início", "back")}
+        <div class="map-navigation">
+          ${control("home", "Início", "back")}
+          ${control("prologue", "Rever o começo", "story")}
+        </div>
         <h1 tabindex="-1">Mapa espacial</h1>
         ${control("listen", "Ouvir", "sound")}
       </div>
@@ -44,7 +57,8 @@ export function mapScreen(planets, visits, completed) {
         <div class="planet-grid" role="group" aria-label="Planetas">${destinations}</div>
         <div class="map-actions">
           ${control("workshop", "Oficina de Energia", "ship")}
-          ${canReply ? control("finale", "Responder ao sinal", "antenna", "primary") : ""}
+          ${canReply ? control("finale", signalSent ? "Rever o final" : "Responder ao sinal",
+            signalSent ? "lighthouse" : "antenna", "primary") : ""}
         </div>
       </div>
     </section>`;
@@ -61,7 +75,8 @@ function storyPicture(planet, discovered) {
   if (planet.id === "crystals") {
     return `
       <div class="story-picture story-station" data-discovered="${discovered}" aria-hidden="true">
-        ${discovered ? lightPattern : ""}
+        ${discovered ? `<span class="station-signal" aria-hidden="true">${icon("antenna")}${lightPattern}</span>
+          <div class="station-reply">${shipArt}${lightPattern}</div>` : ""}
         <img src="${station}" alt="">
         <svg class="station-robot" viewBox="0 0 66 66">
           <g stroke="#242345" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -128,35 +143,6 @@ export function completeScreen(planet, nextPlanet) {
           </div>
         </div>
         ${storyPicture(planet, true)}
-      </div>
-    </section>`;
-}
-
-export function finaleScreen() {
-  return `
-    <section class="screen sky-screen story-screen finale-screen" data-screen="finale">
-      <div class="screen-toolbar">
-        ${control("map", "Voltar ao mapa", "back")}
-        ${control("listen", "Ouvir", "sound")}
-      </div>
-      <div class="destination-layout">
-        <div class="destination-copy">
-          <h1 tabindex="-1">Um sinal <strong>de volta!</strong></h1>
-          <p>A nave piscou, e as luzinhas responderam.</p>
-        </div>
-        <div class="story-picture story-valley finale-picture" aria-hidden="true">
-          <svg class="story-ship" viewBox="0 0 144 94" fill="none">
-            <path d="M35 47C24 35 13 42 5 53c9 8 20 14 31 5" fill="#ffc979"/>
-            <path d="m57 27-12-14-20 3 7 27m23 20-8 16-24-2 9-28" fill="#df826b" stroke="#ffb088" stroke-width="2"/>
-            <path d="M29 36c21-23 71-24 108 3l4 8-4 8c-37 30-86 29-108 6Z" fill="#ffe7cb" stroke="#fec091" stroke-width="3"/>
-            <path d="M119 29q13 7 22 18-8 12-22 19-11-21 0-37Z" fill="#ef9a82"/>
-            <circle cx="78" cy="45" r="17" fill="#294161" stroke="#d4ae93" stroke-width="4"/>
-            <path d="M69 41q4-8 13-7" stroke="#9ee8d0" stroke-width="4" stroke-linecap="round"/>
-            <circle class="ship-lamp" cx="129" cy="47" r="5" fill="#fff0a6"/>
-          </svg>
-          ${lightPattern}
-          <div class="story-lights">${creature.repeat(3)}</div>
-        </div>
       </div>
     </section>`;
 }

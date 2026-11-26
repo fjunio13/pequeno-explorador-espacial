@@ -19,7 +19,7 @@ As ilustrações são gerações originais para este projeto. As imagens usam pe
 
 ## Narração e efeitos
 
-As 108 falas em `assets/audio/` foram sintetizadas em português brasileiro com Piper TTS 1.8.0 e o modelo `pt_BR-faber-medium` na revisão `5ec43b186ef915a195d3ddbcfd9916e76c503c3f`. Os arquivos foram normalizados e exportados em MP3 mono a 22.050 Hz. A revisão de fluidez recortou os pedidos e acertos das Estrelas e a fala de energização dos Cristais. A integração narrativa regravou a abertura e as conclusões das Estrelas e dos Cristais. A oficina adicionou 32 falas e regravou a indicação de destinos do mapa. [Catálogo de áudio](../src/services/audio-catalog.js)
+As 112 falas em `assets/audio/` foram sintetizadas em português brasileiro com Piper TTS 1.8.0 e o modelo `pt_BR-faber-medium` na revisão `5ec43b186ef915a195d3ddbcfd9916e76c503c3f`. Os arquivos foram normalizados e exportados em MP3 mono a 22.050 Hz. A revisão de fluidez recortou os pedidos e acertos das Estrelas e a fala de energização dos Cristais. A integração narrativa regravou a abertura e as conclusões das Estrelas e dos Cristais. A oficina adicionou 32 falas e regravou a indicação de destinos do mapa. [Catálogo de áudio](../src/services/audio-catalog.js)
 
 A décima entrega acrescentou nove falas curtas de assistência. Elas orientam seleção e retirada de estrelas, falta e excesso de cristais, complementação e comparação na oficina. A fala de reorientação no vale e a pista de montagem na oficina foram regravadas. A instrução do antigo botão **Ajudar**, que movia um cristal, foi removida. Os novos destaques usam os gráficos existentes e estilos CSS.
 
@@ -33,7 +33,7 @@ O efeito `desmarcar.mp3` e as três notas iniciais de `conclusao.mp3` são tons 
 
 Os efeitos `cristais-encaixe.mp3` e `cristais-retirar.mp3` usam a mesma técnica, com notas diferentes. A energização usa uma sequência original em `cristais-ligado.mp3`.
 
-O motivo do sinal usa dois tons breves de 660 Hz e um longo de 880 Hz com envelope suave. Ele abre `cristais-conclusao.mp3` e `descobertas-sinal.mp3`. Em `aventura-conclusao.mp3`, a nave e as luzinhas tocam o motivo uma vez cada.
+O motivo do sinal usa dois tons breves de 660 Hz e um longo de 880 Hz com envelope suave. Ele abre `cristais-conclusao.mp3` e `descobertas-sinal.mp3`. A fase B da 13ª entrega usa a gravação local `farol-sinal.mp3` na abertura e na resposta. As notas foram sintetizadas com envelope senoidal suave. O arquivo substitui a gravação do encerramento anterior junto das cinco falas `farol-*.mp3`, geradas em português brasileiro com a mesma voz Faber. O farol usa os dois estados da silhueta do arco do vale. As cenas reaproveitam a nave, as criaturas, o cenário e os ícones das pistas.
 
 Os encaixes e as retiradas da oficina reutilizam os efeitos dos Cristais. As falas de resultado da oficina começam com duas notas sintetizadas para o jogo. Em `oficina-pronta.mp3`, quatro notas acompanham a iluminação da nave antes da fala.
 

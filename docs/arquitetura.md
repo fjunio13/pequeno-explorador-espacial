@@ -80,7 +80,7 @@ Evitar abstrações excessivamente genéricas. As três atividades poderão comp
 
 `src/main.js` inicia o jogo. `src/core/game.js` registra os planetas, as falas de chegada e as pistas. O núcleo conta visitas e mantém um conjunto de conclusões por identificador. A primeira entrada abre a chegada narrada. Nas seguintes, a criança pode entrar direto ou rever a chegada pelo mapa. **Próxima missão** usa o mesmo caminho de entrada do mapa e sugere o primeiro planeta pendente na ordem Estrelas, Cristais e Descobertas. **Jogar de novo** inicia a missão que acabou de ser concluída. `src/ui/` contém as telas, os controles e os estilos.
 
-O núcleo reutiliza `round-advance.js` nas chegadas e após a fala da terceira pista. Quando reúne as três, apresenta o desfecho ao fim da fala, com a opção de abri-lo pelo mapa. Ele sinaliza a primeira exibição durante a sessão, para que repetir uma missão preserve as pistas e a escolha da próxima ação.
+O núcleo reutiliza `round-advance.js` nas chegadas e após a fala da terceira pista distinta. O mapa libera o desfecho assim que essa pista é registrada. `src/ui/adventure.js` apresenta as fases da abertura e do desfecho, cancela passagens ao sair e usa o fim da mídia para avançar. O toque na lâmpada registra a resposta no núcleo. A fase luminosa da cena pode terminar depois, e o mapa já reconhece a conclusão durante a sessão.
 
 `src/activities/stars/` implementa a contagem de estrelas. `starConfiguration` usa o número da visita para alternar o numeral repetido e embaralha as cinco rodadas após a abertura. Em `src/activities/crystals/`, `logic.js` monta as cinco situações de cada visita e valida os desafios. Cada carga define a quantidade inicial e a solicitada. A comparação define as duas quantidades e se a criança procura mais ou menos. `drag.js` cuida dos gestos, e `index.js` liga as regras à tela e ao áudio. A carga certa passa pelo numeral e pela ativação. A comparação passa diretamente da escolha do gerador ao feedback e à rodada seguinte.
 
@@ -112,7 +112,7 @@ O layout será projetado prioritariamente para celulares na orientação horizon
 
 Quando aberto na vertical, poderá apresentar uma orientação visual solicitando que o usuário gire o aparelho. Não dependerá de bloqueio automático de orientação, pois navegadores móveis podem restringir esse recurso.
 
-O toque em **Começar** abre o mapa e inicia a narração antes de solicitar tela cheia no mesmo gesto. Se o navegador recusar a solicitação, o mapa funciona na aba.
+O toque em **Começar** abre a introdução na primeira visita e o mapa nas seguintes, com solicitação de tela cheia no mesmo gesto. Se o navegador recusar a solicitação, o mapa funciona na aba.
 
 ## 6.7. Publicação
 

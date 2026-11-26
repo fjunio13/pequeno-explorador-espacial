@@ -18,6 +18,7 @@ async function openMission(page, playbackRate = 1) {
   await page.goto("./");
   await player(page).evaluate((audio, rate) => { audio.defaultPlaybackRate = rate; }, playbackRate);
   await button(page, "Começar").tap();
+  await button(page, "Pular apresentação").tap();
   await button(page, "Planeta das Descobertas").tap();
   await button(page, "Pular apresentação").tap();
 }
@@ -169,6 +170,7 @@ test("acomoda o mapa e as fases de descoberta em três telas em paisagem", async
     await page.setViewportSize({ width, height });
     await page.goto("./");
     await button(page, "Começar").tap();
+    await button(page, "Pular apresentação").tap();
     await fit();
     await button(page, "Planeta das Descobertas").tap();
     await fit();

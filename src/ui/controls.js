@@ -12,6 +12,7 @@ const paths = {
   spark: '<path d="M12 2c0 6-4 10-10 10 6 0 10 4 10 10 0-6 4-10 10-10-6 0-10-4-10-10Z" fill="currentColor" stroke="none"/>',
   direction: '<path d="M4 20 20 4m-8 0h8v8"/><circle cx="7" cy="9" r="1.3"/><circle cx="15" cy="19" r="1.3"/>',
   antenna: '<circle cx="12" cy="9" r="1.5" fill="currentColor"/><path d="m8 21 4-9 4 9M6 21h12M7.5 5a6 6 0 0 0 0 8m9-8a6 6 0 0 1 0 8M4 2a10 10 0 0 0 0 14M20 2a10 10 0 0 1 0 14"/>',
+  lighthouse: '<path d="M4 21v-5a8 8 0 0 1 16 0v5m-12 0v-5a4 4 0 0 1 8 0v5M12 2v3M4 6l2 2m14-2-2 2"/>',
   lights: '<ellipse cx="12" cy="9" rx="3" ry="4"/><ellipse cx="5.5" cy="17" rx="3" ry="4"/><ellipse cx="18.5" cy="17" rx="3" ry="4"/>',
   story: '<path d="M12 5c-3-2-5-2-9-2v15c4 0 6 0 9 2 3-2 5-2 9-2V3c-4 0-6 0-9 2Zm0 0v15"/><path d="M6 8h2m8 0h2M6 12h2m8 0h2"/>',
 };

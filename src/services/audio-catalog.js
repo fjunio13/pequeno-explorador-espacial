@@ -70,7 +70,11 @@ export const messages = Object.freeze({
   "descobertas-comparar-pares": "Compare uma luzinha de cada lado. Veja se falta ou sobra alguma.",
   "descobertas-sinal": "As luzinhas piscaram juntas!",
   "descobertas-conclusao": "Descobrimos quem mandou o sinal. Foram as luzinhas do vale!",
-  "aventura-conclusao": "A nave piscou. Olhe, as luzinhas responderam!",
+  "farol-quem-piscou": "Olha! Uma luz piscou lá longe. Quem será?",
+  "farol-escolher-planeta": "Temos três planetas para explorar. Por onde vamos começar?",
+  "farol-convite": "É um convite! As luzinhas querem acender o farol com a gente.",
+  "farol-mandar-oi": "Toque na luz da nave pra mandar um oi!",
+  "farol-celebracao": "Olha o farol! As luzinhas mandaram outro oi!",
   "oficina-chegada": "A nave precisa de energia para novas viagens. Vamos preparar as cargas?",
   "oficina-montar-6": "Prepare seis energias. Você pode encaixar um grupo inteiro de uma vez.",
   "oficina-montar-7": "Prepare sete energias. Use os grupos e as peças pequenas.",
@@ -109,7 +113,7 @@ export const messages = Object.freeze({
   "oficina-pronta": "Os sistemas acenderam. A nave está pronta para novas viagens!",
 });
 
-export const effects = Object.freeze(["desmarcar", "cristais-encaixe", "cristais-retirar"]);
+export const effects = Object.freeze(["desmarcar", "cristais-encaixe", "cristais-retirar", "farol-sinal"]);
 
 export function audioUrl(id) {
   if (!Object.hasOwn(messages, id) && !effects.includes(id)) {

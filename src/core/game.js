@@ -8,8 +8,9 @@ import { energyArrivalScreen, energyCompleteScreen } from "../activities/energy/
 import { createRoundAdvance } from "../activities/round-advance.js";
 import { mountStars } from "../activities/stars/index.js";
 import { starConfiguration } from "../activities/stars/logic.js";
+import { mountFinale, mountPrologue } from "../ui/adventure.js";
 import { bindActions } from "../ui/controls.js";
-import { arrivalScreen, completeScreen, finaleScreen, homeScreen, mapScreen } from "../ui/screens.js";
+import { arrivalScreen, completeScreen, homeScreen, mapScreen } from "../ui/screens.js";
 
 const planets = [
   {
@@ -43,7 +44,8 @@ const planets = [
 
 export function startGame(container, audio) {
   let closeScreen = () => {};
-  let finaleShown = false;
+  let prologueSeen = false;
+  let signalSent = false;
   let energyBand = 0;
   const completed = new Set();
   const visits = new Map();
@@ -59,7 +61,7 @@ export function startGame(container, audio) {
     }
   }
 
-  function show(markup, actions, instruction, { onEnd, focus, playNow } = {}) {
+  function show(markup, actions, instruction, { onEnd, focus, playNow, replayVisual = false } = {}) {
     open(() => {
       container.innerHTML = markup;
       const advance = onEnd && createRoundAdvance(onEnd);
@@ -68,6 +70,12 @@ export function startGame(container, audio) {
       const unbind = bindActions(container, {
         ...actions,
         listen: () => {
+          if (replayVisual) {
+            for (const animation of container.querySelector(".story-picture").getAnimations({ subtree: true })) {
+              animation.currentTime = 0;
+              animation.play();
+            }
+          }
           const replay = audio.repeat();
           advance?.schedule(replay);
         },
@@ -85,7 +93,8 @@ export function startGame(container, audio) {
 
   async function start() {
     // Inicie a narração antes que o pedido de tela cheia consuma o gesto.
-    map();
+    if (prologueSeen) map();
+    else prologue();
     if (!document.fullscreenEnabled || document.fullscreenElement) return;
 
     try {
@@ -95,14 +104,20 @@ export function startGame(container, audio) {
     }
   }
 
-  function map() {
-    show(mapScreen(planets, visits, completed), {
+  function prologue() {
+    prologueSeen = true;
+    open(() => mountPrologue(container, audio, planets, (playNow) => map({ playNow })));
+  }
+
+  function map({ playNow = true } = {}) {
+    show(mapScreen(planets, visits, completed, signalSent), {
       home: () => home(),
+      prologue,
       mission: (button) => enterPlanet(planets.find((item) => item.id === button.dataset.planet)),
       arrival: (button) => arrive(planets.find((item) => item.id === button.dataset.planet)),
       workshop: enterWorkshop,
       finale,
-    }, "mapa");
+    }, "mapa", { playNow });
   }
 
   function enterPlanet(planet) {
@@ -128,17 +143,17 @@ export function startGame(container, audio) {
   }
 
   function finish(planet) {
+    const newDiscovery = !completed.has(planet.id);
     completed.add(planet.id);
     const nextPlanet = planets.find(({ id }) => !completed.has(id));
     const actions = { map, mission: () => mission(planet) };
     if (nextPlanet) actions["next-mission"] = () => enterPlanet(nextPlanet);
-    const onEnd = !nextPlanet && !finaleShown ? finale : undefined;
-    show(completeScreen(planet, nextPlanet), actions, planet.discovery.audio, { onEnd });
+    const onEnd = !nextPlanet && newDiscovery ? finale : undefined;
+    show(completeScreen(planet, nextPlanet), actions, planet.discovery.audio, { onEnd, replayVisual: true });
   }
 
   function finale() {
-    finaleShown = true;
-    show(finaleScreen(), { map }, "aventura-conclusao");
+    open(() => mountFinale(container, audio, map, () => { signalSent = true; }));
   }
 
   function enterWorkshop() {
